@@ -29,10 +29,17 @@ namespace StockApp
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,18 +51,51 @@ namespace StockApp
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Location = new System.Drawing.Point(12, 27);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.Size = new System.Drawing.Size(776, 411);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.dataGridView1_CellContextMenuStripNeeded);
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFavoriteToolStripMenuItem,
+            this.removeFavoriteToolStripMenuItem,
+            this.addHateToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 92);
+            // 
+            // addFavoriteToolStripMenuItem
+            // 
+            this.addFavoriteToolStripMenuItem.Name = "addFavoriteToolStripMenuItem";
+            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addFavoriteToolStripMenuItem.Text = "Add Favorite";
+            this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.addFavoriteToolStripMenuItem_Click);
+            // 
+            // removeFavoriteToolStripMenuItem
+            // 
+            this.removeFavoriteToolStripMenuItem.Name = "removeFavoriteToolStripMenuItem";
+            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeFavoriteToolStripMenuItem.Text = "Remove Favorite";
+            this.removeFavoriteToolStripMenuItem.Click += new System.EventHandler(this.removeFavoriteToolStripMenuItem_Click);
+            // 
+            // addHateToolStripMenuItem
+            // 
+            this.addHateToolStripMenuItem.Name = "addHateToolStripMenuItem";
+            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addHateToolStripMenuItem.Text = "Add Hate";
+            this.addHateToolStripMenuItem.Click += new System.EventHandler(this.addHateToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.觀察清單ToolStripMenuItem});
+            this.觀察清單ToolStripMenuItem,
+            this.排除清單ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -69,6 +109,13 @@ namespace StockApp
             this.觀察清單ToolStripMenuItem.Text = "觀察清單";
             this.觀察清單ToolStripMenuItem.Click += new System.EventHandler(this.觀察清單ToolStripMenuItem_Click);
             // 
+            // 排除清單ToolStripMenuItem
+            // 
+            this.排除清單ToolStripMenuItem.Name = "排除清單ToolStripMenuItem";
+            this.排除清單ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.排除清單ToolStripMenuItem.Text = "排除清單";
+            this.排除清單ToolStripMenuItem.Click += new System.EventHandler(this.排除清單ToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -81,6 +128,7 @@ namespace StockApp
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -93,6 +141,11 @@ namespace StockApp
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 觀察清單ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 排除清單ToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem addFavoriteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeFavoriteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addHateToolStripMenuItem;
     }
 }
 

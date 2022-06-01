@@ -14,7 +14,8 @@ namespace StockApp
     public partial class Form1 : Form
     {
 
-        string[] AssignComCodes = new string[] { };
+        string[] FavoriteComCodes = new string[] { };
+        string[] HateComCodes = new string[] { };
 
         public Form1()
         {
@@ -28,21 +29,29 @@ namespace StockApp
 
         private void LoadData()
         {
-            List<string> assignComCodes;
-            if (File.Exists(FrmFavorite.FilePath))
-                assignComCodes = JsonCache.Load<List<string>>(FrmFavorite.FilePath);
+            List<string> favoriteComCodes;
+            if (File.Exists(FrmFavorite.FavoriteFilePath))
+                favoriteComCodes = JsonCache.Load<List<string>>(FrmFavorite.FavoriteFilePath);
             else
-                assignComCodes = new List<string>();
+                favoriteComCodes = new List<string>();
 
-            AssignComCodes = assignComCodes.ToArray();
+            List<string> hateComCodes;
+            if (File.Exists(FrmFavorite.HateFilePath))
+                hateComCodes = JsonCache.Load<List<string>>(FrmFavorite.HateFilePath);
+            else
+                hateComCodes = new List<string>();
+
+            FavoriteComCodes = favoriteComCodes.ToArray();
+            HateComCodes = hateComCodes.ToArray();
 
             var list = CompanyAvgBonus.GetAll();
+            list.RemoveAll(l => hateComCodes.Contains(l.ComCode));
             list.Sort(new CompanyAvgBonus.Expect7DiffComparer());
 
             var list2 = list
                 .Where(l => l.CurrentPrice < 60)
                 .Take(100).ToList();
-            foreach (var code in assignComCodes)
+            foreach (var code in favoriteComCodes)
             {
                 if (list2.Any(l => l.ComCode == code))
                     continue;
@@ -65,7 +74,8 @@ namespace StockApp
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            var grow = dataGridView1.Rows[e.RowIndex];
+            var gv = (DataGridView)sender;
+            var grow = gv.Rows[e.RowIndex];
 
             RefreshCellStyle(grow);
 
@@ -76,7 +86,7 @@ namespace StockApp
         {
             var data = (CompanyAvgBonus)grow.DataBoundItem;
 
-            if (AssignComCodes.Contains(data.ComCode))
+            if (FavoriteComCodes.Contains(data.ComCode))
                 grow.DefaultCellStyle.BackColor = Color.LightYellow;
 
             var defaultForeColor = grow.Cells[nameof(CompanyAvgBonus.ComCode)].Style.ForeColor;
@@ -100,6 +110,77 @@ namespace StockApp
             {
                 LoadData();
             }
+        }
+
+        private void 排除清單ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = new FrmFavorite();
+            if (editor.ShowHateDialog(this) == DialogResult.OK)
+            {
+                LoadData();
+            }
+        }
+
+        private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
+        {
+            var gv = (DataGridView)sender;
+            if (e.RowIndex == -1)
+            {
+                foreach (ToolStripItem item in contextMenuStrip1.Items)
+                    item.Visible = false;
+                return;
+            }
+            var grow = gv.Rows[e.RowIndex];
+            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            addFavoriteToolStripMenuItem.Visible = !FavoriteComCodes.Contains(data.ComCode);
+            removeFavoriteToolStripMenuItem.Visible = FavoriteComCodes.Contains(data.ComCode);
+            addHateToolStripMenuItem.Visible = !HateComCodes.Contains(data.ComCode);
+
+            gv.ClearSelection();
+            grow.Selected = true;
+            contextMenuStrip1.Tag = grow;
+        }
+
+        private void addFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var jsonPath = FrmFavorite.FavoriteFilePath;
+
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (CompanyAvgBonus)grow.DataBoundItem;
+
+            var codes = JsonCache.Load<List<string>>(jsonPath);
+            codes.Add(data.ComCode);
+            JsonCache.Store(jsonPath, codes.Distinct());
+
+            LoadData();
+        }
+        private void removeFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var jsonPath = FrmFavorite.FavoriteFilePath;
+
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (CompanyAvgBonus)grow.DataBoundItem;
+
+            var codes = JsonCache.Load<List<string>>(jsonPath);
+            if (codes.Remove(data.ComCode))
+            {
+                JsonCache.Store(jsonPath, codes.Distinct());
+
+                LoadData();
+            }
+        }
+        private void addHateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var jsonPath = FrmFavorite.HateFilePath;
+
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (CompanyAvgBonus)grow.DataBoundItem;
+
+            var codes = JsonCache.Load<List<string>>(jsonPath);
+            codes.Add(data.ComCode);
+            JsonCache.Store(jsonPath, codes.Distinct());
+
+            LoadData();
         }
     }
 }

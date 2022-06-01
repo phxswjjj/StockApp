@@ -48,7 +48,9 @@ namespace StockApp
 
         public static List<CompanyAvgBonus> GetAll()
         {
-            var jsonFilePath = Path.Combine("CompanyAvgBonus", $"{DateTime.Today:yyyyMMdd}.json");
+            //offset 1330
+            var offseted = DateTime.Now.AddHours(-13).AddMinutes(-30).Date;
+            var jsonFilePath = Path.Combine("CompanyAvgBonus", $"{offseted:yyyyMMdd}.json");
             if (System.IO.File.Exists(jsonFilePath))
                 return JsonCache.Load<List<CompanyAvgBonus>>(jsonFilePath);
 
