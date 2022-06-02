@@ -38,6 +38,9 @@ namespace StockApp
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -64,11 +67,13 @@ namespace StockApp
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem,
             this.addFavoriteToolStripMenuItem,
             this.removeFavoriteToolStripMenuItem,
-            this.addHateToolStripMenuItem});
+            this.addHateToolStripMenuItem,
+            this.removeHateToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 136);
             // 
             // addFavoriteToolStripMenuItem
             // 
@@ -95,7 +100,8 @@ namespace StockApp
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.觀察清單ToolStripMenuItem,
-            this.排除清單ToolStripMenuItem});
+            this.排除清單ToolStripMenuItem,
+            this.重新整理ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -115,6 +121,27 @@ namespace StockApp
             this.排除清單ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.排除清單ToolStripMenuItem.Text = "排除清單";
             this.排除清單ToolStripMenuItem.Click += new System.EventHandler(this.排除清單ToolStripMenuItem_Click);
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Text = "Open GoodInfo";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // 重新整理ToolStripMenuItem
+            // 
+            this.重新整理ToolStripMenuItem.Name = "重新整理ToolStripMenuItem";
+            this.重新整理ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.重新整理ToolStripMenuItem.Text = "重新整理";
+            this.重新整理ToolStripMenuItem.Click += new System.EventHandler(this.重新整理ToolStripMenuItem_Click);
+            // 
+            // removeHateToolStripMenuItem
+            // 
+            this.removeHateToolStripMenuItem.Name = "removeHateToolStripMenuItem";
+            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeHateToolStripMenuItem.Text = "Remove Hate";
+            this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -146,6 +173,9 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem addFavoriteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeFavoriteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addHateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 重新整理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeHateToolStripMenuItem;
     }
 }
 
