@@ -20,6 +20,8 @@ namespace StockApp
 
         public FormModeType FormMode { get; private set; } = FormModeType.Favorite;
 
+        public string[] ViewCodes { get; private set; }
+
         public FrmFavorite()
         {
             InitializeComponent();
@@ -34,7 +36,19 @@ namespace StockApp
         private void btnSave_Click(object sender, EventArgs e)
         {
             var list = txtFavorite.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            JsonCache.Store(this.FilePath, list);
+            JsonCache.Store(this.FilePath, list.Distinct());
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void btnView_Click(object sender, EventArgs e)
+        {
+            var list = txtFavorite.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var distList = list.Distinct();
+            JsonCache.Store(this.FilePath, distList);
+
+            this.ViewCodes = distList.ToArray();
 
             this.DialogResult = DialogResult.OK;
             this.Close();

@@ -27,7 +27,7 @@ namespace StockApp
             LoadData();
         }
 
-        private void LoadData()
+        private void LoadData(string[] assignCodes = null)
         {
             List<string> favoriteComCodes;
             if (File.Exists(FrmFavorite.FavoriteFilePath))
@@ -45,21 +45,31 @@ namespace StockApp
             HateComCodes = hateComCodes.ToArray();
 
             var list = CompanyAvgBonus.GetAll();
-            list.RemoveAll(l => hateComCodes.Contains(l.ComCode));
-            list.Sort(new CompanyAvgBonus.Expect7DiffComparer());
 
-            var list2 = list
-                .Where(l => l.CurrentPrice < 60)
-                .Take(100).ToList();
-            foreach (var code in favoriteComCodes)
+            var list2 = list.ToList();
+            if (assignCodes == null)
             {
-                if (list2.Any(l => l.ComCode == code))
-                    continue;
-                var data = list.Find(l => l.ComCode == code);
-                if (data == null)
-                    continue;
-                list2.Add(data);
+                list2.RemoveAll(l => hateComCodes.Contains(l.ComCode));
+                list2.Sort(new CompanyAvgBonus.Expect7DiffComparer());
+                list2 = list2
+                    .Where(l => l.CurrentPrice < 60)
+                    .Take(100).ToList();
+
+                foreach (var code in favoriteComCodes)
+                {
+                    if (list2.Any(l => l.ComCode == code))
+                        continue;
+                    var data = list.Find(l => l.ComCode == code);
+                    if (data == null)
+                        continue;
+                    list2.Add(data);
+                }
             }
+            else
+            {
+                list2.RemoveAll(l => !assignCodes.Contains(l.ComCode));
+            }
+
             list2.Sort(new CompanyAvgBonus.Expect7DiffComparer());
 
             var binding = new BindingList<CompanyAvgBonus>(list2);
@@ -112,7 +122,7 @@ namespace StockApp
             var editor = new FrmFavorite();
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
-                LoadData();
+                LoadData(editor.ViewCodes);
             }
         }
 
@@ -121,7 +131,7 @@ namespace StockApp
             var editor = new FrmFavorite();
             if (editor.ShowHateDialog(this) == DialogResult.OK)
             {
-                LoadData();
+                LoadData(editor.ViewCodes);
             }
         }
 

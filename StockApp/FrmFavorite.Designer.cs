@@ -31,6 +31,7 @@ namespace StockApp
         {
             this.txtFavorite = new System.Windows.Forms.TextBox();
             this.btnSave = new System.Windows.Forms.Button();
+            this.btnView = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtFavorite
@@ -47,19 +48,31 @@ namespace StockApp
             // btnSave
             // 
             this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSave.Location = new System.Drawing.Point(73, 359);
+            this.btnSave.Location = new System.Drawing.Point(17, 359);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(125, 47);
+            this.btnSave.Size = new System.Drawing.Size(105, 47);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnView
+            // 
+            this.btnView.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnView.Location = new System.Drawing.Point(148, 359);
+            this.btnView.Name = "btnView";
+            this.btnView.Size = new System.Drawing.Size(105, 47);
+            this.btnView.TabIndex = 2;
+            this.btnView.Text = "Save && View";
+            this.btnView.UseVisualStyleBackColor = true;
+            this.btnView.Click += new System.EventHandler(this.btnView_Click);
             // 
             // FrmFavorite
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(271, 417);
+            this.Controls.Add(this.btnView);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.txtFavorite);
             this.Name = "FrmFavorite";
@@ -74,5 +87,6 @@ namespace StockApp
 
         private System.Windows.Forms.TextBox txtFavorite;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnView;
     }
 }
