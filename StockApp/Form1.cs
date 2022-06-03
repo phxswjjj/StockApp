@@ -162,6 +162,30 @@ namespace StockApp
             contextMenuStrip1.Tag = grow;
         }
 
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.F)
+            {
+                var findText = Microsoft.VisualBasic.Interaction.InputBox("輸入完整代號", "尋找代號")
+                    .Trim();
+                if (!string.IsNullOrEmpty(findText))
+                {
+                    foreach (DataGridViewRow grow in dataGridView1.Rows)
+                    {
+                        var data = (CompanyAvgBonus)grow.DataBoundItem;
+                        if (data.ComCode == findText)
+                        {
+                            dataGridView1.ClearSelection();
+                            grow.Selected = true;
+                            dataGridView1.FirstDisplayedScrollingRowIndex = grow.Index;
+                            return;
+                        }
+                    }
+                    MessageBox.Show($"找不到 {findText}");
+                }
+            }
+        }
+
         #region Context Menu
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
