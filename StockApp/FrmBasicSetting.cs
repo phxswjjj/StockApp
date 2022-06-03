@@ -33,6 +33,7 @@ namespace StockApp
                 return;
             }
             Properties.Settings.Default.PriceLimit = price;
+            Properties.Settings.Default.Save();
             BasicSetting.Instance.Load();
 
             this.DialogResult = DialogResult.OK;
