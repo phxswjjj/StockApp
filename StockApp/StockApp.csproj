@@ -62,11 +62,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicSetting.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmBasicSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmBasicSetting.Designer.cs">
+      <DependentUpon>FrmBasicSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmFavorite.cs">
       <SubType>Form</SubType>
@@ -81,6 +88,9 @@
     <Compile Include="WebRequest.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmBasicSetting.resx">
+      <DependentUpon>FrmBasicSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmFavorite.resx">
       <DependentUpon>FrmFavorite.cs</DependentUpon>

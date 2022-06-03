@@ -52,7 +52,7 @@ namespace StockApp
                 list2.RemoveAll(l => hateComCodes.Contains(l.ComCode));
                 list2.Sort(new CompanyAvgBonus.Expect7DiffComparer());
                 list2 = list2
-                    .Where(l => l.CurrentPrice < 60)
+                    .Where(l => l.CurrentPrice < BasicSetting.Instance.PriceLimit)
                     .Take(100).ToList();
 
                 foreach (var code in favoriteComCodes)
@@ -117,6 +117,7 @@ namespace StockApp
                 grow.Cells[nameof(CompanyAvgBonus.Expect5)].Style.ForeColor = Color.Red;
         }
 
+        #region Menu
         private void 觀察清單ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = new FrmFavorite();
@@ -139,6 +140,16 @@ namespace StockApp
         {
             LoadData();
         }
+
+        private void 設定ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = new FrmBasicSetting();
+            if (editor.ShowDialog(this) == DialogResult.OK)
+            {
+                LoadData();
+            }
+        }
+        #endregion
 
         private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
         {

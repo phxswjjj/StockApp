@@ -41,6 +41,7 @@ namespace StockApp
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -102,7 +103,8 @@ namespace StockApp
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.觀察清單ToolStripMenuItem,
             this.排除清單ToolStripMenuItem,
-            this.重新整理ToolStripMenuItem});
+            this.重新整理ToolStripMenuItem,
+            this.設定ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1191, 24);
@@ -144,6 +146,13 @@ namespace StockApp
             this.removeHateToolStripMenuItem.Text = "Remove Hate";
             this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
             // 
+            // 設定ToolStripMenuItem
+            // 
+            this.設定ToolStripMenuItem.Name = "設定ToolStripMenuItem";
+            this.設定ToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.設定ToolStripMenuItem.Text = "設定";
+            this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -179,6 +188,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 重新整理ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeHateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 設定ToolStripMenuItem;
     }
 }
 
