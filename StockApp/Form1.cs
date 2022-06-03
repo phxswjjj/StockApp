@@ -162,6 +162,44 @@ namespace StockApp
             contextMenuStrip1.Tag = grow;
         }
 
+        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
+            var gv = (DataGridView)sender;
+            var colName = gv.Columns[e.ColumnIndex].Name;
+            var lessYield = 0m;
+            switch (colName)
+            {
+                case nameof(CompanyAvgBonus.Expect5):
+                    lessYield = 0.05m;
+                    break;
+                case nameof(CompanyAvgBonus.Expect7):
+                    lessYield = 0.07m;
+                    break;
+                case nameof(CompanyAvgBonus.Expect9):
+                    lessYield = 0.09m;
+                    break;
+                default:
+                    return;
+            }
+
+            var grow = gv.Rows[e.RowIndex];
+            var data = (CompanyAvgBonus)grow.DataBoundItem;
+
+            e.PaintBackground(e.CellBounds, true);
+            var curYield = data.AvgBonus / data.CurrentPrice;
+            var diffYield = curYield - lessYield;
+            var ratio = diffYield / 0.02m;
+            if (ratio > 1)
+                ratio = 1;
+            var rect = new Rectangle(e.CellBounds.Left, e.CellBounds.Top, (int)(e.CellBounds.Width * ratio), e.CellBounds.Height);
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0x2F72EF73)), rect);
+            e.PaintContent(e.CellBounds);
+            e.Handled = true;
+        }
+
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.F)
