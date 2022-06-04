@@ -11,15 +11,17 @@ using System.Threading.Tasks;
 
 namespace StockApp
 {
-    class CompanyAvgBonus
+    class CompanyContBonus
     {
-        const string RefererUrl = "https://goodinfo.tw/tw/StockList.asp?RPT_TIME=&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9+%28%E8%BF%913%E5%B9%B4%E7%9B%B4%E6%8E%A5%E5%B9%B3%E5%9D%87%29%40%40%E5%B9%B3%E5%9D%87%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9%40%40%E8%BF%913%E5%B9%B4%E7%9B%B4%E6%8E%A5%E5%B9%B3%E5%9D%87";
-        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E8%82%A1%E5%88%A9%E6%94%BF%E7%AD%96%E7%99%BC%E6%94%BE%E5%B9%B4%E5%BA%A6%5F%E6%AD%B7%E5%B9%B4%E5%8A%A0%E6%AC%8A%E5%B9%B3%E5%9D%87&SHEET2=%E8%BF%915%E5%B9%B4%E5%B9%B3%E5%9D%87&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9+%28%E6%9C%80%E6%96%B0%E5%B9%B4%E5%BA%A6%29%40%40%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9%40%40%E6%9C%80%E6%96%B0%E5%B9%B4%E5%BA%A6&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=";
+        const string RefererUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=股利政策發放年度&SHEET2=連續配發股利統計&MARKET_CAT=熱門排行&INDUSTRY_CAT=盈餘總分配率&STOCK_CODE=&RPT_TIME=最新資料&STEP=DATA&RANK=1";
+        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E8%82%A1%E5%88%A9%E6%94%BF%E7%AD%96%E7%99%BC%E6%94%BE%E5%B9%B4%E5%BA%A6&SHEET2=%E9%80%A3%E7%BA%8C%E9%85%8D%E7%99%BC%E8%82%A1%E5%88%A9%E7%B5%B1%E8%A8%88&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E7%9B%88%E9%A4%98%E7%B8%BD%E5%88%86%E9%85%8D%E7%8E%87&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=";
 
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
         public string ComName { get; private set; }
+        [JsonProperty]
+        public int ContBonusTimes { get; private set; }
         [JsonProperty]
         public decimal AvgBonus { get; set; }
         [JsonProperty]
@@ -35,18 +37,18 @@ namespace StockApp
 
         public decimal Expect7Ratio => Math.Round(this.CurrentPrice / this.Expect7, 2);
 
-        public static List<CompanyAvgBonus> GetAll()
+        public static List<CompanyContBonus> GetAll()
         {
             //offset 1330
             var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyAvgBonus", $"{offseted:yyyyMMdd}.json");
+            var jsonFilePath = Path.Combine("CompanyContBonus", $"{offseted:yyyyMM}.json");
             if (System.IO.File.Exists(jsonFilePath))
-                return JsonCache.Load<List<CompanyAvgBonus>>(jsonFilePath);
+                return JsonCache.Load<List<CompanyContBonus>>(jsonFilePath);
 
             var totalRank = GetTotalRank();
-            var result = new List<CompanyAvgBonus>();
+            var result = new List<CompanyContBonus>();
 
-            var bags = new ConcurrentBag<List<CompanyAvgBonus>>();
+            var bags = new ConcurrentBag<List<CompanyContBonus>>();
             var r = Parallel.ForEach(Enumerable.Range(0, totalRank), rank =>
             {
                 var subResult = GetByRank(rank);
@@ -73,7 +75,7 @@ namespace StockApp
                 .Where(op => op.NodeValue != "99999");
             return rankOptions.Count();
         }
-        private static List<CompanyAvgBonus> GetByRank(int rank)
+        private static List<CompanyContBonus> GetByRank(int rank)
         {
             var request = WebRequest.Create();
             request.DefaultRequestHeaders.Add("Referer", RefererUrl);
@@ -87,23 +89,28 @@ namespace StockApp
             var trs = doc.QuerySelectorAll("#tblStockList>tbody>tr")
                 .Where(tr => !string.IsNullOrEmpty(tr.Id) && tr.Id.StartsWith("row"));
 
-            var result = new List<CompanyAvgBonus>();
+            var result = new List<CompanyContBonus>();
             foreach (var tr in trs)
             {
                 var tds = tr.QuerySelectorAll("td");
-                var data = new CompanyAvgBonus();
+                var data = new CompanyContBonus();
                 data.ComCode = tds[1].Text();
                 data.ComName = tds[2].Text();
-                data.CurrentPrice = decimal.Parse(tds[3].Text());
+                data.CurrentPrice = decimal.Parse(tds[4].Text());
 
-                var sAvgBonus = tds[11].Text();
+                var sContBonusTimes = tds[17].Text();
+                if (string.IsNullOrEmpty(sContBonusTimes))
+                    continue;
+                data.ContBonusTimes = int.Parse(sContBonusTimes);
+
+                var sAvgBonus = tds[19].Text();
                 if (string.IsNullOrEmpty(sAvgBonus))
                     continue;
                 data.AvgBonus = decimal.Parse(sAvgBonus);
                 if (data.AvgBonus <= 0)
                     continue;
 
-                var sAvgYield = tds[12].Text();
+                var sAvgYield = tds[20].Text();
                 if (string.IsNullOrEmpty(sAvgYield))
                     continue;
                 data.AvgYield = decimal.Parse(sAvgYield);

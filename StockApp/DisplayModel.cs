@@ -18,28 +18,45 @@ namespace StockApp
             this.CurrentPrice = d.CurrentPrice;
             this.AvgYield = d.AvgYield;
         }
+        public DisplayModel(CompanyContBonus d)
+        {
+            this.ComCode = d.ComCode;
+            this.ComName = d.ComName;
+            this.AvgBonus = d.AvgBonus;
+            this.CurrentPrice = d.CurrentPrice;
+            this.ContBonusTimes = d.ContBonusTimes;
+            this.AvgYield = d.AvgYield;
+        }
+
+        internal void SetExtra(CompanyContBonus b)
+        {
+            this.ContBonusTimes = b.ContBonusTimes;
+        }
 
         [DisplayName("代號")]
         public string ComCode { get; private set; }
         [DisplayName("名稱")]
         public string ComName { get; private set; }
-        [DisplayName("平均股利")]
-        public decimal AvgBonus { get; set; }
         [DisplayName("成交")]
         public decimal CurrentPrice { get; set; }
+        [DisplayName("平均股利")]
+        public decimal AvgBonus { get; set; }
+
         [DisplayName("殖利率")]
         public decimal CurrentYield => Math.Round(this.AvgBonus / this.CurrentPrice * 100, 1);
+        [DisplayName("連續次數")]
+        public int ContBonusTimes { get; private set; }
         [DisplayName("平均殖利率")]
 
         public decimal AvgYield { get; private set; }
-        [DisplayName("期望股價(5%)")]
+        [DisplayName("期望(5%)")]
 
         public decimal Expect5 => Math.Floor(this.AvgBonus / 0.05m * 100) / 100;
-        [DisplayName("期望股價(7%)")]
+        [DisplayName("期望(7%)")]
         public decimal Expect7 => Math.Floor(this.AvgBonus / 0.07m * 100) / 100;
-        [DisplayName("期望股價(9%)")]
+        [DisplayName("期望(9%)")]
         public decimal Expect9 => Math.Floor(this.AvgBonus / 0.09m * 100) / 100;
-        [DisplayName("期望股價(7%)比")]
+        [DisplayName("期望(7%)比")]
 
         public decimal Expect7Ratio => Math.Round(this.CurrentPrice / this.Expect7, 2);
 

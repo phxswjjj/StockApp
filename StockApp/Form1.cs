@@ -29,6 +29,16 @@ namespace StockApp
 
         private void LoadData(string[] assignCodes = null)
         {
+            var taskContBonus = Task.Factory.StartNew(() =>
+            {
+                return CompanyContBonus.GetAll();
+            });
+
+            var taskAvgBonus = Task.Factory.StartNew(() =>
+            {
+                return CompanyAvgBonus.GetAll().ConvertAll(d => new DisplayModel(d));
+            });
+
             List<string> favoriteComCodes;
             if (File.Exists(FrmFavorite.FavoriteFilePath))
                 favoriteComCodes = JsonCache.Load<List<string>>(FrmFavorite.FavoriteFilePath);
@@ -44,7 +54,7 @@ namespace StockApp
             FavoriteComCodes = favoriteComCodes.ToArray();
             HateComCodes = hateComCodes.ToArray();
 
-            var list = CompanyAvgBonus.GetAll().ConvertAll<DisplayModel>(d => new DisplayModel(d));
+            var list = taskAvgBonus.Result;
 
             var list2 = list.ToList();
             if (assignCodes == null)
@@ -69,6 +79,14 @@ namespace StockApp
             {
                 list2.RemoveAll(l => !assignCodes.Contains(l.ComCode));
             }
+
+            var contBonusList = taskContBonus.Result;
+            list2.ForEach(l =>
+            {
+                var find = contBonusList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (find != null)
+                    l.SetExtra(find);
+            });
 
             list2.Sort(new DisplayModel.Expect7DiffComparer());
 
