@@ -37,6 +37,10 @@ namespace StockApp
             {
                 return CompanyExDividend.GetAll();
             });
+            var taskDayVolume = Task.Factory.StartNew(() =>
+            {
+                return CompanyDayVolume.GetAll();
+            });
 
             var taskAvgBonus = Task.Factory.StartNew(() =>
             {
@@ -96,6 +100,14 @@ namespace StockApp
             list2.ForEach(l =>
             {
                 var find = exDividendList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (find != null)
+                    l.SetExtra(find);
+            });
+
+            var dayVolumeList = taskDayVolume.Result;
+            list2.ForEach(l =>
+            {
+                var find = dayVolumeList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
             });

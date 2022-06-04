@@ -62,7 +62,6 @@ namespace StockApp
                     .Trim();
                 if (string.IsNullOrEmpty(sExDividendDate))
                     continue;
-                //sExDividendDate = $"20{sExDividendDate}";
                 data.ExDividendDate = DateTime.ParseExact(sExDividendDate, "yy/MM/dd",
                     System.Globalization.CultureInfo.InvariantCulture);
 

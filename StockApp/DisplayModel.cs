@@ -18,15 +18,6 @@ namespace StockApp
             this.CurrentPrice = d.CurrentPrice;
             this.AvgYield = d.AvgYield;
         }
-        public DisplayModel(CompanyContBonus d)
-        {
-            this.ComCode = d.ComCode;
-            this.ComName = d.ComName;
-            this.AvgBonus = d.AvgBonus;
-            this.CurrentPrice = d.CurrentPrice;
-            this.ContBonusTimes = d.ContBonusTimes;
-            this.AvgYield = d.AvgYield;
-        }
 
         internal void SetExtra(CompanyContBonus b)
         {
@@ -56,6 +47,8 @@ namespace StockApp
         public decimal Expect7 => Math.Floor(this.AvgBonus / 0.07m * 100) / 100;
         [DisplayName("期望(9%)")]
         public decimal Expect9 => Math.Floor(this.AvgBonus / 0.09m * 100) / 100;
+        [DisplayName("成交量")]
+        public int LastDayVolume { get; private set; }
         [DisplayName("除息日期T")]
         public int? ExDividendDateT { get; private set; }
         [DisplayName("股利")]
@@ -74,6 +67,11 @@ namespace StockApp
             if (find.ExDividendDate.HasValue)
                 this.ExDividendDateT = (int)(find.ExDividendDate.Value - DateTime.Today).TotalDays;
             this.ExDividendBonus = find.ExDividendBonus;
+        }
+
+        internal void SetExtra(CompanyDayVolume find)
+        {
+            this.LastDayVolume = find.DayVolume;
         }
     }
 }
