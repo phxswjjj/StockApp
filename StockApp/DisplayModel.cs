@@ -56,9 +56,10 @@ namespace StockApp
         public decimal Expect7 => Math.Floor(this.AvgBonus / 0.07m * 100) / 100;
         [DisplayName("期望(9%)")]
         public decimal Expect9 => Math.Floor(this.AvgBonus / 0.09m * 100) / 100;
-        [DisplayName("期望(7%)比")]
-
-        public decimal Expect7Ratio => Math.Round(this.CurrentPrice / this.Expect7, 2);
+        [DisplayName("除息日期T")]
+        public int? ExDividendDateT { get; private set; }
+        [DisplayName("股利")]
+        public decimal? ExDividendBonus { get; private set; }
 
         internal class Expect7DiffComparer : IComparer<DisplayModel>
         {
@@ -66,6 +67,13 @@ namespace StockApp
             {
                 return -x.AvgYield.CompareTo(y.AvgYield);
             }
+        }
+
+        internal void SetExtra(CompanyExDividend find)
+        {
+            if (find.ExDividendDate.HasValue)
+                this.ExDividendDateT = (int)(find.ExDividendDate.Value - DateTime.Today).TotalDays;
+            this.ExDividendBonus = find.ExDividendBonus;
         }
     }
 }

@@ -10,11 +10,21 @@ namespace StockApp
 {
     class JsonCache
     {
-        internal static T Load<T>(string jsonFilePath)
+        internal static T Load<T>(string jsonFilePath, TimeSpan timeSpan)
         {
+            if (!System.IO.File.Exists(jsonFilePath))
+                return default(T);
+
+            var lastModifiedAt = new FileInfo(jsonFilePath).LastWriteTime;
+            if (DateTime.Now - lastModifiedAt > timeSpan)
+                return default(T);
             var content = System.IO.File.ReadAllText(jsonFilePath);
             var caches = JsonConvert.DeserializeObject<T>(content);
             return caches;
+        }
+        internal static T Load<T>(string jsonFilePath)
+        {
+            return Load<T>(jsonFilePath, TimeSpan.MaxValue);
         }
 
         internal static void Store(string jsonFilePath, object result)

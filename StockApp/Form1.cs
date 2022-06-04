@@ -33,6 +33,10 @@ namespace StockApp
             {
                 return CompanyContBonus.GetAll();
             });
+            var taskExDividend = Task.Factory.StartNew(() =>
+            {
+                return CompanyExDividend.GetAll();
+            });
 
             var taskAvgBonus = Task.Factory.StartNew(() =>
             {
@@ -84,6 +88,14 @@ namespace StockApp
             list2.ForEach(l =>
             {
                 var find = contBonusList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (find != null)
+                    l.SetExtra(find);
+            });
+
+            var exDividendList = taskExDividend.Result;
+            list2.ForEach(l =>
+            {
+                var find = exDividendList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
             });

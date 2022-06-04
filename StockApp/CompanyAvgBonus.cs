@@ -21,9 +21,9 @@ namespace StockApp
         [JsonProperty]
         public string ComName { get; private set; }
         [JsonProperty]
-        public decimal AvgBonus { get; set; }
+        public decimal AvgBonus { get; private set; }
         [JsonProperty]
-        public decimal CurrentPrice { get; set; }
+        public decimal CurrentPrice { get; private set; }
         public decimal CurrentYield => Math.Round(this.AvgBonus / this.CurrentPrice * 100, 1);
         [JsonProperty]
 
@@ -33,15 +33,14 @@ namespace StockApp
         public decimal Expect7 => Math.Floor(this.AvgBonus / 0.07m * 100) / 100;
         public decimal Expect9 => Math.Floor(this.AvgBonus / 0.09m * 100) / 100;
 
-        public decimal Expect7Ratio => Math.Round(this.CurrentPrice / this.Expect7, 2);
-
         public static List<CompanyAvgBonus> GetAll()
         {
             //offset 1330
             var offseted = Utility.TWSEDate.Today;
             var jsonFilePath = Path.Combine("CompanyAvgBonus", $"{offseted:yyyyMMdd}.json");
-            if (System.IO.File.Exists(jsonFilePath))
-                return JsonCache.Load<List<CompanyAvgBonus>>(jsonFilePath);
+            var caches = JsonCache.Load<List<CompanyAvgBonus>>(jsonFilePath);
+            if (caches != null)
+                return caches;
 
             var totalRank = GetTotalRank();
             var result = new List<CompanyAvgBonus>();

@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="BasicSetting.cs" />
     <Compile Include="CompanyContBonus.cs" />
+    <Compile Include="CompanyExDividend.cs" />
     <Compile Include="DisplayModel.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

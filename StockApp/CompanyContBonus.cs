@@ -23,9 +23,9 @@ namespace StockApp
         [JsonProperty]
         public int ContBonusTimes { get; private set; }
         [JsonProperty]
-        public decimal AvgBonus { get; set; }
+        public decimal AvgBonus { get; private set; }
         [JsonProperty]
-        public decimal CurrentPrice { get; set; }
+        public decimal CurrentPrice { get; private set; }
         public decimal CurrentYield => Math.Round(this.AvgBonus / this.CurrentPrice * 100, 1);
         [JsonProperty]
 
@@ -35,15 +35,14 @@ namespace StockApp
         public decimal Expect7 => Math.Floor(this.AvgBonus / 0.07m * 100) / 100;
         public decimal Expect9 => Math.Floor(this.AvgBonus / 0.09m * 100) / 100;
 
-        public decimal Expect7Ratio => Math.Round(this.CurrentPrice / this.Expect7, 2);
-
         public static List<CompanyContBonus> GetAll()
         {
             //offset 1330
             var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyContBonus", $"{offseted:yyyyMM}.json");
-            if (System.IO.File.Exists(jsonFilePath))
-                return JsonCache.Load<List<CompanyContBonus>>(jsonFilePath);
+            var jsonFilePath = Path.Combine("CompanyContBonus", $"{offseted:yyyy}.json");
+            var caches = JsonCache.Load<List<CompanyContBonus>>(jsonFilePath, TimeSpan.FromDays(30));
+            if (caches != null)
+                return caches;
 
             var totalRank = GetTotalRank();
             var result = new List<CompanyContBonus>();
