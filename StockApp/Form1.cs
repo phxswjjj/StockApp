@@ -44,13 +44,13 @@ namespace StockApp
             FavoriteComCodes = favoriteComCodes.ToArray();
             HateComCodes = hateComCodes.ToArray();
 
-            var list = CompanyAvgBonus.GetAll();
+            var list = CompanyAvgBonus.GetAll().ConvertAll<DisplayModel>(d => new DisplayModel(d));
 
             var list2 = list.ToList();
             if (assignCodes == null)
             {
                 list2.RemoveAll(l => hateComCodes.Contains(l.ComCode));
-                list2.Sort(new CompanyAvgBonus.Expect7DiffComparer());
+                list2.Sort(new DisplayModel.Expect7DiffComparer());
                 list2 = list2
                     .Where(l => l.CurrentPrice < BasicSetting.Instance.PriceLimit)
                     .Take(100).ToList();
@@ -70,9 +70,9 @@ namespace StockApp
                 list2.RemoveAll(l => !assignCodes.Contains(l.ComCode));
             }
 
-            list2.Sort(new CompanyAvgBonus.Expect7DiffComparer());
+            list2.Sort(new DisplayModel.Expect7DiffComparer());
 
-            var binding = new BindingList<CompanyAvgBonus>(list2);
+            var binding = new BindingList<DisplayModel>(list2);
             dataGridView1.DataSource = binding;
         }
 
@@ -94,7 +94,7 @@ namespace StockApp
 
         private void RefreshCellStyle(DataGridViewRow grow)
         {
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
 
             if (FavoriteComCodes.Contains(data.ComCode))
                 grow.DefaultCellStyle.BackColor = Color.LightYellow;
@@ -103,18 +103,18 @@ namespace StockApp
             else
                 grow.DefaultCellStyle.BackColor = Color.White;
 
-            var defaultForeColor = grow.Cells[nameof(CompanyAvgBonus.ComCode)].Style.ForeColor;
+            var defaultForeColor = grow.Cells[nameof(DisplayModel.ComCode)].Style.ForeColor;
 
-            grow.Cells[nameof(CompanyAvgBonus.Expect5)].Style.ForeColor = defaultForeColor;
-            grow.Cells[nameof(CompanyAvgBonus.Expect7)].Style.ForeColor = defaultForeColor;
-            grow.Cells[nameof(CompanyAvgBonus.Expect9)].Style.ForeColor = defaultForeColor;
+            grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = defaultForeColor;
+            grow.Cells[nameof(DisplayModel.Expect7)].Style.ForeColor = defaultForeColor;
+            grow.Cells[nameof(DisplayModel.Expect9)].Style.ForeColor = defaultForeColor;
 
             if (data.CurrentPrice < data.Expect9)
-                grow.Cells[nameof(CompanyAvgBonus.Expect9)].Style.ForeColor = Color.Red;
+                grow.Cells[nameof(DisplayModel.Expect9)].Style.ForeColor = Color.Red;
             else if (data.CurrentPrice < data.Expect7)
-                grow.Cells[nameof(CompanyAvgBonus.Expect7)].Style.ForeColor = Color.Red;
+                grow.Cells[nameof(DisplayModel.Expect7)].Style.ForeColor = Color.Red;
             else if (data.CurrentPrice < data.Expect5)
-                grow.Cells[nameof(CompanyAvgBonus.Expect5)].Style.ForeColor = Color.Red;
+                grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = Color.Red;
         }
 
         #region Menu
@@ -161,7 +161,7 @@ namespace StockApp
                 return;
             }
             var grow = gv.Rows[e.RowIndex];
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
             openToolStripMenuItem.Visible = true;
             addFavoriteToolStripMenuItem.Visible = !FavoriteComCodes.Contains(data.ComCode);
             removeFavoriteToolStripMenuItem.Visible = FavoriteComCodes.Contains(data.ComCode);
@@ -183,13 +183,13 @@ namespace StockApp
             var lessYield = 0m;
             switch (colName)
             {
-                case nameof(CompanyAvgBonus.Expect5):
+                case nameof(DisplayModel.Expect5):
                     lessYield = 0.05m;
                     break;
-                case nameof(CompanyAvgBonus.Expect7):
+                case nameof(DisplayModel.Expect7):
                     lessYield = 0.07m;
                     break;
-                case nameof(CompanyAvgBonus.Expect9):
+                case nameof(DisplayModel.Expect9):
                     lessYield = 0.09m;
                     break;
                 default:
@@ -197,7 +197,7 @@ namespace StockApp
             }
 
             var grow = gv.Rows[e.RowIndex];
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
 
             e.PaintBackground(e.CellBounds, true);
             var curYield = data.AvgBonus / data.CurrentPrice;
@@ -221,7 +221,7 @@ namespace StockApp
                 {
                     foreach (DataGridViewRow grow in dataGridView1.Rows)
                     {
-                        var data = (CompanyAvgBonus)grow.DataBoundItem;
+                        var data = (DisplayModel)grow.DataBoundItem;
                         if (data.ComCode == findText)
                         {
                             dataGridView1.ClearSelection();
@@ -239,7 +239,7 @@ namespace StockApp
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
 
             System.Diagnostics.Process.Start("https://goodinfo.tw/tw/StockDividendPolicy.asp?STOCK_ID=" + data.ComCode);
         }
@@ -249,7 +249,7 @@ namespace StockApp
             var jsonPath = FrmFavorite.FavoriteFilePath;
 
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
 
             var codes = JsonCache.Load<List<string>>(jsonPath);
             codes.Add(data.ComCode);
@@ -263,7 +263,7 @@ namespace StockApp
             var jsonPath = FrmFavorite.FavoriteFilePath;
 
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
 
             var codes = JsonCache.Load<List<string>>(jsonPath);
             if (codes.Remove(data.ComCode))
@@ -279,7 +279,7 @@ namespace StockApp
             var jsonPath = FrmFavorite.HateFilePath;
 
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
 
             var codes = JsonCache.Load<List<string>>(jsonPath);
             codes.Add(data.ComCode);
@@ -294,7 +294,7 @@ namespace StockApp
             var jsonPath = FrmFavorite.HateFilePath;
 
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (CompanyAvgBonus)grow.DataBoundItem;
+            var data = (DisplayModel)grow.DataBoundItem;
 
             var codes = JsonCache.Load<List<string>>(jsonPath);
             if (codes.Remove(data.ComCode))

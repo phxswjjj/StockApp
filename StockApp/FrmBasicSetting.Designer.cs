@@ -52,7 +52,7 @@ namespace StockApp
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(71, 48);
+            this.btnSave.Location = new System.Drawing.Point(53, 48);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 47);
             this.btnSave.TabIndex = 2;
@@ -62,6 +62,7 @@ namespace StockApp
             // 
             // FrmBasicSetting
             // 
+            this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(210, 107);
