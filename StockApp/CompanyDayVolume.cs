@@ -22,6 +22,8 @@ namespace StockApp
         public string ComName { get; private set; }
         [JsonProperty]
         public int DayVolume { get; private set; }
+        [JsonProperty]
+        public decimal CurrentPrice { get; private set; }
 
         public static List<CompanyDayVolume> GetAll()
         {
@@ -84,6 +86,8 @@ namespace StockApp
                 data.ComCode = tds[1].Text();
                 data.ComName = tds[2].Text();
 
+                var sPrice = tds[7].Text();
+                data.CurrentPrice = decimal.Parse(sPrice);
                 var sDayVolume = tds[10].Text()
                     .Replace(",", "");
                 data.DayVolume = int.Parse(sDayVolume);

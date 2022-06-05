@@ -10,13 +10,11 @@ namespace StockApp
     class DisplayModel
     {
 
-        public DisplayModel(CompanyAvgBonus d)
+        public DisplayModel(CompanyDayVolume d)
         {
             this.ComCode = d.ComCode;
             this.ComName = d.ComName;
-            this.AvgBonus = d.AvgBonus;
-            this.CurrentPrice = d.CurrentPrice;
-            this.AvgYield = d.AvgYield;
+            this.SetExtra(d);
         }
 
         [DisplayName("代號")]
@@ -73,12 +71,20 @@ namespace StockApp
         }
         internal void SetExtra(CompanyDayVolume find)
         {
+            this.CurrentPrice = find.CurrentPrice;
             this.LastDayVolume = find.DayVolume;
         }
         internal void SetExtra(MemoContent data)
         {
             this.HoldStock = data.HoldStock;
             this.HoldValue = data.HoldValue;
+        }
+
+        internal void SetExtra(CompanyAvgBonus d)
+        {
+            this.AvgBonus = d.AvgBonus;
+            this.CurrentPrice = d.CurrentPrice;
+            this.AvgYield = d.AvgYield;
         }
     }
 }

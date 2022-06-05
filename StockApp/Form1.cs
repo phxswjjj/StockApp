@@ -31,7 +31,7 @@ namespace StockApp
 
             var numCellStyle = new DataGridViewCellStyle();
             numCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            numCellStyle.Format = ".00";
+            numCellStyle.Format = "0.00";
 
             var bigNumCellStyle2 = new DataGridViewCellStyle(numCellStyle);
             bigNumCellStyle2.Format = "#,###";
@@ -70,12 +70,12 @@ namespace StockApp
             });
             var taskDayVolume = Task.Factory.StartNew(() =>
             {
-                return CompanyDayVolume.GetAll();
+                return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
             });
 
             var taskAvgBonus = Task.Factory.StartNew(() =>
             {
-                return CompanyAvgBonus.GetAll().ConvertAll(d => new DisplayModel(d));
+                return CompanyAvgBonus.GetAll();
             });
 
             List<string> favoriteComCodes;
@@ -95,7 +95,7 @@ namespace StockApp
 
             var memoList = MemoContent.Load();
 
-            var list = taskAvgBonus.Result;
+            var list = taskDayVolume.Result;
 
             var list2 = list.ToList();
 
@@ -103,6 +103,14 @@ namespace StockApp
             list2.ForEach(l =>
             {
                 var find = contBonusList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (find != null)
+                    l.SetExtra(find);
+            });
+
+            var avgBonusList = taskAvgBonus.Result;
+            list2.ForEach(l =>
+            {
+                var find = avgBonusList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
             });
@@ -144,14 +152,6 @@ namespace StockApp
             list2.ForEach(l =>
             {
                 var find = exDividendList.FirstOrDefault(b => b.ComCode == l.ComCode);
-                if (find != null)
-                    l.SetExtra(find);
-            });
-
-            var dayVolumeList = taskDayVolume.Result;
-            list2.ForEach(l =>
-            {
-                var find = dayVolumeList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
             });
