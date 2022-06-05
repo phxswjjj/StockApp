@@ -48,6 +48,7 @@ namespace StockApp
                     case nameof(DisplayModel.LastDayVolume):
                     case nameof(DisplayModel.ExDividendDateT):
                     case nameof(DisplayModel.ContBonusTimes):
+                    case nameof(DisplayModel.HoldStock):
                         col.DefaultCellStyle = bigNumCellStyle2;
                         break;
                     default:
@@ -92,6 +93,8 @@ namespace StockApp
             FavoriteComCodes = favoriteComCodes.ToArray();
             HateComCodes = hateComCodes.ToArray();
 
+            var memoList = MemoContent.Load();
+
             var list = taskAvgBonus.Result;
 
             var list2 = list.ToList();
@@ -122,6 +125,15 @@ namespace StockApp
                         continue;
                     list2.Add(data);
                 }
+                foreach (var code in memoList.Select(m => m.ComCode))
+                {
+                    if (list2.Any(l => l.ComCode == code))
+                        continue;
+                    var data = list.Find(l => l.ComCode == code);
+                    if (data == null)
+                        continue;
+                    list2.Add(data);
+                }
             }
             else
             {
@@ -140,6 +152,13 @@ namespace StockApp
             list2.ForEach(l =>
             {
                 var find = dayVolumeList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (find != null)
+                    l.SetExtra(find);
+            });
+
+            list2.ForEach(l =>
+            {
+                var find = memoList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
             });
@@ -255,6 +274,12 @@ namespace StockApp
             var gv = (DataGridView)sender;
             var colName = gv.Columns[e.ColumnIndex].Name;
             var lessYield = 0m;
+            var maxYield = 0.02m;
+            var color = Color.FromArgb(0x2F72EF73);
+
+            var grow = gv.Rows[e.RowIndex];
+            var data = (DisplayModel)grow.DataBoundItem;
+            var curYield = data.AvgBonus / data.CurrentPrice;
             switch (colName)
             {
                 case nameof(DisplayModel.Expect5):
@@ -266,21 +291,26 @@ namespace StockApp
                 case nameof(DisplayModel.Expect9):
                     lessYield = 0.09m;
                     break;
+                case nameof(DisplayModel.HoldValue):
+                    if (!data.HoldValue.HasValue)
+                        return;
+                    else if (data.CurrentPrice > data.HoldValue.Value)
+                        color = Color.FromArgb(0x2FDB7A82);
+                    maxYield = 0.1m;
+                    curYield = Math.Abs(data.CurrentPrice - data.HoldValue.Value) / data.HoldValue.Value;
+                    break;
                 default:
                     return;
             }
 
-            var grow = gv.Rows[e.RowIndex];
-            var data = (DisplayModel)grow.DataBoundItem;
-
             e.PaintBackground(e.CellBounds, true);
-            var curYield = data.AvgBonus / data.CurrentPrice;
             var diffYield = curYield - lessYield;
-            var ratio = diffYield / 0.02m;
+            var ratio = diffYield / maxYield;
             if (ratio > 1)
                 ratio = 1;
             var rect = new Rectangle(e.CellBounds.Left, e.CellBounds.Top, (int)(e.CellBounds.Width * ratio), e.CellBounds.Height);
-            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0x2F72EF73)), rect);
+            e.Graphics.FillRectangle(new SolidBrush(color), rect);
+
             e.PaintContent(e.CellBounds);
             e.Handled = true;
         }
@@ -377,6 +407,19 @@ namespace StockApp
                 JsonCache.Store(jsonPath, HateComCodes);
 
                 RefreshCellStyle(grow);
+            }
+        }
+
+        private void editMemoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            var editor = new FrmMemo(data);
+            if (editor.ShowDialog() == DialogResult.OK)
+            {
+                RefreshCellStyle(grow);
+                dataGridView1.Refresh();
             }
         }
 

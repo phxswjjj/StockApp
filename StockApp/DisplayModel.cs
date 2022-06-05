@@ -53,6 +53,10 @@ namespace StockApp
         public int? ExDividendDateT { get; private set; }
         [DisplayName("股利")]
         public decimal? ExDividendBonus { get; private set; }
+        [DisplayName("庫存(張)")]
+        public int? HoldStock { get; private set; }
+        [DisplayName("成本")]
+        public decimal? HoldValue { get; private set; }
 
         internal class Expect7DiffComparer : IComparer<DisplayModel>
         {
@@ -72,6 +76,12 @@ namespace StockApp
         internal void SetExtra(CompanyDayVolume find)
         {
             this.LastDayVolume = find.DayVolume;
+        }
+
+        internal void SetExtra(MemoContent data)
+        {
+            this.HoldStock = data.HoldStock;
+            this.HoldValue = data.HoldValue;
         }
     }
 }

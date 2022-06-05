@@ -42,6 +42,7 @@ namespace StockApp
             this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editMemoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -73,9 +74,10 @@ namespace StockApp
             this.addFavoriteToolStripMenuItem,
             this.removeFavoriteToolStripMenuItem,
             this.addHateToolStripMenuItem,
-            this.removeHateToolStripMenuItem});
+            this.removeHateToolStripMenuItem,
+            this.editMemoToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 158);
             // 
             // openToolStripMenuItem
             // 
@@ -153,6 +155,13 @@ namespace StockApp
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
             // 
+            // editMemoToolStripMenuItem
+            // 
+            this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
+            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editMemoToolStripMenuItem.Text = "Edit Memo";
+            this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.editMemoToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -189,6 +198,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem 重新整理ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeHateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 設定ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editMemoToolStripMenuItem;
     }
 }
 
