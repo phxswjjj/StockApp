@@ -21,6 +21,7 @@ namespace StockApp
         {
             var setting = BasicSetting.Instance;
             txtPriceLimit.Text = setting.PriceLimit.ToString();
+            txtContBonusTimes.Text = setting.ContBonusTimesLimit.ToString();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -33,6 +34,16 @@ namespace StockApp
                 return;
             }
             Properties.Settings.Default.PriceLimit = price;
+
+            int times;
+            if (!int.TryParse(txtContBonusTimes.Text, out times))
+            {
+                MessageBox.Show($"非數值: {txtContBonusTimes.Text}");
+                txtContBonusTimes.Focus();
+                return;
+            }
+            Properties.Settings.Default.ContBonusTimesLimit = times;
+
             Properties.Settings.Default.Save();
             BasicSetting.Instance.Load();
 

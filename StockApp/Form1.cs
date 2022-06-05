@@ -25,6 +25,36 @@ namespace StockApp
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadData();
+
+            var textCellStyle = new DataGridViewCellStyle();
+            textCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+
+            var numCellStyle = new DataGridViewCellStyle();
+            numCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            numCellStyle.Format = ".00";
+
+            var bigNumCellStyle2 = new DataGridViewCellStyle(numCellStyle);
+            bigNumCellStyle2.Format = "#,###";
+
+            foreach (DataGridViewColumn col in dataGridView1.Columns)
+            {
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                switch (col.Name)
+                {
+                    case nameof(DisplayModel.ComCode):
+                    case nameof(DisplayModel.ComName):
+                        col.DefaultCellStyle = textCellStyle;
+                        break;
+                    case nameof(DisplayModel.LastDayVolume):
+                    case nameof(DisplayModel.ExDividendDateT):
+                    case nameof(DisplayModel.ContBonusTimes):
+                        col.DefaultCellStyle = bigNumCellStyle2;
+                        break;
+                    default:
+                        col.DefaultCellStyle = numCellStyle;
+                        break;
+                }
+            }
         }
 
         private void LoadData(string[] assignCodes = null)
@@ -65,12 +95,22 @@ namespace StockApp
             var list = taskAvgBonus.Result;
 
             var list2 = list.ToList();
+
+            var contBonusList = taskContBonus.Result;
+            list2.ForEach(l =>
+            {
+                var find = contBonusList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (find != null)
+                    l.SetExtra(find);
+            });
+
             if (assignCodes == null)
             {
                 list2.RemoveAll(l => hateComCodes.Contains(l.ComCode));
                 list2.Sort(new DisplayModel.Expect7DiffComparer());
                 list2 = list2
                     .Where(l => l.CurrentPrice < BasicSetting.Instance.PriceLimit)
+                    .Where(l => l.ContBonusTimes >= BasicSetting.Instance.ContBonusTimesLimit)
                     .Take(100).ToList();
 
                 foreach (var code in favoriteComCodes)
@@ -87,14 +127,6 @@ namespace StockApp
             {
                 list2.RemoveAll(l => !assignCodes.Contains(l.ComCode));
             }
-
-            var contBonusList = taskContBonus.Result;
-            list2.ForEach(l =>
-            {
-                var find = contBonusList.FirstOrDefault(b => b.ComCode == l.ComCode);
-                if (find != null)
-                    l.SetExtra(find);
-            });
 
             var exDividendList = taskExDividend.Result;
             list2.ForEach(l =>

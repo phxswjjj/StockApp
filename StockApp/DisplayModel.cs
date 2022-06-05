@@ -33,7 +33,7 @@ namespace StockApp
         [DisplayName("平均股利")]
         public decimal AvgBonus { get; set; }
 
-        [DisplayName("殖利率")]
+        [DisplayName("殖利率(%)")]
         public decimal CurrentYield => Math.Round(this.AvgBonus / this.CurrentPrice * 100, 1);
         [DisplayName("連續次數")]
         public int ContBonusTimes { get; private set; }
@@ -49,7 +49,7 @@ namespace StockApp
         public decimal Expect9 => Math.Floor(this.AvgBonus / 0.09m * 100) / 100;
         [DisplayName("成交量")]
         public int LastDayVolume { get; private set; }
-        [DisplayName("除息日期T")]
+        [DisplayName("除息T")]
         public int? ExDividendDateT { get; private set; }
         [DisplayName("股利")]
         public decimal? ExDividendBonus { get; private set; }

@@ -34,5 +34,17 @@ namespace StockApp.Properties {
                 this["PriceLimit"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int ContBonusTimesLimit {
+            get {
+                return ((int)(this["ContBonusTimesLimit"]));
+            }
+            set {
+                this["ContBonusTimesLimit"] = value;
+            }
+        }
     }
 }

@@ -32,15 +32,15 @@ namespace StockApp
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -77,26 +77,40 @@ namespace StockApp
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(170, 114);
             // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.openToolStripMenuItem.Text = "Open GoodInfo";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
             // addFavoriteToolStripMenuItem
             // 
             this.addFavoriteToolStripMenuItem.Name = "addFavoriteToolStripMenuItem";
-            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.addFavoriteToolStripMenuItem.Text = "Add Favorite";
             this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.addFavoriteToolStripMenuItem_Click);
             // 
             // removeFavoriteToolStripMenuItem
             // 
             this.removeFavoriteToolStripMenuItem.Name = "removeFavoriteToolStripMenuItem";
-            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.removeFavoriteToolStripMenuItem.Text = "Remove Favorite";
             this.removeFavoriteToolStripMenuItem.Click += new System.EventHandler(this.removeFavoriteToolStripMenuItem_Click);
             // 
             // addHateToolStripMenuItem
             // 
             this.addHateToolStripMenuItem.Name = "addHateToolStripMenuItem";
-            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.addHateToolStripMenuItem.Text = "Add Hate";
             this.addHateToolStripMenuItem.Click += new System.EventHandler(this.addHateToolStripMenuItem_Click);
+            // 
+            // removeHateToolStripMenuItem
+            // 
+            this.removeHateToolStripMenuItem.Name = "removeHateToolStripMenuItem";
+            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.removeHateToolStripMenuItem.Text = "Remove Hate";
+            this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -125,26 +139,12 @@ namespace StockApp
             this.排除清單ToolStripMenuItem.Text = "排除清單";
             this.排除清單ToolStripMenuItem.Click += new System.EventHandler(this.排除清單ToolStripMenuItem_Click);
             // 
-            // openToolStripMenuItem
-            // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.openToolStripMenuItem.Text = "Open GoodInfo";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-            // 
             // 重新整理ToolStripMenuItem
             // 
             this.重新整理ToolStripMenuItem.Name = "重新整理ToolStripMenuItem";
             this.重新整理ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.重新整理ToolStripMenuItem.Text = "重新整理";
             this.重新整理ToolStripMenuItem.Click += new System.EventHandler(this.重新整理ToolStripMenuItem_Click);
-            // 
-            // removeHateToolStripMenuItem
-            // 
-            this.removeHateToolStripMenuItem.Name = "removeHateToolStripMenuItem";
-            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.removeHateToolStripMenuItem.Text = "Remove Hate";
-            this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
             // 
             // 設定ToolStripMenuItem
             // 
