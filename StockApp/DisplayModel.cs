@@ -19,11 +19,6 @@ namespace StockApp
             this.AvgYield = d.AvgYield;
         }
 
-        internal void SetExtra(CompanyContBonus b)
-        {
-            this.ContBonusTimes = b.ContBonusTimes;
-        }
-
         [DisplayName("代號")]
         public string ComCode { get; private set; }
         [DisplayName("名稱")]
@@ -53,7 +48,7 @@ namespace StockApp
         public int? ExDividendDateT { get; private set; }
         [DisplayName("股利")]
         public decimal? ExDividendBonus { get; private set; }
-        [DisplayName("庫存(張)")]
+        [DisplayName("庫存")]
         public int? HoldStock { get; private set; }
         [DisplayName("成本")]
         public decimal? HoldValue { get; private set; }
@@ -66,18 +61,20 @@ namespace StockApp
             }
         }
 
+        internal void SetExtra(CompanyContBonus b)
+        {
+            this.ContBonusTimes = b.ContBonusTimes;
+        }
         internal void SetExtra(CompanyExDividend find)
         {
             if (find.ExDividendDate.HasValue)
                 this.ExDividendDateT = (int)(find.ExDividendDate.Value - DateTime.Today).TotalDays;
             this.ExDividendBonus = find.ExDividendBonus;
         }
-
         internal void SetExtra(CompanyDayVolume find)
         {
             this.LastDayVolume = find.DayVolume;
         }
-
         internal void SetExtra(MemoContent data)
         {
             this.HoldStock = data.HoldStock;

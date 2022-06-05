@@ -37,12 +37,13 @@ namespace StockApp
             this.removeFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editMemoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editMemoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.庫存清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -77,7 +78,7 @@ namespace StockApp
             this.removeHateToolStripMenuItem,
             this.editMemoToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 158);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 136);
             // 
             // openToolStripMenuItem
             // 
@@ -114,11 +115,19 @@ namespace StockApp
             this.removeHateToolStripMenuItem.Text = "Remove Hate";
             this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
             // 
+            // editMemoToolStripMenuItem
+            // 
+            this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
+            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.editMemoToolStripMenuItem.Text = "Edit Memo";
+            this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.editMemoToolStripMenuItem_Click);
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.觀察清單ToolStripMenuItem,
             this.排除清單ToolStripMenuItem,
+            this.庫存清單ToolStripMenuItem,
             this.重新整理ToolStripMenuItem,
             this.設定ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -155,12 +164,12 @@ namespace StockApp
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
             // 
-            // editMemoToolStripMenuItem
+            // 庫存清單ToolStripMenuItem
             // 
-            this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
-            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.editMemoToolStripMenuItem.Text = "Edit Memo";
-            this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.editMemoToolStripMenuItem_Click);
+            this.庫存清單ToolStripMenuItem.Name = "庫存清單ToolStripMenuItem";
+            this.庫存清單ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.庫存清單ToolStripMenuItem.Text = "庫存清單";
+            this.庫存清單ToolStripMenuItem.Click += new System.EventHandler(this.庫存清單ToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -199,6 +208,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem removeHateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 設定ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editMemoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 庫存清單ToolStripMenuItem;
     }
 }
 

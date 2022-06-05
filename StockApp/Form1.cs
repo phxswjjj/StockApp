@@ -242,6 +242,12 @@ namespace StockApp
                 LoadData();
             }
         }
+
+        private void 庫存清單ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var list = MemoContent.Load();
+            LoadData(list.Select(l => l.ComCode).ToArray());
+        }
         #endregion
 
         private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
