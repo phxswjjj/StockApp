@@ -12,7 +12,7 @@ namespace StockApp
 {
     class CompanyExDividend
     {
-        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockDividendScheduleList.asp?MARKET_CAT=%E4%B8%8A%E5%B8%82&INDUSTRY_CAT=%E5%85%A8%E9%83%A8&YEAR=%E5%8D%B3%E5%B0%87%E9%99%A4%E6%AC%8A%E6%81%AF";
+        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockDividendScheduleList.asp?MARKET_CAT=%E5%85%A8%E9%83%A8&INDUSTRY_CAT=%E5%85%A8%E9%83%A8&YEAR=%E5%8D%B3%E5%B0%87%E9%99%A4%E6%AC%8A%E6%81%AF";
 
         [JsonProperty]
         public string ComCode { get; private set; }
@@ -58,6 +58,7 @@ namespace StockApp
 
                 var sExDividendDate = tds[4].Text()
                     .Replace("即將除息", "")
+                    .Replace("今日除息", "")
                     .Replace("'", "/")
                     .Trim();
                 if (string.IsNullOrEmpty(sExDividendDate))
