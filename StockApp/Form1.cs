@@ -13,9 +13,11 @@ namespace StockApp
 {
     public partial class Form1 : Form
     {
-
-        string[] FavoriteComCodes = new string[] { };
-        string[] HateComCodes = new string[] { };
+        List<string> FavoriteComCodes = new List<string>();
+        List<string> HateComCodes = new List<string>();
+        List<CustomGroup> CustomGroups = new List<CustomGroup>();
+        private readonly string FavoriteFilePath = "Favorite.json";
+        private readonly string HateFilePath = "Hate.json";
 
         public Form1()
         {
@@ -24,6 +26,7 @@ namespace StockApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            LoadSetting();
             LoadData();
 
             var textCellStyle = new DataGridViewCellStyle();
@@ -58,8 +61,71 @@ namespace StockApp
             }
         }
 
+        private void LoadSetting()
+        {
+            var groups = CustomGroup.GetAll();
+            this.CustomGroups = groups;
+
+            foreach (var group in groups)
+                AddFavoriteCustomGroupMenuItem(group.Name);
+
+            List<string> favoriteComCodes;
+            if (File.Exists(this.FavoriteFilePath))
+                favoriteComCodes = JsonCache.Load<List<string>>(this.FavoriteFilePath);
+            else
+                favoriteComCodes = new List<string>();
+
+            foreach (var group in this.CustomGroups)
+                favoriteComCodes.AddRange(group.ComCodes);
+            this.FavoriteComCodes = favoriteComCodes;
+
+            List<string> hateComCodes;
+            if (File.Exists(this.HateFilePath))
+                hateComCodes = JsonCache.Load<List<string>>(this.HateFilePath);
+            else
+                hateComCodes = new List<string>();
+            this.HateComCodes = hateComCodes;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            JsonCache.Store(this.FavoriteFilePath, this.FavoriteComCodes.Distinct());
+            JsonCache.Store(this.HateFilePath, this.HateComCodes.Distinct());
+
+            var groups = this.CustomGroups;
+            groups.ForEach(g => g.Distinct());
+            groups.RemoveAll(g => g.ComCodes.Count == 0);
+            CustomGroup.Store(groups);
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.F)
+            {
+                var findText = Microsoft.VisualBasic.Interaction.InputBox("輸入完整代號", "尋找代號")
+                    .Trim();
+                if (!string.IsNullOrEmpty(findText))
+                {
+                    foreach (DataGridViewRow grow in dataGridView1.Rows)
+                    {
+                        var data = (DisplayModel)grow.DataBoundItem;
+                        if (data.ComCode == findText)
+                        {
+                            dataGridView1.ClearSelection();
+                            grow.Selected = true;
+                            dataGridView1.FirstDisplayedScrollingRowIndex = grow.Index;
+                            return;
+                        }
+                    }
+                    MessageBox.Show($"找不到 {findText}");
+                }
+            }
+        }
+
         private void LoadData(string[] assignCodes = null)
         {
+            var groups = this.CustomGroups;
+
             var taskContBonus = Task.Factory.StartNew(() =>
             {
                 return CompanyContBonus.GetAll();
@@ -78,20 +144,8 @@ namespace StockApp
                 return CompanyAvgBonus.GetAll();
             });
 
-            List<string> favoriteComCodes;
-            if (File.Exists(FrmFavorite.FavoriteFilePath))
-                favoriteComCodes = JsonCache.Load<List<string>>(FrmFavorite.FavoriteFilePath);
-            else
-                favoriteComCodes = new List<string>();
-
-            List<string> hateComCodes;
-            if (File.Exists(FrmFavorite.HateFilePath))
-                hateComCodes = JsonCache.Load<List<string>>(FrmFavorite.HateFilePath);
-            else
-                hateComCodes = new List<string>();
-
-            FavoriteComCodes = favoriteComCodes.ToArray();
-            HateComCodes = hateComCodes.ToArray();
+            List<string> favoriteComCodes = this.FavoriteComCodes;
+            List<string> hateComCodes = this.HateComCodes;
 
             var memoList = MemoContent.Load();
 
@@ -185,71 +239,6 @@ namespace StockApp
             dataGridView1.Refresh();
         }
 
-        private void RefreshCellStyle(DataGridViewRow grow)
-        {
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            if (FavoriteComCodes.Contains(data.ComCode))
-                grow.DefaultCellStyle.BackColor = Color.LightYellow;
-            else if (HateComCodes.Contains(data.ComCode))
-                grow.DefaultCellStyle.BackColor = Color.LightGray;
-            else
-                grow.DefaultCellStyle.BackColor = Color.White;
-
-            var defaultForeColor = grow.Cells[nameof(DisplayModel.ComCode)].Style.ForeColor;
-
-            grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = defaultForeColor;
-            grow.Cells[nameof(DisplayModel.Expect7)].Style.ForeColor = defaultForeColor;
-            grow.Cells[nameof(DisplayModel.Expect9)].Style.ForeColor = defaultForeColor;
-
-            if (data.CurrentPrice < data.Expect9)
-                grow.Cells[nameof(DisplayModel.Expect9)].Style.ForeColor = Color.Red;
-            else if (data.CurrentPrice < data.Expect7)
-                grow.Cells[nameof(DisplayModel.Expect7)].Style.ForeColor = Color.Red;
-            else if (data.CurrentPrice < data.Expect5)
-                grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = Color.Red;
-        }
-
-        #region Menu
-        private void 觀察清單ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var editor = new FrmFavorite();
-            if (editor.ShowDialog(this) == DialogResult.OK)
-            {
-                LoadData(editor.ViewCodes);
-            }
-        }
-
-        private void 排除清單ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var editor = new FrmFavorite();
-            if (editor.ShowHateDialog(this) == DialogResult.OK)
-            {
-                LoadData(editor.ViewCodes);
-            }
-        }
-
-        private void 重新整理ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadData();
-        }
-
-        private void 設定ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var editor = new FrmBasicSetting();
-            if (editor.ShowDialog(this) == DialogResult.OK)
-            {
-                LoadData();
-            }
-        }
-
-        private void 庫存清單ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var list = MemoContent.Load();
-            LoadData(list.Select(l => l.ComCode).ToArray());
-        }
-        #endregion
-
         private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
         {
             var gv = (DataGridView)sender;
@@ -321,29 +310,98 @@ namespace StockApp
             e.Handled = true;
         }
 
-        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        private void RefreshCellStyle(DataGridViewRow grow)
         {
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.F)
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            if (FavoriteComCodes.Contains(data.ComCode))
+                grow.DefaultCellStyle.BackColor = Color.LightYellow;
+            else if (HateComCodes.Contains(data.ComCode))
+                grow.DefaultCellStyle.BackColor = Color.LightGray;
+            else
+                grow.DefaultCellStyle.BackColor = Color.White;
+
+            var defaultForeColor = grow.Cells[nameof(DisplayModel.ComCode)].Style.ForeColor;
+
+            grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = defaultForeColor;
+            grow.Cells[nameof(DisplayModel.Expect7)].Style.ForeColor = defaultForeColor;
+            grow.Cells[nameof(DisplayModel.Expect9)].Style.ForeColor = defaultForeColor;
+
+            if (data.CurrentPrice < data.Expect9)
+                grow.Cells[nameof(DisplayModel.Expect9)].Style.ForeColor = Color.Red;
+            else if (data.CurrentPrice < data.Expect7)
+                grow.Cells[nameof(DisplayModel.Expect7)].Style.ForeColor = Color.Red;
+            else if (data.CurrentPrice < data.Expect5)
+                grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = Color.Red;
+        }
+
+        private void AddFavoriteCustomGroupMenuItem(string text)
+        {
+            var newMainMenuItem = new ToolStripMenuItem(text);
+            newMainMenuItem.Click += CustomGroupMenuItem_Click; ;
+            觀察清單ToolStripMenuItem.DropDownItems.Add(newMainMenuItem);
+
+            var newcontextMenuItem = new ToolStripMenuItem(text);
+            newcontextMenuItem.Click += favoriteCustomGroup_Click;
+            addFavoriteToolStripMenuItem.DropDownItems.Insert(addFavoriteToolStripMenuItem.DropDownItems.Count - 1, newcontextMenuItem);
+        }
+
+        #region Main Menu
+        private void 觀察清單ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = new FrmFavorite();
+            if (editor.ShowFavoriteDialog(this, this.FavoriteComCodes) == DialogResult.OK)
             {
-                var findText = Microsoft.VisualBasic.Interaction.InputBox("輸入完整代號", "尋找代號")
-                    .Trim();
-                if (!string.IsNullOrEmpty(findText))
-                {
-                    foreach (DataGridViewRow grow in dataGridView1.Rows)
-                    {
-                        var data = (DisplayModel)grow.DataBoundItem;
-                        if (data.ComCode == findText)
-                        {
-                            dataGridView1.ClearSelection();
-                            grow.Selected = true;
-                            dataGridView1.FirstDisplayedScrollingRowIndex = grow.Index;
-                            return;
-                        }
-                    }
-                    MessageBox.Show($"找不到 {findText}");
-                }
+                this.FavoriteComCodes = new List<string>(editor.ViewCodes);
+                LoadData(editor.ViewCodes);
             }
         }
+
+        private void CustomGroupMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = (ToolStripMenuItem)sender;
+            var text = item.Text;
+
+            var groups = this.CustomGroups;
+            var group = groups.FirstOrDefault(g => g.Name == text);
+            if (group == null)
+            {
+                MessageBox.Show($"{text} Group not exists");
+                return;
+            }
+            LoadData(group.ComCodes.ToArray());
+        }
+
+        private void 排除清單ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = new FrmFavorite();
+            if (editor.ShowHateDialog(this, this.HateComCodes) == DialogResult.OK)
+            {
+                this.HateComCodes = new List<string>(editor.ViewCodes);
+                LoadData(editor.ViewCodes);
+            }
+        }
+
+        private void 重新整理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadData();
+        }
+
+        private void 設定ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = new FrmBasicSetting();
+            if (editor.ShowDialog(this) == DialogResult.OK)
+            {
+                LoadData();
+            }
+        }
+
+        private void 庫存清單ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var list = MemoContent.Load();
+            LoadData(list.Select(l => l.ComCode).ToArray());
+        }
+        #endregion
 
         #region Context Menu
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -356,64 +414,96 @@ namespace StockApp
 
         private void addFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var jsonPath = FrmFavorite.FavoriteFilePath;
-
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var codes = JsonCache.Load<List<string>>(jsonPath);
-            codes.Add(data.ComCode);
-            FavoriteComCodes = codes.Distinct().ToArray();
-            JsonCache.Store(jsonPath, FavoriteComCodes);
-
+            FavoriteComCodes.Add(data.ComCode);
             RefreshCellStyle(grow);
+
+            contextMenuStrip1.Hide();
         }
-        private void removeFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void addFavoriteTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            var jsonPath = FrmFavorite.FavoriteFilePath;
-
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            var codes = JsonCache.Load<List<string>>(jsonPath);
-            if (codes.Remove(data.ComCode))
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                FavoriteComCodes = codes.Distinct().ToArray();
-                JsonCache.Store(jsonPath, FavoriteComCodes);
+                var tbx = (ToolStripTextBox)sender;
+                var text = tbx.Text;
+                if (!string.IsNullOrEmpty(text))
+                {
+                    tbx.Text = "";
 
-                RefreshCellStyle(grow);
+                    var groups = this.CustomGroups;
+                    var group = groups.FirstOrDefault(g => g.Name == text);
+                    if (group == null)
+                    {
+                        group = CustomGroup.Create(text);
+                        groups.Add(group);
+
+                        AddFavoriteCustomGroupMenuItem(text);
+                    }
+
+                    foreach (ToolStripItem item in addFavoriteToolStripMenuItem.DropDownItems)
+                    {
+                        if (item.Text == text)
+                        {
+                            item.PerformClick();
+                            break;
+                        }
+                    }
+                }
+                e.Handled = true;
             }
         }
-        private void addHateToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void favoriteCustomGroup_Click(object sender, EventArgs e)
         {
-            var jsonPath = FrmFavorite.HateFilePath;
+            var item = (ToolStripMenuItem)sender;
+            var text = item.Text;
+
+            var groups = this.CustomGroups;
+            var group = groups.FirstOrDefault(g => g.Name == text);
+            if (group == null)
+            {
+                MessageBox.Show($"找不到自訂群組: {text}");
+                return;
+            }
 
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var codes = JsonCache.Load<List<string>>(jsonPath);
-            codes.Add(data.ComCode);
-            HateComCodes = codes.Distinct().ToArray();
-            JsonCache.Store(jsonPath, HateComCodes);
+            group.ComCodes.Add(data.ComCode);
+            FavoriteComCodes.Add(data.ComCode);
+            RefreshCellStyle(grow);
+        }
 
+        private void removeFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            var groups = this.CustomGroups;
+            groups.ForEach(g => g.ComCodes.Remove(data.ComCode));
+            this.FavoriteComCodes.Remove(data.ComCode);
+            RefreshCellStyle(grow);
+        }
+
+        private void addHateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            this.HateComCodes.Add(data.ComCode);
             RefreshCellStyle(grow);
         }
 
         private void removeHateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var jsonPath = FrmFavorite.HateFilePath;
-
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var codes = JsonCache.Load<List<string>>(jsonPath);
-            if (codes.Remove(data.ComCode))
-            {
-                HateComCodes = codes.Distinct().ToArray();
-                JsonCache.Store(jsonPath, HateComCodes);
-
-                RefreshCellStyle(grow);
-            }
+            this.HateComCodes.Remove(data.ComCode);
+            RefreshCellStyle(grow);
         }
 
         private void editMemoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -428,7 +518,6 @@ namespace StockApp
                 dataGridView1.Refresh();
             }
         }
-
         #endregion
     }
 }

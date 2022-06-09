@@ -42,6 +42,7 @@ namespace StockApp
             this.txtFavorite.Location = new System.Drawing.Point(12, 12);
             this.txtFavorite.Multiline = true;
             this.txtFavorite.Name = "txtFavorite";
+            this.txtFavorite.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtFavorite.Size = new System.Drawing.Size(247, 341);
             this.txtFavorite.TabIndex = 0;
             // 
@@ -52,7 +53,7 @@ namespace StockApp
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 47);
             this.btnSave.TabIndex = 1;
-            this.btnSave.Text = "Save";
+            this.btnSave.Text = "Apply && Close";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -63,7 +64,7 @@ namespace StockApp
             this.btnView.Name = "btnView";
             this.btnView.Size = new System.Drawing.Size(105, 47);
             this.btnView.TabIndex = 2;
-            this.btnView.Text = "Save && View";
+            this.btnView.Text = "Apply && View";
             this.btnView.UseVisualStyleBackColor = true;
             this.btnView.Click += new System.EventHandler(this.btnView_Click);
             // 

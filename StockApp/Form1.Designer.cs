@@ -34,6 +34,7 @@ namespace StockApp
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFavoriteTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.removeFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,9 +42,9 @@ namespace StockApp
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.庫存清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.庫存清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -89,10 +90,18 @@ namespace StockApp
             // 
             // addFavoriteToolStripMenuItem
             // 
+            this.addFavoriteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFavoriteTextBox});
             this.addFavoriteToolStripMenuItem.Name = "addFavoriteToolStripMenuItem";
             this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.addFavoriteToolStripMenuItem.Text = "Add Favorite";
             this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.addFavoriteToolStripMenuItem_Click);
+            // 
+            // addFavoriteTextBox
+            // 
+            this.addFavoriteTextBox.Name = "addFavoriteTextBox";
+            this.addFavoriteTextBox.Size = new System.Drawing.Size(100, 23);
+            this.addFavoriteTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.addFavoriteTextBox_KeyPress);
             // 
             // removeFavoriteToolStripMenuItem
             // 
@@ -150,6 +159,13 @@ namespace StockApp
             this.排除清單ToolStripMenuItem.Text = "排除清單";
             this.排除清單ToolStripMenuItem.Click += new System.EventHandler(this.排除清單ToolStripMenuItem_Click);
             // 
+            // 庫存清單ToolStripMenuItem
+            // 
+            this.庫存清單ToolStripMenuItem.Name = "庫存清單ToolStripMenuItem";
+            this.庫存清單ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.庫存清單ToolStripMenuItem.Text = "庫存清單";
+            this.庫存清單ToolStripMenuItem.Click += new System.EventHandler(this.庫存清單ToolStripMenuItem_Click);
+            // 
             // 重新整理ToolStripMenuItem
             // 
             this.重新整理ToolStripMenuItem.Name = "重新整理ToolStripMenuItem";
@@ -164,13 +180,6 @@ namespace StockApp
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
             // 
-            // 庫存清單ToolStripMenuItem
-            // 
-            this.庫存清單ToolStripMenuItem.Name = "庫存清單ToolStripMenuItem";
-            this.庫存清單ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
-            this.庫存清單ToolStripMenuItem.Text = "庫存清單";
-            this.庫存清單ToolStripMenuItem.Click += new System.EventHandler(this.庫存清單ToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -182,6 +191,7 @@ namespace StockApp
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
@@ -209,6 +219,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem 設定ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editMemoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 庫存清單ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox addFavoriteTextBox;
     }
 }
 

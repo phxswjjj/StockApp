@@ -13,11 +13,6 @@ namespace StockApp
 {
     public partial class FrmFavorite : Form
     {
-        public const string FavoriteFilePath = "Favorite.json";
-        public const string HateFilePath = "Hate.json";
-
-        public string FilePath => this.FormMode == FormModeType.Favorite ? FavoriteFilePath : HateFilePath;
-
         public FormModeType FormMode { get; private set; } = FormModeType.Favorite;
 
         public string[] ViewCodes { get; private set; }
@@ -26,41 +21,40 @@ namespace StockApp
         {
             InitializeComponent();
         }
-        public DialogResult ShowHateDialog(IWin32Window owner)
+        public DialogResult ShowFavoriteDialog(IWin32Window owner, List<string> codes)
+        {
+            this.ViewCodes = codes.ToArray();
+            return this.ShowDialog(owner);
+        }
+        public DialogResult ShowHateDialog(IWin32Window owner, List<string> codes)
         {
             this.FormMode = FormModeType.Hate;
             this.Text = "Hate";
+            this.ViewCodes = codes.ToArray();
             return this.ShowDialog(owner);
+        }
+
+        private void FrmFavorite_Load(object sender, EventArgs e)
+        {
+            txtFavorite.Text = string.Join(Environment.NewLine, this.ViewCodes);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             var list = txtFavorite.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            JsonCache.Store(this.FilePath, list.Distinct());
+            this.ViewCodes = list.ToArray();
 
-            this.DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
         private void btnView_Click(object sender, EventArgs e)
         {
             var list = txtFavorite.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var distList = list.Distinct();
-            JsonCache.Store(this.FilePath, distList);
-
-            this.ViewCodes = distList.ToArray();
+            this.ViewCodes = list.ToArray();
 
             this.DialogResult = DialogResult.OK;
             this.Close();
-        }
-
-        private void FrmFavorite_Load(object sender, EventArgs e)
-        {
-            if (File.Exists(this.FilePath))
-            {
-                var list = JsonCache.Load<List<string>>(this.FilePath);
-                txtFavorite.Text = string.Join(Environment.NewLine, list.ToArray());
-            }
         }
 
         public enum FormModeType
