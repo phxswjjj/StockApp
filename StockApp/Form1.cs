@@ -117,7 +117,8 @@ namespace StockApp
                             return;
                         }
                     }
-                    MessageBox.Show($"找不到 {findText}");
+                    LoadData(new string[] { findText });
+                    //MessageBox.Show($"找不到 {findText}");
                 }
             }
         }
