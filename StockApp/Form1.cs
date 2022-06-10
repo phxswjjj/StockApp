@@ -123,7 +123,7 @@ namespace StockApp
             }
         }
 
-        private void LoadData(string[] assignCodes = null)
+        private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null)
         {
             var groups = this.CustomGroups;
 
@@ -170,10 +170,13 @@ namespace StockApp
                     l.SetExtra(find);
             });
 
+            if (comparer == null)
+                comparer = new DisplayModel.Expect7DiffComparer();
+
             if (assignCodes == null)
             {
                 list2.RemoveAll(l => hateComCodes.Contains(l.ComCode));
-                list2.Sort(new DisplayModel.Expect7DiffComparer());
+                list2.Sort(comparer);
                 list2 = list2
                     .Where(l => l.CurrentPrice < BasicSetting.Instance.PriceLimit)
                     .Where(l => l.ContBonusTimes >= BasicSetting.Instance.ContBonusTimesLimit)
@@ -218,7 +221,7 @@ namespace StockApp
                     l.SetExtra(find);
             });
 
-            list2.Sort(new DisplayModel.Expect7DiffComparer());
+            list2.Sort(comparer);
 
             var binding = new BindingList<DisplayModel>(list2);
             dataGridView1.DataSource = binding;
@@ -401,6 +404,17 @@ namespace StockApp
         {
             var list = MemoContent.Load();
             LoadData(list.Select(l => l.ComCode).ToArray());
+        }
+
+        private void 將除息ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var comparer = new DisplayModel.ExDividendDateTComparer();
+
+            var codes = CompanyExDividend.GetAll()
+                .Where(l => l.ExDividendDate.HasValue)
+                .Take(100)
+                .Select(l => l.ComCode).ToArray();
+            LoadData(codes, comparer);
         }
         #endregion
 

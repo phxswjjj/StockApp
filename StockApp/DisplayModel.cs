@@ -51,14 +51,6 @@ namespace StockApp
         [DisplayName("成本")]
         public decimal? HoldValue { get; private set; }
 
-        internal class Expect7DiffComparer : IComparer<DisplayModel>
-        {
-            public int Compare(DisplayModel x, DisplayModel y)
-            {
-                return -x.AvgYield.CompareTo(y.AvgYield);
-            }
-        }
-
         internal void SetExtra(CompanyContBonus b)
         {
             this.ContBonusTimes = b.ContBonusTimes;
@@ -86,5 +78,26 @@ namespace StockApp
             this.CurrentPrice = d.CurrentPrice;
             this.AvgYield = d.AvgYield;
         }
+
+        #region Comparer
+        internal class Expect7DiffComparer : IComparer<DisplayModel>
+        {
+            public int Compare(DisplayModel x, DisplayModel y)
+            {
+                return -x.AvgYield.CompareTo(y.AvgYield);
+            }
+        }
+        internal class ExDividendDateTComparer : IComparer<DisplayModel>
+        {
+            public int Compare(DisplayModel x, DisplayModel y)
+            {
+                if (!y.ExDividendDateT.HasValue)
+                    return 1;
+                else if (!x.ExDividendDateT.HasValue)
+                    return 1;
+                return x.ExDividendDateT.Value.CompareTo(y.ExDividendDateT.Value);
+            }
+        }
+        #endregion
     }
 }

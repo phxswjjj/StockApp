@@ -45,6 +45,7 @@ namespace StockApp
             this.庫存清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.將除息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -99,6 +100,7 @@ namespace StockApp
             // 
             // addFavoriteTextBox
             // 
+            this.addFavoriteTextBox.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9F);
             this.addFavoriteTextBox.Name = "addFavoriteTextBox";
             this.addFavoriteTextBox.Size = new System.Drawing.Size(100, 23);
             this.addFavoriteTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.addFavoriteTextBox_KeyPress);
@@ -137,6 +139,7 @@ namespace StockApp
             this.觀察清單ToolStripMenuItem,
             this.排除清單ToolStripMenuItem,
             this.庫存清單ToolStripMenuItem,
+            this.將除息ToolStripMenuItem,
             this.重新整理ToolStripMenuItem,
             this.設定ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -180,6 +183,13 @@ namespace StockApp
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
             // 
+            // 將除息ToolStripMenuItem
+            // 
+            this.將除息ToolStripMenuItem.Name = "將除息ToolStripMenuItem";
+            this.將除息ToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
+            this.將除息ToolStripMenuItem.Text = "將除息";
+            this.將除息ToolStripMenuItem.Click += new System.EventHandler(this.將除息ToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -220,6 +230,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem editMemoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 庫存清單ToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox addFavoriteTextBox;
+        private System.Windows.Forms.ToolStripMenuItem 將除息ToolStripMenuItem;
     }
 }
 
