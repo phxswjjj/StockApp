@@ -534,5 +534,33 @@ namespace StockApp
             }
         }
         #endregion
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            lbsSelectedTotal.Text = "";
+
+            var grid = (DataGridView)sender;
+            var lastSelectedCell = grid.CurrentCell;
+            if (lastSelectedCell == null)
+                return;
+            switch (lastSelectedCell.OwningColumn.Name)
+            {
+                case nameof(DisplayModel.ComCode):
+                case nameof(DisplayModel.ComName):
+                    return;
+            }
+
+            var total = 0m;
+            foreach (DataGridViewCell cell in grid.SelectedCells)
+            {
+                if (cell.ColumnIndex != lastSelectedCell.ColumnIndex)
+                    continue;
+                if (cell.Value == null)
+                    continue;
+                var v = decimal.Parse(cell.Value.ToString());
+                total += v;
+            }
+            lbsSelectedTotal.Text = $"Total: {total:#,##0.##}";
+        }
     }
 }
