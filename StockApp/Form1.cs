@@ -440,8 +440,9 @@ namespace StockApp
         {
             var comparer = new DisplayModel.ExDividendDateTComparer();
 
+            var today = Utility.TWSEDate.Today;
             var codes = CompanyExDividend.GetAll()
-                .Where(l => l.ExDividendDate.HasValue)
+                .Where(l => l.ExDividendDate.HasValue && l.ExDividendDate > today)
                 .Take(100)
                 .Select(l => l.ComCode).ToArray();
             LoadData(codes, comparer);
