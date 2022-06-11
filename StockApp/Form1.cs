@@ -64,27 +64,34 @@ namespace StockApp
 
         private void LoadSetting()
         {
-            var groups = CustomGroup.GetAll();
+            var loading = new FrmLoading();
+            var taskGroups = loading.AddTask("自訂觀察清單", () => CustomGroup.GetAll());
+            var taskFavorite = loading.AddTask("觀察清單", () =>
+            {
+                if (File.Exists(this.FavoriteFilePath))
+                    return JsonCache.Load<List<string>>(this.FavoriteFilePath);
+                else
+                    return new List<string>();
+            });
+            var taskHate = loading.AddTask("排除清單", () =>
+            {
+                if (File.Exists(this.FavoriteFilePath))
+                    return JsonCache.Load<List<string>>(this.FavoriteFilePath);
+                else
+                    return new List<string>();
+            });
+            if (!loading.Start())
+                loading.ShowDialog(this);
+
+            var groups = taskGroups.Result;
             this.CustomGroups = groups;
 
             foreach (var group in groups)
                 AddFavoriteCustomGroupMenuItem(group.Name);
 
-            List<string> favoriteComCodes;
-            if (File.Exists(this.FavoriteFilePath))
-                favoriteComCodes = JsonCache.Load<List<string>>(this.FavoriteFilePath);
-            else
-                favoriteComCodes = new List<string>();
-
-            foreach (var group in this.CustomGroups)
-                favoriteComCodes.AddRange(group.ComCodes);
+            List<string> favoriteComCodes = taskFavorite.Result;
             this.FavoriteComCodes = favoriteComCodes;
-
-            List<string> hateComCodes;
-            if (File.Exists(this.HateFilePath))
-                hateComCodes = JsonCache.Load<List<string>>(this.HateFilePath);
-            else
-                hateComCodes = new List<string>();
+            List<string> hateComCodes = taskHate.Result;
             this.HateComCodes = hateComCodes;
         }
 
@@ -127,29 +134,31 @@ namespace StockApp
         private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null)
         {
             var groups = this.CustomGroups;
-
-            var taskContBonus = Task.Factory.StartNew(() =>
-            {
-                return CompanyContBonus.GetAll();
-            });
-            var taskExDividend = Task.Factory.StartNew(() =>
-            {
-                return CompanyExDividend.GetAll();
-            });
-            var taskDayVolume = Task.Factory.StartNew(() =>
-            {
-                return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
-            });
-
-            var taskAvgBonus = Task.Factory.StartNew(() =>
-            {
-                return CompanyAvgBonus.GetAll();
-            });
-
             List<string> favoriteComCodes = this.FavoriteComCodes;
             List<string> hateComCodes = this.HateComCodes;
 
-            var memoList = MemoContent.Load();
+            var loading = new FrmLoading();
+            var taskContBonus = loading.AddTask("連續股息", () =>
+            {
+                return CompanyContBonus.GetAll();
+            });
+            var taskExDividend = loading.AddTask("除息時間", () =>
+            {
+                return CompanyExDividend.GetAll();
+            });
+            var taskDayVolume = loading.AddTask("日交易量", () =>
+            {
+                return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
+            });
+            var taskAvgBonus = loading.AddTask("平均股息", () =>
+            {
+                return CompanyAvgBonus.GetAll();
+            });
+            var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
+            if (!loading.Start())
+                loading.ShowDialog(this);
+
+            var memoList = taskMemo.Result;
 
             var list = taskDayVolume.Result;
 

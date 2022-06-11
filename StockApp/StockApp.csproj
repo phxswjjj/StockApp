@@ -68,6 +68,12 @@
     <Compile Include="CompanyExDividend.cs" />
     <Compile Include="CustomGroup.cs" />
     <Compile Include="DisplayModel.cs" />
+    <Compile Include="FrmLoading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmLoading.Designer.cs">
+      <DependentUpon>FrmLoading.cs</DependentUpon>
+    </Compile>
     <Compile Include="MemoContent.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -107,6 +113,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmFavorite.resx">
       <DependentUpon>FrmFavorite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmLoading.resx">
+      <DependentUpon>FrmLoading.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMemo.resx">
       <DependentUpon>FrmMemo.cs</DependentUpon>
