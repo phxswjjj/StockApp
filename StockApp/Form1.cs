@@ -75,8 +75,8 @@ namespace StockApp
             });
             var taskHate = loading.AddTask("排除清單", () =>
             {
-                if (File.Exists(this.FavoriteFilePath))
-                    return JsonCache.Load<List<string>>(this.FavoriteFilePath);
+                if (File.Exists(this.HateFilePath))
+                    return JsonCache.Load<List<string>>(this.HateFilePath);
                 else
                     return new List<string>();
             });
