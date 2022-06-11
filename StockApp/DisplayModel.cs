@@ -17,6 +17,8 @@ namespace StockApp
             this.SetExtra(d);
         }
 
+        [DisplayName("市")]
+        public string ComType { get; private set; }
         [DisplayName("代號")]
         public string ComCode { get; private set; }
         [DisplayName("名稱")]
@@ -65,6 +67,7 @@ namespace StockApp
         {
             this.CurrentPrice = find.CurrentPrice;
             this.LastDayVolume = find.DayVolume;
+            this.ComType = find.ComType;
         }
         internal void SetExtra(MemoContent data)
         {

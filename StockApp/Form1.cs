@@ -44,6 +44,7 @@ namespace StockApp
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
                 switch (col.Name)
                 {
+                    case nameof(DisplayModel.ComType):
                     case nameof(DisplayModel.ComCode):
                     case nameof(DisplayModel.ComName):
                         col.DefaultCellStyle = textCellStyle;
@@ -314,6 +315,35 @@ namespace StockApp
             e.Handled = true;
         }
 
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            lbsSelectedTotal.Text = "";
+
+            var grid = (DataGridView)sender;
+            var lastSelectedCell = grid.CurrentCell;
+            if (lastSelectedCell == null)
+                return;
+            switch (lastSelectedCell.OwningColumn.Name)
+            {
+                case nameof(DisplayModel.ComType):
+                case nameof(DisplayModel.ComCode):
+                case nameof(DisplayModel.ComName):
+                    return;
+            }
+
+            var total = 0m;
+            foreach (DataGridViewCell cell in grid.SelectedCells)
+            {
+                if (cell.ColumnIndex != lastSelectedCell.ColumnIndex)
+                    continue;
+                if (cell.Value == null)
+                    continue;
+                var v = decimal.Parse(cell.Value.ToString());
+                total += v;
+            }
+            lbsSelectedTotal.Text = $"Total: {total:#,##0.##}";
+        }
+
         private void RefreshCellStyle(DataGridViewRow grow)
         {
             var data = (DisplayModel)grow.DataBoundItem;
@@ -533,34 +563,17 @@ namespace StockApp
                 dataGridView1.Refresh();
             }
         }
-        #endregion
 
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void simulatorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            lbsSelectedTotal.Text = "";
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
 
-            var grid = (DataGridView)sender;
-            var lastSelectedCell = grid.CurrentCell;
-            if (lastSelectedCell == null)
-                return;
-            switch (lastSelectedCell.OwningColumn.Name)
-            {
-                case nameof(DisplayModel.ComCode):
-                case nameof(DisplayModel.ComName):
-                    return;
-            }
-
-            var total = 0m;
-            foreach (DataGridViewCell cell in grid.SelectedCells)
-            {
-                if (cell.ColumnIndex != lastSelectedCell.ColumnIndex)
-                    continue;
-                if (cell.Value == null)
-                    continue;
-                var v = decimal.Parse(cell.Value.ToString());
-                total += v;
-            }
-            lbsSelectedTotal.Text = $"Total: {total:#,##0.##}";
+            var url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?date=20220611&stockNo=" + data.ComCode;
+            if (data.ComType == "櫃")
+                url = "https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/st43_result.php?l=en-us&d=2022/06&stkno=" + data.ComCode;
+            System.Diagnostics.Process.Start(url);
         }
+        #endregion
     }
 }

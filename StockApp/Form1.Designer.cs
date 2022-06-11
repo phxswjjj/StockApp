@@ -48,6 +48,7 @@ namespace StockApp
             this.將除息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
+            this.simulatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -82,9 +83,10 @@ namespace StockApp
             this.removeFavoriteToolStripMenuItem,
             this.addHateToolStripMenuItem,
             this.removeHateToolStripMenuItem,
-            this.editMemoToolStripMenuItem});
+            this.editMemoToolStripMenuItem,
+            this.simulatorToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 180);
             // 
             // openToolStripMenuItem
             // 
@@ -210,6 +212,13 @@ namespace StockApp
             this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
             this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
             // 
+            // simulatorToolStripMenuItem
+            // 
+            this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
+            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.simulatorToolStripMenuItem.Text = "Simulator";
+            this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.simulatorToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -256,6 +265,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem 將除息ToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lbsSelectedTotal;
+        private System.Windows.Forms.ToolStripMenuItem simulatorToolStripMenuItem;
     }
 }
 
