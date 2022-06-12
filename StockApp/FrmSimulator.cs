@@ -14,15 +14,20 @@ namespace StockApp
     public partial class FrmSimulator : Form
     {
         internal CompanyDayPrice RefData { get; set; }
-        public ToolTip MouseTip { get; }
+        public ToolTip CursorYTip { get; }
+        public ToolTip CursorXTip { get; }
 
         public FrmSimulator()
         {
             InitializeComponent();
 
-            var tip = new ToolTip();
-            tip.ShowAlways = true;
-            this.MouseTip = tip;
+            var tipX = new ToolTip();
+            tipX.ShowAlways = true;
+            this.CursorXTip = tipX;
+
+            var tipY = new ToolTip();
+            tipY.ShowAlways = true;
+            this.CursorYTip = tipY;
         }
 
         private void FrmSimulator_Load(object sender, EventArgs e)
@@ -42,6 +47,11 @@ namespace StockApp
             area.CursorX.IsUserSelectionEnabled = true;
             //設定最小單位才能精準定位
             area.CursorY.Interval = 0.01d;
+
+            area.CursorX.LineColor = Color.CornflowerBlue;
+            area.CursorY.LineColor = Color.CornflowerBlue;
+            area.CursorX.LineDashStyle = ChartDashStyle.Dash;
+            area.CursorY.LineDashStyle = ChartDashStyle.Dash;
 
             var series = chart1.Series.First();
             series.XValueMember = nameof(DayPrice.Date);
@@ -90,6 +100,7 @@ namespace StockApp
                         {
                             delta = Math.Abs(i - valX),
                             index = i,
+                            XValue = DateTime.FromOADate(d.XValue),
                             YValue = d.YValues[1],
                             YValues = d.YValues,
                         })
@@ -100,14 +111,22 @@ namespace StockApp
                     area.CursorX.SetCursorPosition(indexX);
                     area.CursorY.SetCursorPosition(dp.YValue);
 
-                    var pos = new
+                    var posX = new
+                    {
+                        X = e.X,
+                        Y = (int)area.AxisY.ValueToPixelPosition(area.AxisY.Minimum),
+                    };
+                    var posY = new
                     {
                         X = (int)area.AxisX.ValueToPixelPosition(0),
                         Y = (int)area.AxisY.ValueToPixelPosition(dp.YValue),
                     };
 
-                    var tip = this.MouseTip;
-                    tip.Show(dp.YValue.ToString(), chart, new Point(pos.X, pos.Y));
+                    var tipX = this.CursorXTip;
+                    tipX.Show(dp.XValue.ToString("M/d"), chart, new Point(posX.X, posX.Y));
+
+                    var tipY = this.CursorYTip;
+                    tipY.Show(dp.YValue.ToString(), chart, new Point(posY.X, posY.Y));
                     break;
             }
         }
