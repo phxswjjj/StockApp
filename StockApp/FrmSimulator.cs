@@ -31,6 +31,7 @@ namespace StockApp
 
             this.Text = $"{dp.ComCode} - {dp.ComName}";
 
+            #region Init Chart
             var area = chart1.ChartAreas.First();
             //不顯示格線
             area.AxisX.MajorGrid.LineWidth = 0;
@@ -60,6 +61,12 @@ namespace StockApp
             series["ShowOpenClose"] = "Both";
             chart1.DataManipulator.IsStartFromFirst = true;
             chart1.DataSource = dp.DayPrices;
+            #endregion
+
+            #region Setting
+            dateTimePicker1.MinDate = dp.DayPrices.Select(d => d.Date).Min();
+            dateTimePicker1.Value = dateTimePicker1.MinDate;
+            #endregion
         }
 
         private void chart1_MouseMove(object sender, MouseEventArgs e)
@@ -93,10 +100,151 @@ namespace StockApp
                     area.CursorX.SetCursorPosition(indexX);
                     area.CursorY.SetCursorPosition(dp.YValue);
 
+                    var pos = new
+                    {
+                        X = (int)area.AxisX.ValueToPixelPosition(0),
+                        Y = (int)area.AxisY.ValueToPixelPosition(dp.YValue),
+                    };
+
                     var tip = this.MouseTip;
-                    tip.Show($"Open: {dp.YValues[2]}, High: {dp.YValues[0]}, Low: {dp.YValues[1]}, Close: {dp.YValues[3]}",
-                        chart, new Point(e.X, e.Y - 20));
+                    tip.Show(dp.YValue.ToString(), chart, new Point(pos.X, pos.Y));
                     break;
+            }
+        }
+
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            var startDate = dateTimePicker1.Value;
+            var startVolume = (int)numStartVolume.Value;
+            var downRate = numDownRate.Value / 100;
+            var buyVolume = 1000;
+
+            var dayPrices = this.RefData.DayPrices
+                .Where(d => d.Date >= startDate);
+
+            var simulator = Simulator.Create(dayPrices);
+
+            simulator.BuyFirst(startVolume);
+
+            while (simulator.MoveNext())
+            {
+                simulator.Buy(buyVolume, downRate);
+            }
+
+            var simulateResults = simulator.Result.ToList();
+            foreach (var result in simulateResults)
+            {
+                if (!result.Volume.HasValue) continue;
+                Console.WriteLine($"{result.Price}\t{result.Volume:#,##0}");
+            }
+            Console.WriteLine("****");
+            Console.WriteLine($"{simulator.AvgPrice:0.00}\t{simulator.TotalVolume:#,##0}\t\t{simulator.TotalValue:#,##0}");
+            var diffPrice = dayPrices.Last().ClosingPrice - simulator.AvgPrice;
+            diffPrice = Math.Floor(diffPrice * 100) / 100;
+            var diffTotalPrice = diffPrice * simulator.TotalVolume;
+            var diffRate = diffTotalPrice / simulator.TotalValue;
+            Console.WriteLine($"{diffPrice}\t{diffTotalPrice:#,##0}\t\t{diffRate:P2}");
+        }
+
+        private class Simulator
+        {
+            private List<SimulateDayPrice> Source;
+            private int ItemIndex;
+            private readonly int ItemCount;
+
+            public SimulateDayPrice Current => this.Source[this.ItemIndex];
+
+            public decimal TotalValue { get; private set; }
+            public int TotalVolume { get; private set; }
+            public decimal AvgPrice => TotalValue / TotalVolume;
+
+            public IEnumerable<SimulateDayPrice> Result
+            {
+                get
+                {
+                    return this.Source;
+                }
+            }
+
+            public Simulator(IEnumerable<DayPrice> dayPrices)
+            {
+                this.Source = dayPrices
+                    .Select(d => new SimulateDayPrice(d))
+                    .ToList();
+                this.ItemIndex = -1;
+                this.ItemCount = this.Source.Count;
+            }
+
+            internal static Simulator Create(IEnumerable<DayPrice> dayPrices)
+            {
+                var simulator = new Simulator(dayPrices);
+                return simulator;
+            }
+
+            internal void BuyFirst(int startVolume)
+            {
+                if (!this.MoveNext())
+                    throw new Exception("no data found");
+                var price = this.Current.BuyFirst(startVolume);
+
+                this.TotalVolume = startVolume;
+                this.TotalValue = startVolume * price;
+            }
+
+            internal bool MoveNext()
+            {
+                if (this.ItemIndex < this.ItemCount - 1)
+                {
+                    this.ItemIndex++;
+                    return true;
+                }
+                return false;
+            }
+
+            internal bool Buy(int buyVolume, decimal downRate)
+            {
+                var data = this.Current;
+
+                var expectPrice = Math.Floor(this.AvgPrice * (1 - downRate) * 100) / 100;
+
+                if (data.Buy(expectPrice, buyVolume))
+                {
+                    this.TotalVolume += buyVolume;
+                    this.TotalValue += buyVolume * expectPrice;
+                    return true;
+                }
+
+                return false;
+            }
+        }
+        private class SimulateDayPrice
+        {
+            private DayPrice Source;
+
+            public int? Volume { get; private set; }
+            public decimal? Price { get; private set; }
+
+            public SimulateDayPrice(DayPrice source)
+            {
+                this.Source = source;
+            }
+
+            internal decimal BuyFirst(int startVolume)
+            {
+                this.Volume = startVolume;
+                this.Price = Source.OpeningPrice;
+                return this.Price.Value;
+            }
+
+            internal bool Buy(decimal expectPrice, int buyVolume)
+            {
+                if (expectPrice >= this.Source.MinPrice)
+                {
+                    this.Volume = buyVolume;
+                    this.Price = expectPrice;
+                    return true;
+                }
+                return false;
             }
         }
     }

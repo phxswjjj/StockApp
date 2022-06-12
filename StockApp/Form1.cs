@@ -582,7 +582,7 @@ namespace StockApp
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var months = 3;
+            var months = Properties.Settings.Default.SimulateMaxMonth;
             var dp = CompanyDayPrice.New(data);
 
             var loading = new FrmLoading();

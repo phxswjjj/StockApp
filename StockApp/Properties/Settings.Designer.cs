@@ -46,5 +46,17 @@ namespace StockApp.Properties {
                 this["ContBonusTimesLimit"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int SimulateMaxMonth {
+            get {
+                return ((int)(this["SimulateMaxMonth"]));
+            }
+            set {
+                this["SimulateMaxMonth"] = value;
+            }
+        }
     }
 }
