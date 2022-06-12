@@ -132,18 +132,30 @@ namespace StockApp
             }
 
             var simulateResults = simulator.Result.ToList();
-            foreach (var result in simulateResults)
-            {
-                if (!result.Volume.HasValue) continue;
-                Console.WriteLine($"{result.Price}\t{result.Volume:#,##0}");
-            }
-            Console.WriteLine("****");
-            Console.WriteLine($"{simulator.AvgPrice:0.00}\t{simulator.TotalVolume:#,##0}\t\t{simulator.TotalValue:#,##0}");
+
             var diffPrice = dayPrices.Last().ClosingPrice - simulator.AvgPrice;
             diffPrice = Math.Floor(diffPrice * 100) / 100;
             var diffTotalPrice = diffPrice * simulator.TotalVolume;
             var diffRate = diffTotalPrice / simulator.TotalValue;
-            Console.WriteLine($"{diffPrice}\t{diffTotalPrice:#,##0}\t\t{diffRate:P2}");
+            var seriesName = $"{downRate:P0} / {simulator.AvgPrice:0.##} / {diffRate:P2}";
+            LoadSimulateResult(seriesName, simulateResults);
+        }
+
+        private void LoadSimulateResult(string seriesName, IEnumerable<SimulateDayPrice> simulateResults)
+        {
+            var chart = chart1;
+            var area = chart.ChartAreas.First();
+            var series = new Series(seriesName);
+            chart.Series.Add(series);
+
+            series.ChartArea = area.Name;
+            series.ChartType = SeriesChartType.Point;
+            series.MarkerStyle = MarkerStyle.Cross;
+            series.MarkerSize = 20;
+            series.IsXValueIndexed = true;
+
+            series.Points.DataBind(simulateResults,
+                nameof(SimulateDayPrice.Date), nameof(SimulateDayPrice.Price), null);
         }
 
         private class Simulator
@@ -221,6 +233,7 @@ namespace StockApp
         {
             private DayPrice Source;
 
+            public DateTime Date => Source.Date;
             public int? Volume { get; private set; }
             public decimal? Price { get; private set; }
 
