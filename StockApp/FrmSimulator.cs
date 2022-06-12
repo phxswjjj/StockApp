@@ -14,10 +14,15 @@ namespace StockApp
     public partial class FrmSimulator : Form
     {
         internal CompanyDayPrice RefData { get; set; }
+        public ToolTip MouseTip { get; }
 
         public FrmSimulator()
         {
             InitializeComponent();
+
+            var tip = new ToolTip();
+            tip.ShowAlways = true;
+            this.MouseTip = tip;
         }
 
         private void FrmSimulator_Load(object sender, EventArgs e)
@@ -79,6 +84,7 @@ namespace StockApp
                             delta = Math.Abs(i - valX),
                             index = i,
                             YValue = d.YValues[1],
+                            YValues = d.YValues,
                         })
                         .OrderBy(d => d.delta)
                         .First();
@@ -86,9 +92,10 @@ namespace StockApp
 
                     area.CursorX.SetCursorPosition(indexX);
                     area.CursorY.SetCursorPosition(dp.YValue);
-                    break;
-                default:
-                    this.Text = result.ChartElementType.ToString();
+
+                    var tip = this.MouseTip;
+                    tip.Show($"Open: {dp.YValues[2]}, High: {dp.YValues[0]}, Low: {dp.YValues[1]}, Close: {dp.YValues[3]}",
+                        chart, new Point(e.X, e.Y - 20));
                     break;
             }
         }
