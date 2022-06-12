@@ -262,9 +262,12 @@ namespace StockApp
                     item.Visible = false;
                 return;
             }
+
+            foreach (ToolStripItem item in contextMenuStrip1.Items)
+                item.Visible = true;
+
             var grow = gv.Rows[e.RowIndex];
             var data = (DisplayModel)grow.DataBoundItem;
-            openToolStripMenuItem.Visible = true;
             addFavoriteToolStripMenuItem.Visible = !FavoriteComCodes.Contains(data.ComCode);
             removeFavoriteToolStripMenuItem.Visible = FavoriteComCodes.Contains(data.ComCode);
             addHateToolStripMenuItem.Visible = !HateComCodes.Contains(data.ComCode);
@@ -579,10 +582,33 @@ namespace StockApp
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?date=20220611&stockNo=" + data.ComCode;
-            if (data.ComType == "櫃")
-                url = "https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/st43_result.php?l=en-us&d=2022/06&stkno=" + data.ComCode;
-            System.Diagnostics.Process.Start(url);
+            var months = 3;
+            var dp = CompanyDayPrice.New(data);
+
+            var loading = new FrmLoading();
+
+            var today = Utility.TWSEDate.Today;
+            var curMonth = new DateTime(today.Year, today.Month, 1);
+            for (var i = 0; i < months; i++)
+            {
+                var target = curMonth.AddMonths(-i);
+                var year = target.Year;
+                var month = target.Month;
+                var task = loading.AddTask($"{year:0000}/{month:00}", () =>
+                {
+                    return dp.GetMonth(year, month);
+                });
+            }
+
+            if (!loading.Start())
+                loading.ShowDialog(this);
+
+            dp.Sort();
+
+            var simulator = new FrmSimulator();
+            simulator.RefData = dp;
+            simulator.ShowDialog(this);
+
         }
         #endregion
     }
