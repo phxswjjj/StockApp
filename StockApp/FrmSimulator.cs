@@ -138,10 +138,9 @@ namespace StockApp
             var downRate = numDownRate.Value / 100;
             var buyVolume = 1000;
 
-            var dayPrices = this.RefData.DayPrices
-                .Where(d => d.Date >= startDate);
+            var dayPrices = this.RefData.DayPrices;
 
-            var simulator = Simulator.Create(dayPrices);
+            var simulator = Simulator.Create(dayPrices, startDate);
 
             simulator.BuyFirst(startVolume);
 
@@ -183,6 +182,8 @@ namespace StockApp
             private int ItemIndex;
             private readonly int ItemCount;
 
+            private DateTime StartDate;
+
             public SimulateDayPrice Current => this.Source[this.ItemIndex];
 
             public decimal TotalValue { get; private set; }
@@ -197,24 +198,34 @@ namespace StockApp
                 }
             }
 
-            public Simulator(IEnumerable<DayPrice> dayPrices)
+            public Simulator(IEnumerable<DayPrice> dayPrices, DateTime startDate)
             {
                 this.Source = dayPrices
                     .Select(d => new SimulateDayPrice(d))
                     .ToList();
                 this.ItemIndex = -1;
                 this.ItemCount = this.Source.Count;
+                this.StartDate = startDate;
             }
 
-            internal static Simulator Create(IEnumerable<DayPrice> dayPrices)
+            internal static Simulator Create(IEnumerable<DayPrice> dayPrices, DateTime startDate)
             {
-                var simulator = new Simulator(dayPrices);
+                var simulator = new Simulator(dayPrices, startDate);
                 return simulator;
             }
 
             internal void BuyFirst(int startVolume)
             {
-                if (!this.MoveNext())
+                var dataFound = false;
+                while (this.MoveNext())
+                {
+                    if (this.Current.Date >= this.StartDate)
+                    {
+                        dataFound = true;
+                        break;
+                    }
+                }
+                if (!dataFound)
                     throw new Exception("no data found");
                 var price = this.Current.BuyFirst(startVolume);
 
