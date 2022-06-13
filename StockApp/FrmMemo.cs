@@ -76,7 +76,9 @@ namespace StockApp
         private void btnClear_Click(object sender, EventArgs e)
         {
             var data = new MemoContent(this.RefData);
-            MemoContent.Remove(data.ComCode);
+            data.HoldStock = null;
+            data.HoldValue = null;
+            MemoContent.Remove(data);
 
             this.RefData.SetExtra(data);
             this.DialogResult = DialogResult.OK;

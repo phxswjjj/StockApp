@@ -50,10 +50,10 @@ namespace StockApp
             JsonCache.Store(FilePath, list);
         }
 
-        internal static void Remove(string code)
+        internal static void Remove(MemoContent data)
         {
             var list = Load();
-            var existsIndex = list.FindIndex(d => d.ComCode == code);
+            var existsIndex = list.FindIndex(d => d.ComCode == data.ComCode);
             if (existsIndex != -1)
             {
                 list.RemoveAt(existsIndex);
