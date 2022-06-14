@@ -13,7 +13,8 @@ namespace StockApp
 {
     public partial class FrmSimulator : Form
     {
-        internal CompanyDayPrice RefData { get; set; }
+        internal CompanyDayPrice DayPrices { get; set; }
+        internal CompanyBonusHistory BonusHistories { get; set; }
         public ToolTip CursorYTip { get; }
         public ToolTip CursorXTip { get; }
 
@@ -32,7 +33,7 @@ namespace StockApp
 
         private void FrmSimulator_Load(object sender, EventArgs e)
         {
-            var dp = this.RefData;
+            var dp = this.DayPrices;
 
             this.Text = $"{dp.ComCode} - {dp.ComName}";
 
@@ -138,7 +139,7 @@ namespace StockApp
             var downRate = numDownRate.Value / 100;
             var buyVolume = 1000;
 
-            var dayPrices = this.RefData.DayPrices;
+            var dayPrices = this.DayPrices.DayPrices;
 
             var simulator = Simulator.Create(dayPrices, startDate);
 

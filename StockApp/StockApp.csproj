@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicSetting.cs" />
+    <Compile Include="CompanyBonusHistory.cs" />
     <Compile Include="CompanyContBonus.cs" />
     <Compile Include="CompanyDayPrice.cs" />
     <Compile Include="CompanyDayVolume.cs" />

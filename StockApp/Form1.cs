@@ -584,6 +584,7 @@ namespace StockApp
 
             var months = Properties.Settings.Default.SimulateMaxMonth;
             var dp = CompanyDayPrice.New(data);
+            var bh = CompanyBonusHistory.New(data);
 
             var loading = new FrmLoading();
 
@@ -594,19 +595,25 @@ namespace StockApp
                 var target = curMonth.AddMonths(-i);
                 var year = target.Year;
                 var month = target.Month;
-                var task = loading.AddTask($"{year:0000}/{month:00}", () =>
+                var task = loading.AddTask($"每日成交記錄 {year:0000}/{month:00}", () =>
                 {
                     return dp.GetMonth(year, month);
                 });
             }
+            loading.AddTask("除權息記錄", () =>
+            {
+                return bh.GetAll();
+            });
 
             if (!loading.Start())
                 loading.ShowDialog(this);
 
             dp.Sort();
+            bh.Sort();
 
             var simulator = new FrmSimulator();
-            simulator.RefData = dp;
+            simulator.DayPrices = dp;
+            simulator.BonusHistories = bh;
             simulator.ShowDialog(this);
 
         }
