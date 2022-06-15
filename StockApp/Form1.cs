@@ -614,7 +614,7 @@ namespace StockApp
             var simulator = new FrmSimulator();
             simulator.DayPrices = dp;
             simulator.BonusHistories = bh;
-            simulator.ShowDialog(this);
+            simulator.Show(this);
 
         }
         #endregion

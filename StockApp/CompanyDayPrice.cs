@@ -170,6 +170,8 @@ namespace StockApp
             foreach (var data in model.aaData)
             {
                 var dayOfMonth = int.Parse(data.First().Substring(yearMonthPrefixLen + 1, 2));
+                if (data[3] == "--")
+                    continue;
                 var openingPrice = decimal.Parse(data[3]);
                 var maxPrice = decimal.Parse(data[4]);
                 var minPrice = decimal.Parse(data[5]);
