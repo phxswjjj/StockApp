@@ -214,7 +214,8 @@ namespace StockApp
             }
             else
             {
-                list2.RemoveAll(l => !assignCodes.Contains(l.ComCode) && !l.ComName.Contains(likeComName));
+                list2.RemoveAll(l => !assignCodes.Contains(l.ComCode)
+                    && (string.IsNullOrEmpty(likeComName) || !l.ComName.Contains(likeComName)));
             }
 
             var exDividendList = taskExDividend.Result;
