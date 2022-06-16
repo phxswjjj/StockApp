@@ -125,13 +125,14 @@ namespace StockApp
                             return;
                         }
                     }
-                    LoadData(new string[] { findText });
+                    LoadData(new string[] { findText }, likeComName: findText);
                     //MessageBox.Show($"找不到 {findText}");
                 }
             }
         }
 
-        private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null)
+        private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null,
+            string likeComName = null)
         {
             var groups = this.CustomGroups;
             List<string> favoriteComCodes = this.FavoriteComCodes;
@@ -213,7 +214,7 @@ namespace StockApp
             }
             else
             {
-                list2.RemoveAll(l => !assignCodes.Contains(l.ComCode));
+                list2.RemoveAll(l => !assignCodes.Contains(l.ComCode) && !l.ComName.Contains(likeComName));
             }
 
             var exDividendList = taskExDividend.Result;
