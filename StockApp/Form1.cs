@@ -471,6 +471,13 @@ namespace StockApp
 
             System.Diagnostics.Process.Start("https://goodinfo.tw/tw/StockDividendPolicy.asp?STOCK_ID=" + data.ComCode);
         }
+        private void openToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            System.Diagnostics.Process.Start("https://www.cmoney.tw/forum/stock/" + data.ComCode);
+        }
 
         private void addFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
         {

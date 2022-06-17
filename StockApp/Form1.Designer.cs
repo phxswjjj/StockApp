@@ -39,16 +39,17 @@ namespace StockApp
             this.addHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editMemoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.simulatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.庫存清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.將除息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.將除息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
-            this.simulatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -86,10 +87,12 @@ namespace StockApp
             this.editMemoToolStripMenuItem,
             this.simulatorToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 180);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 158);
             // 
             // openToolStripMenuItem
             // 
+            this.openToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem1});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.openToolStripMenuItem.Text = "Open GoodInfo";
@@ -139,6 +142,13 @@ namespace StockApp
             this.editMemoToolStripMenuItem.Text = "Edit Memo";
             this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.editMemoToolStripMenuItem_Click);
             // 
+            // simulatorToolStripMenuItem
+            // 
+            this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
+            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.simulatorToolStripMenuItem.Text = "Simulator";
+            this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.simulatorToolStripMenuItem_Click);
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -175,6 +185,13 @@ namespace StockApp
             this.庫存清單ToolStripMenuItem.Text = "庫存清單";
             this.庫存清單ToolStripMenuItem.Click += new System.EventHandler(this.庫存清單ToolStripMenuItem_Click);
             // 
+            // 將除息ToolStripMenuItem
+            // 
+            this.將除息ToolStripMenuItem.Name = "將除息ToolStripMenuItem";
+            this.將除息ToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
+            this.將除息ToolStripMenuItem.Text = "將除息";
+            this.將除息ToolStripMenuItem.Click += new System.EventHandler(this.將除息ToolStripMenuItem_Click);
+            // 
             // 重新整理ToolStripMenuItem
             // 
             this.重新整理ToolStripMenuItem.Name = "重新整理ToolStripMenuItem";
@@ -188,13 +205,6 @@ namespace StockApp
             this.設定ToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
-            // 
-            // 將除息ToolStripMenuItem
-            // 
-            this.將除息ToolStripMenuItem.Name = "將除息ToolStripMenuItem";
-            this.將除息ToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
-            this.將除息ToolStripMenuItem.Text = "將除息";
-            this.將除息ToolStripMenuItem.Click += new System.EventHandler(this.將除息ToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -212,12 +222,12 @@ namespace StockApp
             this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
             this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
             // 
-            // simulatorToolStripMenuItem
+            // openToolStripMenuItem1
             // 
-            this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
-            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.simulatorToolStripMenuItem.Text = "Simulator";
-            this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.simulatorToolStripMenuItem_Click);
+            this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem1.Text = "Open CMoney";
+            this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
             // 
             // Form1
             // 
@@ -266,6 +276,7 @@ namespace StockApp
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lbsSelectedTotal;
         private System.Windows.Forms.ToolStripMenuItem simulatorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
     }
 }
 
