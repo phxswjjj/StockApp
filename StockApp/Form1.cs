@@ -620,9 +620,7 @@ namespace StockApp
             dp.Sort();
             bh.Sort();
 
-            var simulator = new FrmSimulator();
-            simulator.DayPrices = dp;
-            simulator.BonusHistories = bh;
+            var simulator = new FrmSimulator(dp, bh);
             simulator.Show(this);
 
         }

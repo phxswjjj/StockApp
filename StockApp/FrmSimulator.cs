@@ -18,8 +18,11 @@ namespace StockApp
         public ToolTip CursorYTip { get; }
         public ToolTip CursorXTip { get; }
 
-        public FrmSimulator()
+        internal FrmSimulator(CompanyDayPrice dp, CompanyBonusHistory bh)
         {
+            this.DayPrices = dp;
+            this.BonusHistories = bh;
+
             InitializeComponent();
 
             var tipX = new ToolTip();
@@ -141,9 +144,15 @@ namespace StockApp
 
             var dayPrices = this.DayPrices.DayPrices;
 
-            var simulator = Simulator.Create(dayPrices, startDate);
+            var simulator = Simulator.Create(dayPrices);
 
-            simulator.BuyFirst(startVolume);
+            var startPriceDate = dayPrices.FirstOrDefault(d => d.Date >= startDate);
+            if (startPriceDate == null)
+            {
+                MessageBox.Show($"找不到 {startDate: yy/MM/dd} 之後的成交記錄");
+                return;
+            }
+            simulator.BuyFirst(startDate, startVolume, startPriceDate.OpeningPrice);
 
             while (simulator.MoveNext())
             {
@@ -183,8 +192,6 @@ namespace StockApp
             private int ItemIndex;
             private readonly int ItemCount;
 
-            private DateTime StartDate;
-
             public SimulateDayPrice Current => this.Source[this.ItemIndex];
 
             public decimal TotalValue { get; private set; }
@@ -199,28 +206,27 @@ namespace StockApp
                 }
             }
 
-            public Simulator(IEnumerable<DayPrice> dayPrices, DateTime startDate)
+            public Simulator(IEnumerable<DayPrice> dayPrices)
             {
                 this.Source = dayPrices
                     .Select(d => new SimulateDayPrice(d))
                     .ToList();
                 this.ItemIndex = -1;
                 this.ItemCount = this.Source.Count;
-                this.StartDate = startDate;
             }
 
-            internal static Simulator Create(IEnumerable<DayPrice> dayPrices, DateTime startDate)
+            internal static Simulator Create(IEnumerable<DayPrice> dayPrices)
             {
-                var simulator = new Simulator(dayPrices, startDate);
+                var simulator = new Simulator(dayPrices);
                 return simulator;
             }
 
-            internal void BuyFirst(int startVolume)
+            internal void BuyFirst(DateTime startDate, int startVolume, decimal startPrice)
             {
                 var dataFound = false;
                 while (this.MoveNext())
                 {
-                    if (this.Current.Date >= this.StartDate)
+                    if (this.Current.Date >= startDate)
                     {
                         dataFound = true;
                         break;
@@ -228,7 +234,7 @@ namespace StockApp
                 }
                 if (!dataFound)
                     throw new Exception("no data found");
-                var price = this.Current.BuyFirst(startVolume);
+                var price = this.Current.BuyFirst(startVolume, startPrice);
 
                 this.TotalVolume = startVolume;
                 this.TotalValue = startVolume * price;
@@ -273,10 +279,10 @@ namespace StockApp
                 this.Source = source;
             }
 
-            internal decimal BuyFirst(int startVolume)
+            internal decimal BuyFirst(int startVolume, decimal startPrice)
             {
                 this.Volume = startVolume;
-                this.Price = Source.OpeningPrice;
+                this.Price = startPrice;
                 return this.Price.Value;
             }
 
