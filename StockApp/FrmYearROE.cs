@@ -30,6 +30,7 @@ namespace StockApp
         }
         private void InitGrid(DataGridView gv, CompanyROE data)
         {
+            gv.ReadOnly = true;
             gv.AutoGenerateColumns = false;
             gv.VirtualMode = true;
 

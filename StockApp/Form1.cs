@@ -301,6 +301,8 @@ namespace StockApp
 
         private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
         {
+            contextMenuStrip1.Tag = null;
+
             var gv = (DataGridView)sender;
             if (e.RowIndex == -1)
             {
@@ -309,19 +311,29 @@ namespace StockApp
                 return;
             }
 
-            foreach (ToolStripItem item in contextMenuStrip1.Items)
-                item.Visible = true;
+            if (gv.SelectedRows.Count <= 1)
+            {
+                foreach (ToolStripItem item in contextMenuStrip1.Items)
+                    item.Visible = true;
 
-            var grow = gv.Rows[e.RowIndex];
-            var data = (DisplayModel)grow.DataBoundItem;
-            addFavoriteToolStripMenuItem.Visible = !FavoriteComCodes.Contains(data.ComCode);
-            removeFavoriteToolStripMenuItem.Visible = FavoriteComCodes.Contains(data.ComCode);
-            addHateToolStripMenuItem.Visible = !HateComCodes.Contains(data.ComCode);
-            removeHateToolStripMenuItem.Visible = HateComCodes.Contains(data.ComCode);
+                var grow = gv.Rows[e.RowIndex];
+                var data = (DisplayModel)grow.DataBoundItem;
+                addFavoriteToolStripMenuItem.Visible = !FavoriteComCodes.Contains(data.ComCode);
+                removeFavoriteToolStripMenuItem.Visible = FavoriteComCodes.Contains(data.ComCode);
+                addHateToolStripMenuItem.Visible = !HateComCodes.Contains(data.ComCode);
+                removeHateToolStripMenuItem.Visible = HateComCodes.Contains(data.ComCode);
 
-            gv.ClearSelection();
-            grow.Selected = true;
-            contextMenuStrip1.Tag = grow;
+                gv.ClearSelection();
+                grow.Selected = true;
+                contextMenuStrip1.Tag = grow;
+            }
+            else
+            {
+                foreach (ToolStripItem item in contextMenuStrip1.Items)
+                    item.Visible = false;
+
+                showYearROEToolStripMenuItem.Visible = true;
+            }
         }
 
         private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -524,12 +536,30 @@ namespace StockApp
         }
         private void showYearInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
+            var list = new List<DisplayModel>();
+            var gv = dataGridView1;
+
+            if (contextMenuStrip1.Tag != null)
+            {
+                var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+                var data = (DisplayModel)grow.DataBoundItem;
+                list.Add(data);
+            }
+            else
+            {
+                foreach (DataGridViewRow grow in gv.SelectedRows)
+                {
+                    var data = (DisplayModel)grow.DataBoundItem;
+                    list.Add(data);
+                }
+            }
+            if (list.Count == 0) return;
+
             var frm = (FrmYearROE)this.OwnedForms.FirstOrDefault(f => f is FrmYearROE);
             if (frm == null)
                 frm = new FrmYearROE();
-            frm.AddData(data);
+            foreach (var data in list)
+                frm.AddData(data);
             if (!frm.Visible)
                 frm.Show(this);
         }
