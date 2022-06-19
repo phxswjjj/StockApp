@@ -33,6 +33,7 @@ namespace StockApp
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.addFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFavoriteTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.removeFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,7 +50,7 @@ namespace StockApp
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
-            this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.showYearInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -87,23 +88,31 @@ namespace StockApp
             this.editMemoToolStripMenuItem,
             this.simulatorToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 158);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 180);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem1});
+            this.openToolStripMenuItem1,
+            this.showYearInfoToolStripMenuItem});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open GoodInfo";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // openToolStripMenuItem1
+            // 
+            this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem1.Text = "Open CMoney";
+            this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
             // 
             // addFavoriteToolStripMenuItem
             // 
             this.addFavoriteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addFavoriteTextBox});
             this.addFavoriteToolStripMenuItem.Name = "addFavoriteToolStripMenuItem";
-            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addFavoriteToolStripMenuItem.Text = "Add Favorite";
             this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.addFavoriteToolStripMenuItem_Click);
             // 
@@ -117,35 +126,35 @@ namespace StockApp
             // removeFavoriteToolStripMenuItem
             // 
             this.removeFavoriteToolStripMenuItem.Name = "removeFavoriteToolStripMenuItem";
-            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeFavoriteToolStripMenuItem.Text = "Remove Favorite";
             this.removeFavoriteToolStripMenuItem.Click += new System.EventHandler(this.removeFavoriteToolStripMenuItem_Click);
             // 
             // addHateToolStripMenuItem
             // 
             this.addHateToolStripMenuItem.Name = "addHateToolStripMenuItem";
-            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addHateToolStripMenuItem.Text = "Add Hate";
             this.addHateToolStripMenuItem.Click += new System.EventHandler(this.addHateToolStripMenuItem_Click);
             // 
             // removeHateToolStripMenuItem
             // 
             this.removeHateToolStripMenuItem.Name = "removeHateToolStripMenuItem";
-            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeHateToolStripMenuItem.Text = "Remove Hate";
             this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
             // 
             // editMemoToolStripMenuItem
             // 
             this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
-            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editMemoToolStripMenuItem.Text = "Edit Memo";
             this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.editMemoToolStripMenuItem_Click);
             // 
             // simulatorToolStripMenuItem
             // 
             this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
-            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.simulatorToolStripMenuItem.Text = "Simulator";
             this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.simulatorToolStripMenuItem_Click);
             // 
@@ -222,12 +231,12 @@ namespace StockApp
             this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
             this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
             // 
-            // openToolStripMenuItem1
+            // showYearInfoToolStripMenuItem
             // 
-            this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.openToolStripMenuItem1.Text = "Open CMoney";
-            this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
+            this.showYearInfoToolStripMenuItem.Name = "showYearInfoToolStripMenuItem";
+            this.showYearInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showYearInfoToolStripMenuItem.Text = "Show Year Info";
+            this.showYearInfoToolStripMenuItem.Click += new System.EventHandler(this.showYearInfoToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -277,6 +286,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripStatusLabel lbsSelectedTotal;
         private System.Windows.Forms.ToolStripMenuItem simulatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem showYearInfoToolStripMenuItem;
     }
 }
 

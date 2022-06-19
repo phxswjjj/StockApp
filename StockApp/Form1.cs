@@ -522,6 +522,17 @@ namespace StockApp
 
             System.Diagnostics.Process.Start("https://www.cmoney.tw/forum/stock/" + data.ComCode);
         }
+        private void showYearInfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+            var frm = (FrmYearROE)this.OwnedForms.FirstOrDefault(f => f is FrmYearROE);
+            if (frm == null)
+                frm = new FrmYearROE();
+            frm.AddData(data);
+            if (!frm.Visible)
+                frm.Show(this);
+        }
 
         private void addFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
         {
