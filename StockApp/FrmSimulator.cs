@@ -83,6 +83,20 @@ namespace StockApp
             #endregion
         }
 
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            var selectedDate = dateTimePicker1.Value;
+            var dp = this.DayPrices.DayPrices.FirstOrDefault(d => d.Date == selectedDate);
+            if (dp != null)
+                numStartPrice.Value = dp.ClosingPrice;
+        }
+
+        private void numStartVolume_Enter(object sender, EventArgs e)
+        {
+            var ctrl = (NumericUpDown)sender;
+            ctrl.Select(0, ctrl.Text.Length);
+        }
+
         private void chart1_MouseMove(object sender, MouseEventArgs e)
         {
             var chart = (Chart)sender;
@@ -143,8 +157,9 @@ namespace StockApp
             var buyVolume = 1000;
 
             var dayPrices = this.DayPrices.DayPrices;
+            var bonusHistories = this.BonusHistories.DayBonusHistories.Where(b => cbxExDividend.Checked);
 
-            var simulator = Simulator.Create(dayPrices);
+            var simulator = Simulator.Create(dayPrices, bonusHistories.ToList());
 
             var startPriceDate = dayPrices.FirstOrDefault(d => d.Date >= startDate);
             if (startPriceDate == null)
@@ -152,7 +167,8 @@ namespace StockApp
                 MessageBox.Show($"找不到 {startDate: yy/MM/dd} 之後的成交記錄");
                 return;
             }
-            simulator.BuyFirst(startDate, startVolume, startPriceDate.OpeningPrice);
+            var startPrice = numStartPrice.Value;
+            simulator.BuyFirst(startDate, startVolume, startPrice);
 
             while (simulator.MoveNext())
             {
@@ -166,13 +182,18 @@ namespace StockApp
             var diffTotalPrice = diffPrice * simulator.TotalVolume;
             var diffRate = diffTotalPrice / simulator.TotalValue;
             var seriesName = $"{downRate:P0} / {simulator.AvgPrice:0.##} / {diffRate:P2}";
-            LoadSimulateResult(seriesName, simulateResults);
+            if (!LoadSimulateResult(seriesName, simulateResults))
+                MessageBox.Show($"{seriesName} 重複");
         }
 
-        private void LoadSimulateResult(string seriesName, IEnumerable<SimulateDayPrice> simulateResults)
+        private bool LoadSimulateResult(string seriesName, IEnumerable<SimulateDayPrice> simulateResults)
         {
             var chart = chart1;
             var area = chart.ChartAreas.First();
+
+            if (chart.Series.Any(s => s.Name == seriesName))
+                return false;
+
             var series = new Series(seriesName);
             chart.Series.Add(series);
 
@@ -184,13 +205,18 @@ namespace StockApp
 
             series.Points.DataBind(simulateResults,
                 nameof(SimulateDayPrice.Date), nameof(SimulateDayPrice.Price), null);
+            return true;
         }
 
         private class Simulator
         {
             private List<SimulateDayPrice> Source;
+
+            public List<DayBonus> BonusHistories { get; }
+
             private int ItemIndex;
             private readonly int ItemCount;
+            private static int PricePerVolume = 10;
 
             public SimulateDayPrice Current => this.Source[this.ItemIndex];
 
@@ -206,18 +232,19 @@ namespace StockApp
                 }
             }
 
-            public Simulator(IEnumerable<DayPrice> dayPrices)
+            public Simulator(IEnumerable<DayPrice> dayPrices, List<DayBonus> dayBonusHistories)
             {
                 this.Source = dayPrices
                     .Select(d => new SimulateDayPrice(d))
                     .ToList();
+                this.BonusHistories = dayBonusHistories;
                 this.ItemIndex = -1;
                 this.ItemCount = this.Source.Count;
             }
 
-            internal static Simulator Create(IEnumerable<DayPrice> dayPrices)
+            internal static Simulator Create(IEnumerable<DayPrice> dayPrices, List<DayBonus> dayBonusHistories)
             {
-                var simulator = new Simulator(dayPrices);
+                var simulator = new Simulator(dayPrices, dayBonusHistories);
                 return simulator;
             }
 
@@ -240,13 +267,45 @@ namespace StockApp
                 this.TotalValue = startVolume * price;
             }
 
+            private void ExDividend()
+            {
+                var date = this.Current.Date;
+                var list = this.BonusHistories
+                    .Where(b => b.ExDate == date);
+
+                foreach (var bonus in list)
+                {
+                    var buys = this.Source.Where(s => s.Date < date);
+                    switch (bonus.ExType)
+                    {
+                        case ExDividendType.Money:
+                            //降低成本
+                            var exBonus = bonus.ExBonus * buys.Sum(b => b.Volume ?? 0);
+                            this.TotalValue -= exBonus;
+                            Console.WriteLine($"{date}, bonus: {exBonus:#,##0}, result: {TotalValue:#,##0}");
+                            break;
+                        case ExDividendType.Volume:
+                            var exVolume = (int)(bonus.ExBonus / PricePerVolume * buys.Sum(b => b.Volume ?? 0));
+                            this.TotalVolume += exVolume;
+                            Console.WriteLine($"{date}, volume: {exVolume:#,##0}, result: {TotalVolume:#,##0}");
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
             internal bool MoveNext()
             {
-                if (this.ItemIndex < this.ItemCount - 1)
+                this.ItemIndex++;
+
+                if (this.ItemIndex < this.ItemCount)
                 {
-                    this.ItemIndex++;
+                    //當日不計除息
+                    this.ExDividend();
                     return true;
                 }
+
                 return false;
             }
 

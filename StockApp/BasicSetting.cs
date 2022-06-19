@@ -17,11 +17,13 @@ namespace StockApp
         });
         public decimal PriceLimit { get; private set; }
         public int ContBonusTimesLimit { get; private set; }
+        public int SimulateMaxMonths { get; internal set; }
 
         public void Load()
         {
             this.PriceLimit = Properties.Settings.Default.PriceLimit;
             this.ContBonusTimesLimit = Properties.Settings.Default.ContBonusTimesLimit;
+            this.SimulateMaxMonths = Properties.Settings.Default.SimulateMaxMonth;
         }
     }
 }

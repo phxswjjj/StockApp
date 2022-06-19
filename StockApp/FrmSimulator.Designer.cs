@@ -29,9 +29,9 @@ namespace StockApp
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
@@ -40,9 +40,13 @@ namespace StockApp
             this.label3 = new System.Windows.Forms.Label();
             this.numDownRate = new System.Windows.Forms.NumericUpDown();
             this.btnExecute = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.numStartPrice = new System.Windows.Forms.NumericUpDown();
+            this.cbxExDividend = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStartVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDownRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numStartPrice)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
@@ -50,21 +54,22 @@ namespace StockApp
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(12, 98);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Candlestick;
-            series2.Legend = "Legend1";
-            series2.Name = "StockSeries";
-            series2.YValuesPerPoint = 4;
-            this.chart1.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Candlestick;
+            series1.Legend = "Legend1";
+            series1.Name = "StockSeries";
+            series1.YValuesPerPoint = 4;
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(776, 340);
             this.chart1.TabIndex = 0;
+            this.chart1.TabStop = false;
             this.chart1.Text = "chart1";
             this.chart1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chart1_MouseMove);
             // 
@@ -82,7 +87,8 @@ namespace StockApp
             this.dateTimePicker1.Location = new System.Drawing.Point(78, 9);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(200, 22);
-            this.dateTimePicker1.TabIndex = 2;
+            this.dateTimePicker1.TabIndex = 3;
+            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
             // label2
             // 
@@ -121,6 +127,7 @@ namespace StockApp
             0,
             0,
             0});
+            this.numStartVolume.Enter += new System.EventHandler(this.numStartVolume_Enter);
             // 
             // label3
             // 
@@ -141,7 +148,7 @@ namespace StockApp
             0});
             this.numDownRate.Name = "numDownRate";
             this.numDownRate.Size = new System.Drawing.Size(120, 22);
-            this.numDownRate.TabIndex = 4;
+            this.numDownRate.TabIndex = 7;
             this.numDownRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numDownRate.ThousandsSeparator = true;
             this.numDownRate.Value = new decimal(new int[] {
@@ -149,26 +156,67 @@ namespace StockApp
             0,
             0,
             0});
+            this.numDownRate.Enter += new System.EventHandler(this.numStartVolume_Enter);
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(296, 53);
+            this.btnExecute.Location = new System.Drawing.Point(411, 45);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(81, 39);
-            this.btnExecute.TabIndex = 5;
+            this.btnExecute.TabIndex = 8;
             this.btnExecute.Text = "Execute";
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(263, 44);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(29, 12);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "價格";
+            // 
+            // numStartPrice
+            // 
+            this.numStartPrice.DecimalPlaces = 2;
+            this.numStartPrice.Location = new System.Drawing.Point(298, 42);
+            this.numStartPrice.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numStartPrice.Name = "numStartPrice";
+            this.numStartPrice.Size = new System.Drawing.Size(83, 22);
+            this.numStartPrice.TabIndex = 5;
+            this.numStartPrice.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numStartPrice.ThousandsSeparator = true;
+            this.numStartPrice.Enter += new System.EventHandler(this.numStartVolume_Enter);
+            // 
+            // cbxExDividend
+            // 
+            this.cbxExDividend.AutoSize = true;
+            this.cbxExDividend.Checked = true;
+            this.cbxExDividend.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbxExDividend.Location = new System.Drawing.Point(298, 72);
+            this.cbxExDividend.Name = "cbxExDividend";
+            this.cbxExDividend.Size = new System.Drawing.Size(72, 16);
+            this.cbxExDividend.TabIndex = 9;
+            this.cbxExDividend.Text = "含除權息";
+            this.cbxExDividend.UseVisualStyleBackColor = true;
             // 
             // FrmSimulator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.cbxExDividend);
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.numDownRate);
+            this.Controls.Add(this.numStartPrice);
             this.Controls.Add(this.numStartVolume);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -179,6 +227,7 @@ namespace StockApp
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStartVolume)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDownRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numStartPrice)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,5 +243,8 @@ namespace StockApp
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown numDownRate;
         private System.Windows.Forms.Button btnExecute;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown numStartPrice;
+        private System.Windows.Forms.CheckBox cbxExDividend;
     }
 }

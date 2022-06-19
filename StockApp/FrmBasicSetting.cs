@@ -22,6 +22,7 @@ namespace StockApp
             var setting = BasicSetting.Instance;
             txtPriceLimit.Text = setting.PriceLimit.ToString();
             txtContBonusTimes.Text = setting.ContBonusTimesLimit.ToString();
+            txtSimulateMonths.Text = setting.SimulateMaxMonths.ToString();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -43,6 +44,15 @@ namespace StockApp
                 return;
             }
             Properties.Settings.Default.ContBonusTimesLimit = times;
+
+            int months;
+            if (!int.TryParse(txtSimulateMonths.Text, out months))
+            {
+                MessageBox.Show($"非數值: {txtSimulateMonths.Text}");
+                txtSimulateMonths.Focus();
+                return;
+            }
+            Properties.Settings.Default.SimulateMaxMonth = months;
 
             Properties.Settings.Default.Save();
             BasicSetting.Instance.Load();

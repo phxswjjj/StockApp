@@ -34,6 +34,8 @@ namespace StockApp
             this.btnSave = new System.Windows.Forms.Button();
             this.txtContBonusTimes = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.txtSimulateMonths = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -55,7 +57,7 @@ namespace StockApp
             // btnSave
             // 
             this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSave.Location = new System.Drawing.Point(53, 75);
+            this.btnSave.Location = new System.Drawing.Point(53, 100);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 47);
             this.btnSave.TabIndex = 2;
@@ -79,12 +81,30 @@ namespace StockApp
             this.label2.TabIndex = 3;
             this.label2.Text = "連續股利";
             // 
+            // txtSimulateMonths
+            // 
+            this.txtSimulateMonths.Location = new System.Drawing.Point(71, 68);
+            this.txtSimulateMonths.Name = "txtSimulateMonths";
+            this.txtSimulateMonths.Size = new System.Drawing.Size(100, 22);
+            this.txtSimulateMonths.TabIndex = 6;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 71);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(53, 12);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "模擬月數";
+            // 
             // FrmBasicSetting
             // 
             this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(210, 134);
+            this.ClientSize = new System.Drawing.Size(210, 159);
+            this.Controls.Add(this.txtSimulateMonths);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.txtContBonusTimes);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnSave);
@@ -106,5 +126,7 @@ namespace StockApp
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox txtContBonusTimes;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtSimulateMonths;
+        private System.Windows.Forms.Label label3;
     }
 }
