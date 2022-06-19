@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace StockApp
 {
@@ -23,7 +24,12 @@ namespace StockApp
             this.ROEData = CompanyROE.GetAll();
 
             var data = ROEData.First();
-            var gv = dataGridView1;
+            InitGrid(dataGridView1, data);
+
+            chart1.Series.Clear();
+        }
+        private void InitGrid(DataGridView gv, CompanyROE data)
+        {
             gv.AutoGenerateColumns = false;
             gv.VirtualMode = true;
 
@@ -72,13 +78,30 @@ namespace StockApp
             ViewData.Add(data);
             var fdata = new FormData(data, rdata);
             AddGridData(fdata);
+            AddSeries(fdata);
             return true;
         }
-
         private void AddGridData(FormData fdata)
         {
             var gv = dataGridView1;
             this.DataSource.Add(fdata);
+        }
+        private void AddSeries(FormData fdata)
+        {
+            var chart = chart1;
+            var area = chart.ChartAreas.First();
+            var series = new Series(fdata.ComName);
+            chart.Series.Add(series);
+
+            series.ChartArea = area.Name;
+            series.ChartType = SeriesChartType.Spline;
+            series.BorderWidth = 2;
+            series.IsXValueIndexed = true;
+
+            var headers = ROEData.First().ROEHeaders;
+            var list = headers.Select((h, i) => new { TimeLabel = h, YValue = fdata[i] });
+            series.Points.DataBind(list,
+                "TimeLabel", "YValue", null);
         }
 
         private void dataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
