@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +53,22 @@ namespace StockApp
         public int? HoldStock { get; private set; }
         [DisplayName("成本")]
         public decimal? HoldValue { get; private set; }
+        protected decimal ValueK { get; private set; }
+        protected decimal ValueJ { get; private set; }
+        [DisplayName("K")]
+        public decimal ValueKDJ => this.ValueK;
+        internal Color KDJColor
+        {
+            get
+            {
+                var c = Color.Transparent;
+                if (this.ValueK > this.ValueJ && this.ValueK < 20m && this.ValueJ < 20m)
+                    c = Color.FromArgb(0x2F72EF73);
+                else if (this.ValueK < this.ValueJ && this.ValueK > 80m && this.ValueJ > 80m)
+                    c = Color.FromArgb(0x2FDB7A82);
+                return c;
+            }
+        }
 
         internal void SetExtra(CompanyContBonus b)
         {
@@ -80,6 +97,12 @@ namespace StockApp
             this.AvgBonus = d.AvgBonus;
             this.CurrentPrice = d.CurrentPrice;
             this.AvgYield = d.AvgYield;
+        }
+
+        internal void SetExtra(CompanyKDJ find)
+        {
+            this.ValueK = find.MonthK ?? find.DayK;
+            this.ValueJ = find.MonthJ ?? find.DayJ;
         }
 
         #region Comparer

@@ -135,6 +135,7 @@ namespace StockApp
                 return CompanyAvgBonus.GetAll();
             });
             var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
+            var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
             if (!loading.Start())
                 loading.ShowDialog(this);
         }
@@ -200,6 +201,7 @@ namespace StockApp
                 return CompanyAvgBonus.GetAll();
             });
             var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
+            var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
             if (!loading.Start())
                 loading.ShowDialog(this);
 
@@ -273,6 +275,14 @@ namespace StockApp
             list2.ForEach(l =>
             {
                 var find = memoList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (find != null)
+                    l.SetExtra(find);
+            });
+
+            var kdjList = taskKDJ.Result;
+            list2.ForEach(l =>
+            {
+                var find = kdjList.FirstOrDefault(k => k.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
             });
@@ -368,6 +378,11 @@ namespace StockApp
                         color = Color.FromArgb(0x2FDB7A82);
                     maxYield = 0.1m;
                     curYield = Math.Abs(data.CurrentPrice - data.HoldValue.Value) / data.HoldValue.Value;
+                    break;
+                case nameof(DisplayModel.ValueKDJ):
+                    maxYield = 1m;
+                    curYield = 1m;
+                    color = data.KDJColor;
                     break;
                 default:
                     return;

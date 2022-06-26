@@ -69,6 +69,7 @@
     <Compile Include="CompanyDayPrice.cs" />
     <Compile Include="CompanyDayVolume.cs" />
     <Compile Include="CompanyExDividend.cs" />
+    <Compile Include="CompanyKDJ.cs" />
     <Compile Include="CompanyROE.cs" />
     <Compile Include="CustomGroup.cs" />
     <Compile Include="DisplayModel.cs" />
