@@ -84,7 +84,10 @@ namespace StockApp
                 var data = new CompanyKDJ();
                 data.ComCode = tds[0].Text();
                 data.ComName = tds[1].Text();
-                data.DayK = Parse(tds[7].Text()).Value;
+                var dayK = tds[7].Text();
+                if (string.IsNullOrEmpty(dayK))
+                    continue;
+                data.DayK = Parse(dayK).Value;
                 data.DayD = Parse(tds[8].Text()).Value;
                 data.DayJ = Parse(tds[9].Text()).Value;
                 data.WeekK = Parse(tds[11].Text());
