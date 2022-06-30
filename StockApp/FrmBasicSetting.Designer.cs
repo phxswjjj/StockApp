@@ -36,6 +36,8 @@ namespace StockApp
             this.label2 = new System.Windows.Forms.Label();
             this.txtSimulateMonths = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cbxKDJRange = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -57,7 +59,7 @@ namespace StockApp
             // btnSave
             // 
             this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSave.Location = new System.Drawing.Point(53, 100);
+            this.btnSave.Location = new System.Drawing.Point(53, 138);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 47);
             this.btnSave.TabIndex = 2;
@@ -97,13 +99,33 @@ namespace StockApp
             this.label3.TabIndex = 5;
             this.label3.Text = "模擬月數";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 102);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(49, 12);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "KDJ範圍";
+            // 
+            // cbxKDJRange
+            // 
+            this.cbxKDJRange.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxKDJRange.FormattingEnabled = true;
+            this.cbxKDJRange.Location = new System.Drawing.Point(71, 99);
+            this.cbxKDJRange.Name = "cbxKDJRange";
+            this.cbxKDJRange.Size = new System.Drawing.Size(100, 20);
+            this.cbxKDJRange.TabIndex = 7;
+            // 
             // FrmBasicSetting
             // 
             this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(210, 159);
+            this.ClientSize = new System.Drawing.Size(210, 197);
+            this.Controls.Add(this.cbxKDJRange);
             this.Controls.Add(this.txtSimulateMonths);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtContBonusTimes);
             this.Controls.Add(this.label2);
@@ -128,5 +150,7 @@ namespace StockApp
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtSimulateMonths;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cbxKDJRange;
     }
 }

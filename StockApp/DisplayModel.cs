@@ -101,8 +101,22 @@ namespace StockApp
 
         internal void SetExtra(CompanyKDJ find)
         {
-            this.ValueK = find.MonthK ?? find.DayK;
-            this.ValueJ = find.MonthJ ?? find.DayJ;
+            var range = (KDJRangeType)Properties.Settings.Default.KDJRange;
+            var k = find.MonthK;
+            var j = find.MonthJ;
+            switch (range)
+            {
+                case KDJRangeType.Week:
+                    k = find.WeekK;
+                    j = find.WeekJ;
+                    break;
+                case KDJRangeType.Day:
+                    k = find.DayK;
+                    j = find.DayJ;
+                    break;
+            }
+            this.ValueK = k ?? find.DayK;
+            this.ValueJ = j ?? find.DayJ;
         }
 
         #region Comparer
@@ -125,5 +139,12 @@ namespace StockApp
             }
         }
         #endregion
+
+        public enum KDJRangeType
+        {
+            Day,
+            Week,
+            Month,
+        }
     }
 }

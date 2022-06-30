@@ -15,6 +15,12 @@ namespace StockApp
         public FrmBasicSetting()
         {
             InitializeComponent();
+
+            cbxKDJRange.Items.Clear();
+            foreach(DisplayModel.KDJRangeType range in Enum.GetValues(typeof(DisplayModel.KDJRangeType)))
+            {
+                cbxKDJRange.Items.Add(range);
+            }
         }
 
         private void FrmBasicSetting_Load(object sender, EventArgs e)
@@ -23,6 +29,8 @@ namespace StockApp
             txtPriceLimit.Text = setting.PriceLimit.ToString();
             txtContBonusTimes.Text = setting.ContBonusTimesLimit.ToString();
             txtSimulateMonths.Text = setting.SimulateMaxMonths.ToString();
+
+            cbxKDJRange.SelectedIndex = (int)setting.KDJRange;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -53,6 +61,7 @@ namespace StockApp
                 return;
             }
             Properties.Settings.Default.SimulateMaxMonth = months;
+            Properties.Settings.Default.KDJRange = cbxKDJRange.SelectedIndex;
 
             Properties.Settings.Default.Save();
             BasicSetting.Instance.Load();

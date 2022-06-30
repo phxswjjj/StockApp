@@ -58,5 +58,17 @@ namespace StockApp.Properties {
                 this["SimulateMaxMonth"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int KDJRange {
+            get {
+                return ((int)(this["KDJRange"]));
+            }
+            set {
+                this["KDJRange"] = value;
+            }
+        }
     }
 }
