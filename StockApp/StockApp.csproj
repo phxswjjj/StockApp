@@ -122,6 +122,7 @@
     <Compile Include="CompanyAvgBonus.cs" />
     <Compile Include="Utility\TWSEDate.cs" />
     <Compile Include="WebRequest.cs" />
+    <Compile Include="Web\GoodInfoClient.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

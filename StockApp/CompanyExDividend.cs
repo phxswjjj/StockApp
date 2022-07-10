@@ -32,7 +32,7 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
-            var request = WebRequest.Create();
+            var request = WebRequest.CreateGoodInfo();
             var resp = request.GetAsync(QueryBaseUrl).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);

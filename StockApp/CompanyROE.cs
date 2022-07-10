@@ -51,7 +51,7 @@ namespace StockApp
 
         private static List<CompanyROE> GetByRank(int rank)
         {
-            var request = WebRequest.Create();
+            var request = WebRequest.CreateGoodInfo();
             request.DefaultRequestHeaders.Add("Referer", RefererUrl);
             var resp = request.PostAsync(QueryBaseUrl + rank, null).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
@@ -110,7 +110,7 @@ namespace StockApp
 
         private static int GetTotalRank()
         {
-            var request = WebRequest.Create();
+            var request = WebRequest.CreateGoodInfo();
             request.DefaultRequestHeaders.Add("Referer", RefererUrl);
             var resp = request.PostAsync(QueryBaseUrl + "0", null).Result;
             var content = resp.Content.ReadAsByteArrayAsync().Result;
