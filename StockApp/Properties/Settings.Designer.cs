@@ -70,5 +70,17 @@ namespace StockApp.Properties {
                 this["KDJRange"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("LOGIN=")]
+        public string GoodInfoLogin {
+            get {
+                return ((string)(this["GoodInfoLogin"]));
+            }
+            set {
+                this["GoodInfoLogin"] = value;
+            }
+        }
     }
 }

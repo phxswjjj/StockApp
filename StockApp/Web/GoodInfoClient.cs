@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -10,14 +11,17 @@ namespace StockApp.Web
 {
     class GoodInfoClient : HttpClient
     {
+        static readonly Uri BaseAddress = new Uri("https://goodinfo.tw");
         static readonly object LockObject = new object();
         static DateTime NextFireTime = DateTime.MinValue;
         //每次請求安全的間隔時間(ms)
-        const int WaitMS = 15000;
+        const int WaitMS = 20000;
 
         static Lazy<HttpClientHandler> Handler = new Lazy<HttpClientHandler>(() =>
         {
-            return new HttpClientHandler();
+            var handler = new HttpClientHandler();
+            handler.CookieContainer.SetCookies(BaseAddress, Properties.Settings.Default.GoodInfoLogin);
+            return handler;
         });
 
         public GoodInfoClient() : base(Handler.Value)

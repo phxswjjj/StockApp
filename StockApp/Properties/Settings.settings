@@ -14,5 +14,8 @@
     <Setting Name="KDJRange" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
+    <Setting Name="GoodInfoLogin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">LOGIN=</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
