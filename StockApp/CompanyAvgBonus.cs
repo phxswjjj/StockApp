@@ -14,7 +14,7 @@ namespace StockApp
     class CompanyAvgBonus
     {
         const string RefererUrl = "https://goodinfo.tw/tw/StockList.asp?RPT_TIME=&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9+%28%E8%BF%913%E5%B9%B4%E7%9B%B4%E6%8E%A5%E5%B9%B3%E5%9D%87%29%40%40%E5%B9%B3%E5%9D%87%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9%40%40%E8%BF%913%E5%B9%B4%E7%9B%B4%E6%8E%A5%E5%B9%B3%E5%9D%87";
-        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E8%82%A1%E5%88%A9%E6%94%BF%E7%AD%96%E7%99%BC%E6%94%BE%E5%B9%B4%E5%BA%A6%5F%E6%AD%B7%E5%B9%B4%E5%8A%A0%E6%AC%8A%E5%B9%B3%E5%9D%87&SHEET2=%E8%BF%915%E5%B9%B4%E5%B9%B3%E5%9D%87&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9+%28%E6%9C%80%E6%96%B0%E5%B9%B4%E5%BA%A6%29%40%40%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9%40%40%E6%9C%80%E6%96%B0%E5%B9%B4%E5%BA%A6&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=";
+        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E8%82%A1%E5%88%A9%E6%94%BF%E7%AD%96%E7%99%BC%E6%94%BE%E5%B9%B4%E5%BA%A6%5F%E6%AD%B7%E5%B9%B4%E7%9B%B4%E6%8E%A5%E5%B9%B3%E5%9D%87&SHEET2=%E8%BF%915%E5%B9%B4%E5%B9%B3%E5%9D%87&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9+%28%E8%BF%913%E5%B9%B4%E7%9B%B4%E6%8E%A5%E5%B9%B3%E5%9D%87%29%40%40%E5%B9%B3%E5%9D%87%E5%90%88%E8%A8%88%E8%82%A1%E5%88%A9%40%40%E8%BF%913%E5%B9%B4%E7%9B%B4%E6%8E%A5%E5%B9%B3%E5%9D%87&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=99999";
 
         [JsonProperty]
         public string ComCode { get; private set; }
@@ -42,41 +42,9 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
-            var totalRank = GetTotalRank();
-            var result = new List<CompanyAvgBonus>();
-
-            var bags = new ConcurrentBag<List<CompanyAvgBonus>>();
-            var r = Parallel.ForEach(Enumerable.Range(0, totalRank), rank =>
-            {
-                var subResult = GetByRank(rank);
-                bags.Add(subResult);
-            });
-
-            foreach (var res in bags)
-                result.AddRange(res);
-
-            JsonCache.Store(jsonFilePath, result);
-            return result;
-        }
-        private static int GetTotalRank()
-        {
             var request = WebRequest.CreateGoodInfo();
             request.DefaultRequestHeaders.Add("Referer", RefererUrl);
-            var resp = request.PostAsync(QueryBaseUrl + "0", null).Result;
-            var content = resp.Content.ReadAsByteArrayAsync().Result;
-            var data = Encoding.UTF8.GetString(content, 0, content.Length);
-
-            IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
-                .OpenAsync(req => req.Content(data)).Result;
-            var rankOptions = doc.QuerySelectorAll("#selRANK>option")
-                .Where(op => op.NodeValue != "99999");
-            return rankOptions.Count();
-        }
-        private static List<CompanyAvgBonus> GetByRank(int rank)
-        {
-            var request = WebRequest.CreateGoodInfo();
-            request.DefaultRequestHeaders.Add("Referer", RefererUrl);
-            var resp = request.PostAsync(QueryBaseUrl + rank, null).Result;
+            var resp = request.PostAsync(QueryBaseUrl, null).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
 
@@ -109,6 +77,8 @@ namespace StockApp
 
                 result.Add(data);
             }
+
+            JsonCache.Store(jsonFilePath, result);
             return result;
         }
     }

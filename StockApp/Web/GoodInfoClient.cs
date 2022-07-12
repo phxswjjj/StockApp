@@ -11,7 +11,6 @@ namespace StockApp.Web
 {
     class GoodInfoClient : HttpClient
     {
-        static readonly Uri BaseAddress = new Uri("https://goodinfo.tw");
         static readonly object LockObject = new object();
         static DateTime NextFireTime = DateTime.MinValue;
         //每次請求安全的間隔時間(ms)
@@ -19,8 +18,9 @@ namespace StockApp.Web
 
         static Lazy<HttpClientHandler> Handler = new Lazy<HttpClientHandler>(() =>
         {
+            var uri = new Uri("https://goodinfo.tw");
             var handler = new HttpClientHandler();
-            handler.CookieContainer.SetCookies(BaseAddress, Properties.Settings.Default.GoodInfoLogin);
+            handler.CookieContainer.SetCookies(uri, Properties.Settings.Default.GoodInfoLogin);
             return handler;
         });
 
