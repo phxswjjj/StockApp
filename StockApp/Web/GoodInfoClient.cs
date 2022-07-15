@@ -39,7 +39,8 @@ namespace StockApp.Web
                         Thread.Sleep(waitMsDiff);
 
                     var result = base.SendAsync(request, cancellationToken).Result;
-                    NextFireTime = DateTime.Now.AddMilliseconds(WaitMS);
+                    var wait = new Random().Next(WaitMS / 2, WaitMS);
+                    NextFireTime = DateTime.Now.AddMilliseconds(wait);
 
                     return result;
                 }
