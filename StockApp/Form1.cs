@@ -89,6 +89,10 @@ namespace StockApp
             {
                 return new ETF.ETF0056().GetAll();
             });
+            var task00900 = loading.AddTask("00900", () =>
+            {
+                return new ETF.ETF00900().GetAll();
+            });
             if (!loading.Start())
                 loading.ShowDialog(this);
 
@@ -101,6 +105,10 @@ namespace StockApp
             var group0056 = task0056.Result;
             groups.RemoveAll(g => g.Name == group0056.Name);
             groups.Add(group0056);
+
+            var group00900 = task00900.Result;
+            groups.RemoveAll(g => g.Name == group00900.Name);
+            groups.Add(group00900);
 
             this.CustomGroups = groups;
 
