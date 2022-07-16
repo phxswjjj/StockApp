@@ -81,10 +81,27 @@ namespace StockApp
                 else
                     return new List<string>();
             });
+            var task0050 = loading.AddTask("0050", () =>
+            {
+                return new ETF.ETF0050().GetAll();
+            });
+            var task0056 = loading.AddTask("0056", () =>
+            {
+                return new ETF.ETF0056().GetAll();
+            });
             if (!loading.Start())
                 loading.ShowDialog(this);
 
             var groups = taskGroups.Result;
+
+            var group0050 = task0050.Result;
+            groups.RemoveAll(g => g.Name == group0050.Name);
+            groups.Add(group0050);
+
+            var group0056 = task0056.Result;
+            groups.RemoveAll(g => g.Name == group0056.Name);
+            groups.Add(group0056);
+
             this.CustomGroups = groups;
 
             foreach (var group in groups)

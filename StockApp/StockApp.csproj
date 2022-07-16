@@ -73,6 +73,9 @@
     <Compile Include="CompanyROE.cs" />
     <Compile Include="CustomGroup.cs" />
     <Compile Include="DisplayModel.cs" />
+    <Compile Include="ETF\ETF0050.cs" />
+    <Compile Include="ETF\ETF0056.cs" />
+    <Compile Include="ETF\ETFBase.cs" />
     <Compile Include="FrmLoading.cs">
       <SubType>Form</SubType>
     </Compile>

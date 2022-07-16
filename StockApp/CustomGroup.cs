@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +12,9 @@ namespace StockApp
     class CustomGroup
     {
         [JsonProperty]
-        public string Name { get; private set; }
+        public string Name { get; set; }
         [JsonProperty]
-        public List<string> ComCodes { get; private set; } = new List<string>();
+        public List<string> ComCodes { get; set; } = new List<string>();
 
         public static CustomGroup Create(string name)
         {
