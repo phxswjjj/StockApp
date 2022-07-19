@@ -47,6 +47,7 @@ namespace StockApp
             var resp = request.PostAsync(QueryBaseUrl, null).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            resp.EnsureSuccessStatusCode();
 
             IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
                 .OpenAsync(req => req.Content(content)).Result;
@@ -78,7 +79,8 @@ namespace StockApp
                 result.Add(data);
             }
 
-            JsonCache.Store(jsonFilePath, result);
+            if (result.Count > 300)
+                JsonCache.Store(jsonFilePath, result);
             return result;
         }
     }

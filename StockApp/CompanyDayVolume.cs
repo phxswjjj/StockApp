@@ -13,9 +13,6 @@ namespace StockApp
 {
     class CompanyDayVolume
     {
-        const string RefererUrl = "https://goodinfo.tw/tw/StockList.asp?MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E6%88%90%E4%BA%A4%E5%BC%B5%E6%95%B8+%28%E9%AB%98%E2%86%92%E4%BD%8E%29%40%40%E6%88%90%E4%BA%A4%E5%BC%B5%E6%95%B8%40%40%E7%94%B1%E9%AB%98%E2%86%92%E4%BD%8E";
-        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E4%BA%A4%E6%98%93%E7%8B%80%E6%B3%81&SHEET2=%E6%97%A5&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E6%88%90%E4%BA%A4%E5%BC%B5%E6%95%B8+%28%E9%AB%98%E2%86%92%E4%BD%8E%29%40%40%E6%88%90%E4%BA%A4%E5%BC%B5%E6%95%B8%40%40%E7%94%B1%E9%AB%98%E2%86%92%E4%BD%8E&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=99999";
-
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
@@ -36,38 +33,69 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
-            var request = WebRequest.CreateGoodInfo();
-            request.DefaultRequestHeaders.Add("Referer", RefererUrl);
-            var resp = request.PostAsync(QueryBaseUrl, null).Result;
-            var bytes = resp.Content.ReadAsByteArrayAsync().Result;
-            var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            var request = WebRequest.Create();
+            var requestEx = WebRequest.Create();
+            var resp = request.GetAsync("https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date=20220719&type=ALL&_=1658241396683");
+            var respEx = requestEx.GetAsync("https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d=111/07/19&se=AL&_=1658242781730");
+            var content = resp.Result.Content.ReadAsStringAsync();
+            var contentEx = respEx.Result.Content.ReadAsStringAsync();
 
-            IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
-                .OpenAsync(req => req.Content(content)).Result;
-
-            var trs = doc.QuerySelectorAll("#tblStockList>tbody>tr")
-                .Where(tr => !string.IsNullOrEmpty(tr.Id) && tr.Id.StartsWith("row"));
+            var model = JsonConvert.DeserializeObject<TWSEDataModel>(content.Result);
 
             var result = new List<CompanyDayVolume>();
-            foreach (var tr in trs)
+            foreach (var modelData in model.data9)
             {
-                var tds = tr.QuerySelectorAll("td");
                 var data = new CompanyDayVolume();
-                data.ComCode = tds[1].Text();
-                data.ComName = tds[2].Text();
-                data.ComType = tds[3].Text();
+                data.ComCode = modelData[0];
+                data.ComName = modelData[1];
+                data.ComType = "市";
 
-                var sPrice = tds[6].Text();
+                var sPrice = modelData[8]
+                    .Replace("-", "");
+                if (string.IsNullOrEmpty(sPrice))
+                    continue;
                 data.CurrentPrice = decimal.Parse(sPrice);
-                var sDayVolume = tds[9].Text()
+                var sDayVolume = modelData[2]
                     .Replace(",", "");
-                data.DayVolume = int.Parse(sDayVolume);
+                //換算張數
+                data.DayVolume = int.Parse(sDayVolume) / 1000;
 
                 result.Add(data);
             }
 
-            JsonCache.Store(jsonFilePath, result);
+            var modelEx = JsonConvert.DeserializeObject<TPEXDataModel>(contentEx.Result);
+            foreach (var modelData in modelEx.aaData)
+            {
+                var data = new CompanyDayVolume();
+                data.ComCode = modelData[0];
+                data.ComName = modelData[1];
+                data.ComType = "櫃";
+
+                var sPrice = modelData[2]
+                    .Replace("-", "");
+                if (string.IsNullOrEmpty(sPrice))
+                    continue;
+                data.CurrentPrice = decimal.Parse(sPrice);
+                var sDayVolume = modelData[7]
+                    .Replace(",", "");
+                //換算張數
+                data.DayVolume = int.Parse(sDayVolume) / 1000;
+
+                result.Add(data);
+            }
+
+            if (result.Count > 300)
+                JsonCache.Store(jsonFilePath, result);
             return result;
+        }
+
+        private class TWSEDataModel
+        {
+            public List<List<string>> data9;
+        }
+        private class TPEXDataModel
+        {
+            public List<List<string>> aaData;
         }
     }
 }

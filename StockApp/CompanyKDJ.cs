@@ -61,7 +61,8 @@ namespace StockApp
             foreach (var res in bags)
                 result.AddRange(res);
 
-            JsonCache.Store(jsonFilePath, result);
+            if (result.Count > 300)
+                JsonCache.Store(jsonFilePath, result);
             return result;
         }
         private static List<CompanyKDJ> GetAllByUrl(string url)
@@ -70,6 +71,7 @@ namespace StockApp
             var resp = request.GetAsync(url).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            resp.EnsureSuccessStatusCode();
 
             IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
                 .OpenAsync(req => req.Content(content)).Result;
