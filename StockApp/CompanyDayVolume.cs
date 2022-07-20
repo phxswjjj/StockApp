@@ -35,8 +35,9 @@ namespace StockApp
 
             var request = WebRequest.Create();
             var requestEx = WebRequest.Create();
-            var resp = request.GetAsync("https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date=20220719&type=ALL&_=1658241396683");
-            var respEx = requestEx.GetAsync("https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d=111/07/19&se=AL&_=1658242781730");
+            var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date={offseted:yyyyMMdd}&type=ALL&_=1658241396683");
+            var twYear = offseted.Year - 1911;
+            var respEx = requestEx.GetAsync($"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={twYear}/{offseted:MM/dd}&se=AL&_=1658242781730");
             var content = resp.Result.Content.ReadAsStringAsync();
             var contentEx = respEx.Result.Content.ReadAsStringAsync();
 

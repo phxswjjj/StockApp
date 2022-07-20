@@ -26,14 +26,11 @@ namespace StockApp
         public string ComName { get; private set; }
         [DisplayName("成交")]
         public decimal CurrentPrice { get; set; }
-        [DisplayName("平均股利")]
+        [DisplayName("股利")]
         public decimal AvgBonus { get; set; }
-
-        [DisplayName("殖利率(%)")]
-        public decimal CurrentYield => Math.Round(this.AvgBonus / this.CurrentPrice * 100, 1);
         [DisplayName("連續次數")]
         public int ContBonusTimes { get; private set; }
-        [DisplayName("平均殖利率")]
+        [DisplayName("殖利率(%)")]
 
         public decimal AvgYield { get; private set; }
         [DisplayName("期望(5%)")]
@@ -95,7 +92,6 @@ namespace StockApp
         internal void SetExtra(CompanyAvgBonus d)
         {
             this.AvgBonus = d.AvgBonus;
-            this.CurrentPrice = d.CurrentPrice;
             this.AvgYield = d.AvgYield;
         }
 
