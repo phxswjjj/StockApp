@@ -88,7 +88,8 @@ namespace StockApp
                 results.Add(data);
             }
 
-            JsonCache.Store(jsonFilePath, results);
+            if (results.Count > 300)
+                JsonCache.Store(jsonFilePath, results);
             return results;
         }
     }

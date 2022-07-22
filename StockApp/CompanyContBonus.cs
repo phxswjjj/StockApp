@@ -14,7 +14,7 @@ namespace StockApp
     class CompanyContBonus
     {
         const string RefererUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E8%82%A1%E5%88%A9%E6%94%BF%E7%AD%96%E7%99%BC%E6%94%BE%E5%B9%B4%E5%BA%A6&SHEET2=%E9%80%A3%E7%BA%8C%E9%85%8D%E7%99%BC%E8%82%A1%E5%88%A9%E7%B5%B1%E8%A8%88&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E7%9B%88%E9%A4%98%E7%B8%BD%E5%88%86%E9%85%8D%E7%8E%87&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99";
-        const string QueryBaseUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E8%82%A1%E5%88%A9%E6%94%BF%E7%AD%96%E7%99%BC%E6%94%BE%E5%B9%B4%E5%BA%A6&SHEET2=%E9%80%A3%E7%BA%8C%E9%85%8D%E7%99%BC%E8%82%A1%E5%88%A9%E7%B5%B1%E8%A8%88&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E7%9B%88%E9%A4%98%E7%B8%BD%E5%88%86%E9%85%8D%E7%8E%87&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=99999";
+        const string QueryBaseUrl = "https://goodinfo.tw/tw2/StockList.asp?SEARCH_WORD=&SHEET=%E8%82%A1%E5%88%A9%E6%94%BF%E7%AD%96%E7%99%BC%E6%94%BE%E5%B9%B4%E5%BA%A6&SHEET2=%E9%80%A3%E7%BA%8C%E9%85%8D%E7%99%BC%E8%82%A1%E5%88%A9%E7%B5%B1%E8%A8%88&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E7%9B%88%E9%A4%98%E7%B8%BD%E5%88%86%E9%85%8D%E7%8E%87&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=99999";
 
         [JsonProperty]
         public string ComCode { get; private set; }
@@ -85,7 +85,8 @@ namespace StockApp
                 result.Add(data);
             }
 
-            JsonCache.Store(jsonFilePath, result);
+            if (result.Count > 300)
+                JsonCache.Store(jsonFilePath, result);
             return result;
         }
     }

@@ -26,13 +26,13 @@ namespace StockApp
         public string ComName { get; private set; }
         [DisplayName("成交")]
         public decimal CurrentPrice { get; set; }
-        [DisplayName("股利")]
-        public decimal AvgBonus { get; set; }
-        [DisplayName("連續次數")]
-        public int ContBonusTimes { get; private set; }
         [DisplayName("殖利率(%)")]
 
         public decimal AvgYield { get; private set; }
+        [DisplayName("連續次數")]
+        public int ContBonusTimes { get; private set; }
+        [DisplayName("平均股利")]
+        public decimal AvgBonus { get; set; }
         [DisplayName("期望(5%)")]
 
         public decimal Expect5 => Math.Floor(this.AvgBonus / 0.05m * 100) / 100;
@@ -70,6 +70,7 @@ namespace StockApp
         internal void SetExtra(CompanyContBonus b)
         {
             this.ContBonusTimes = b.ContBonusTimes;
+            this.AvgBonus = b.AvgBonus;
         }
         internal void SetExtra(CompanyExDividend find)
         {
@@ -91,7 +92,7 @@ namespace StockApp
 
         internal void SetExtra(CompanyAvgBonus d)
         {
-            this.AvgBonus = d.AvgBonus;
+            //this.AvgBonus = d.AvgBonus;
             this.AvgYield = d.AvgYield;
         }
 
