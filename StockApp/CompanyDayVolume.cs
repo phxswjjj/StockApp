@@ -33,6 +33,8 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
+            var jsonLastFilePath = Path.Combine("CompanyDayVolume", $"last.json");
+
             var request = WebRequest.Create();
             var requestEx = WebRequest.Create();
             var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date={offseted:yyyyMMdd}&type=ALL&_=1658241396683");
@@ -42,6 +44,12 @@ namespace StockApp
             var contentEx = respEx.Result.Content.ReadAsStringAsync();
 
             var model = JsonConvert.DeserializeObject<TWSEDataModel>(content.Result);
+            if (model.data9 == null)
+            {
+                var cashesLast = JsonCache.Load<List<CompanyDayVolume>>(jsonLastFilePath);
+                if (cashesLast != null)
+                    return cashesLast;
+            }
 
             var result = new List<CompanyDayVolume>();
             foreach (var modelData in model.data9)
@@ -86,7 +94,10 @@ namespace StockApp
             }
 
             if (result.Count > 300)
+            {
                 JsonCache.Store(jsonFilePath, result);
+                JsonCache.Store(jsonLastFilePath, result);
+            }
             return result;
         }
 

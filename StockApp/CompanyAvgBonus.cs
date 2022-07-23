@@ -36,6 +36,8 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
+            var jsonLastFilePath = Path.Combine("CompanyAvgBonus", $"last.json");
+
             var request = WebRequest.Create();
             var requestEx = WebRequest.Create();
             var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date={offseted:yyyyMMdd}&selectType=ALL&_=1658329489142");
@@ -44,6 +46,12 @@ namespace StockApp
             var contentEx = respEx.Result.Content.ReadAsStringAsync();
 
             var model = JsonConvert.DeserializeObject<TWSEDataModel>(content.Result);
+            if (model.data == null)
+            {
+                var cashesLast = JsonCache.Load<List<CompanyAvgBonus>>(jsonLastFilePath);
+                if (cashesLast != null)
+                    return cashesLast;
+            }
 
             var result = new List<CompanyAvgBonus>();
             foreach (var modelData in model.data)
@@ -81,7 +89,10 @@ namespace StockApp
             }
 
             if (result.Count > 300)
+            {
                 JsonCache.Store(jsonFilePath, result);
+                JsonCache.Store(jsonLastFilePath, result);
+            }
             return result;
         }
 
