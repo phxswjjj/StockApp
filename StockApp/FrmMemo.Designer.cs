@@ -31,9 +31,9 @@ namespace StockApp
         {
             this.btnSave = new System.Windows.Forms.Button();
             this.txtHoldStock = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblHoldStock = new System.Windows.Forms.Label();
             this.txtHoldValue = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblHoldValue = new System.Windows.Forms.Label();
             this.btnClear = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -56,14 +56,14 @@ namespace StockApp
             this.txtHoldStock.TabIndex = 1;
             this.txtHoldStock.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // label1
+            // lblHoldStock
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 12);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "庫存(張)";
+            this.lblHoldStock.AutoSize = true;
+            this.lblHoldStock.Location = new System.Drawing.Point(16, 15);
+            this.lblHoldStock.Name = "lblHoldStock";
+            this.lblHoldStock.Size = new System.Drawing.Size(49, 12);
+            this.lblHoldStock.TabIndex = 3;
+            this.lblHoldStock.Text = "庫存(張)";
             // 
             // txtHoldValue
             // 
@@ -73,14 +73,14 @@ namespace StockApp
             this.txtHoldValue.TabIndex = 2;
             this.txtHoldValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // label2
+            // lblHoldValue
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(36, 43);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 12);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "成本";
+            this.lblHoldValue.AutoSize = true;
+            this.lblHoldValue.Location = new System.Drawing.Point(36, 43);
+            this.lblHoldValue.Name = "lblHoldValue";
+            this.lblHoldValue.Size = new System.Drawing.Size(29, 12);
+            this.lblHoldValue.TabIndex = 6;
+            this.lblHoldValue.Text = "成本";
             // 
             // btnClear
             // 
@@ -100,11 +100,11 @@ namespace StockApp
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(198, 126);
             this.Controls.Add(this.txtHoldValue);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lblHoldValue);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.txtHoldStock);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblHoldStock);
             this.MaximizeBox = false;
             this.Name = "FrmMemo";
             this.Text = "FrmMemo";
@@ -117,9 +117,9 @@ namespace StockApp
 
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox txtHoldStock;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblHoldStock;
         private System.Windows.Forms.TextBox txtHoldValue;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblHoldValue;
         private System.Windows.Forms.Button btnClear;
     }
 }

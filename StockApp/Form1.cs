@@ -202,7 +202,7 @@ namespace StockApp
         }
 
         private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null,
-            string likeComName = null)
+            string likeComName = null, Action<List<DisplayModel>> beforeBindingHandler = null)
         {
             var groups = this.CustomGroups;
             List<string> favoriteComCodes = this.FavoriteComCodes;
@@ -313,6 +313,9 @@ namespace StockApp
             });
 
             list2.Sort(comparer);
+
+            if (beforeBindingHandler != null)
+                beforeBindingHandler(list2);
 
             var binding = new BindingList<DisplayModel>(list2);
             dataGridView1.DataSource = binding;

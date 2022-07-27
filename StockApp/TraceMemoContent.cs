@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 
 namespace StockApp
 {
-    class MemoContent : IMemoContent
+    class TraceMemoContent : IMemoContent
     {
-        const string FilePath = "MemoContent.json";
+        const string FilePath = "TraceMemoContent.json";
 
         [JsonConstructor]
-        private MemoContent() { }
-        public MemoContent(DisplayModel data)
+        private TraceMemoContent() { }
+        public TraceMemoContent(DisplayModel data)
         {
             this.ComCode = data.ComCode;
             this.ComName = data.ComName;
-            this.HoldStock = data.HoldStock;
-            this.HoldValue = data.HoldValue;
+            this.TraceValue = data.HoldValue;
         }
 
         [JsonProperty]
@@ -27,17 +26,15 @@ namespace StockApp
         [JsonProperty]
         public string ComName { get; private set; }
         [JsonProperty]
-        public int? HoldStock { get; set; }
-        [JsonProperty]
-        public decimal? HoldValue { get; set; }
-        public int? Stock { get => this.HoldStock; set => this.HoldStock = value; }
-        public decimal? Value { get => this.HoldValue; set => this.HoldValue = value; }
+        public decimal? TraceValue { get; set; }
+        public int? Stock { get => null; set => throw new NotImplementedException(); }
+        public decimal? Value { get => this.TraceValue; set => this.TraceValue = value; }
 
-        public static List<MemoContent> Load()
+        public static List<TraceMemoContent> Load()
         {
-            var result = new List<MemoContent>();
+            var result = new List<TraceMemoContent>();
             if (File.Exists(FilePath))
-                result = JsonCache.Load<List<MemoContent>>(FilePath);
+                result = JsonCache.Load<List<TraceMemoContent>>(FilePath);
             return result;
         }
 
@@ -62,14 +59,5 @@ namespace StockApp
                 JsonCache.Store(FilePath, list);
             }
         }
-    }
-
-    interface IMemoContent
-    {
-        int? Stock { get; set; }
-        decimal? Value { get; set; }
-
-        void Update();
-        void Remove();
     }
 }

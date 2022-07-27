@@ -89,6 +89,11 @@ namespace StockApp
             this.HoldStock = data.HoldStock;
             this.HoldValue = data.HoldValue;
         }
+        internal void SetExtra(IMemoContent data)
+        {
+            this.HoldStock = data.Stock;
+            this.HoldValue = data.Value;
+        }
 
         internal void SetExtra(CompanyAvgBonus d)
         {

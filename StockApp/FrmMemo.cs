@@ -13,6 +13,7 @@ namespace StockApp
     public partial class FrmMemo : Form
     {
         internal DisplayModel RefData { get; }
+        private MemoType DataType { get; set; } = MemoType.Memo;
 
         private FrmMemo()
         {
@@ -35,9 +36,23 @@ namespace StockApp
                 txtHoldValue.Text = data.HoldValue.Value.ToString();
         }
 
+        public void ShowOnlyValue()
+        {
+            DataType = MemoType.Trace;
+            lblHoldStock.Visible = false;
+            txtHoldStock.Visible = false;
+
+            lblHoldValue.Text = "追蹤價格";
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
-            var data = new MemoContent(this.RefData);
+            IMemoContent data;
+
+            if (DataType == MemoType.Trace)
+                data = new TraceMemoContent(this.RefData);
+            else
+                data = new MemoContent(this.RefData);
 
             var sHoldStock = txtHoldStock.Text.Trim();
             var sHoldValue = txtHoldValue.Text.Trim();
@@ -46,7 +61,7 @@ namespace StockApp
             decimal iHoldValue;
 
             if (string.IsNullOrEmpty(sHoldStock))
-                data.HoldStock = null;
+                data.Stock = null;
             else if (!int.TryParse(sHoldStock, out iHoldStock))
             {
                 MessageBox.Show($"非數值: {sHoldStock}");
@@ -54,10 +69,10 @@ namespace StockApp
                 return;
             }
             else
-                data.HoldStock = iHoldStock;
+                data.Stock = iHoldStock;
 
             if (string.IsNullOrEmpty(sHoldValue))
-                data.HoldValue = null;
+                data.Value = null;
             else if (!decimal.TryParse(sHoldValue, out iHoldValue))
             {
                 MessageBox.Show($"非數值: {sHoldValue}");
@@ -65,9 +80,9 @@ namespace StockApp
                 return;
             }
             else
-                data.HoldValue = iHoldValue;
+                data.Value = iHoldValue;
 
-            MemoContent.Update(data);
+            data.Update();
 
             this.RefData.SetExtra(data);
             this.DialogResult = DialogResult.OK;
@@ -75,13 +90,25 @@ namespace StockApp
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            var data = new MemoContent(this.RefData);
-            data.HoldStock = null;
-            data.HoldValue = null;
-            MemoContent.Remove(data);
+            IMemoContent data;
+
+            if (DataType == MemoType.Trace)
+                data = new TraceMemoContent(this.RefData);
+            else
+                data = new MemoContent(this.RefData);
+
+            data.Stock = null;
+            data.Value = null;
+            data.Remove();
 
             this.RefData.SetExtra(data);
             this.DialogResult = DialogResult.OK;
+        }
+
+        private enum MemoType
+        {
+            Memo,
+            Trace,
         }
     }
 }
