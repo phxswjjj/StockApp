@@ -15,6 +15,10 @@ namespace StockApp
         public string Name { get; set; }
         [JsonProperty]
         public List<string> ComCodes { get; set; } = new List<string>();
+        [JsonIgnore]
+        public bool IsFavorite { get; set; } = true;
+        [JsonIgnore]
+        public Action<List<DisplayModel>> BeforeBindingHandler { get; set; }
 
         public static CustomGroup Create(string name)
         {

@@ -41,6 +41,7 @@ namespace StockApp
             this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editMemoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.simulatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showYearROEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,7 +51,7 @@ namespace StockApp
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
-            this.showYearROEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -86,10 +87,11 @@ namespace StockApp
             this.addHateToolStripMenuItem,
             this.removeHateToolStripMenuItem,
             this.editMemoToolStripMenuItem,
+            this.editTraceToolStripMenuItem,
             this.simulatorToolStripMenuItem,
             this.showYearROEToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 202);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 202);
             // 
             // openToolStripMenuItem
             // 
@@ -103,7 +105,7 @@ namespace StockApp
             // openToolStripMenuItem1
             // 
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.openToolStripMenuItem1.Text = "Open CMoney";
             this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
             // 
@@ -157,6 +159,13 @@ namespace StockApp
             this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.simulatorToolStripMenuItem.Text = "Simulator";
             this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.simulatorToolStripMenuItem_Click);
+            // 
+            // showYearROEToolStripMenuItem
+            // 
+            this.showYearROEToolStripMenuItem.Name = "showYearROEToolStripMenuItem";
+            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showYearROEToolStripMenuItem.Text = "Show Year ROE";
+            this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.showYearInfoToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -231,12 +240,12 @@ namespace StockApp
             this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
             this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
             // 
-            // showYearROEToolStripMenuItem
+            // editTraceToolStripMenuItem
             // 
-            this.showYearROEToolStripMenuItem.Name = "showYearROEToolStripMenuItem";
-            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.showYearROEToolStripMenuItem.Text = "Show Year ROE";
-            this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.showYearInfoToolStripMenuItem_Click);
+            this.editTraceToolStripMenuItem.Name = "editTraceToolStripMenuItem";
+            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editTraceToolStripMenuItem.Text = "Edit Trace";
+            this.editTraceToolStripMenuItem.Click += new System.EventHandler(this.editTraceToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -287,6 +296,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem simulatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showYearROEToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editTraceToolStripMenuItem;
     }
 }
 

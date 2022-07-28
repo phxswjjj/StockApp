@@ -36,7 +36,7 @@ namespace StockApp
                 txtHoldValue.Text = data.HoldValue.Value.ToString();
         }
 
-        public void ShowOnlyValue()
+        public void ShowTrace()
         {
             DataType = MemoType.Trace;
             lblHoldStock.Visible = false;

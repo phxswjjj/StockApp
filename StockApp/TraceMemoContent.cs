@@ -27,7 +27,12 @@ namespace StockApp
         public string ComName { get; private set; }
         [JsonProperty]
         public decimal? TraceValue { get; set; }
-        public int? Stock { get => null; set => throw new NotImplementedException(); }
+        [JsonIgnore]
+        public int? Stock
+        {
+            get => null; set { /* ignore */ }
+        }
+        [JsonIgnore]
         public decimal? Value { get => this.TraceValue; set => this.TraceValue = value; }
 
         public static List<TraceMemoContent> Load()

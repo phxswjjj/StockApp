@@ -93,6 +93,25 @@ namespace StockApp
             {
                 return new ETF.ETF00900().GetAll();
             });
+            var taskTrace = loading.AddTask("追蹤價格", () =>
+            {
+                var list = TraceMemoContent.Load();
+                var group = new CustomGroup()
+                {
+                    Name = "追蹤價格",
+                    ComCodes = list.Select(t => t.ComCode).ToList(),
+                    IsFavorite = false,
+                };
+                group.BeforeBindingHandler = models =>
+                {
+                    foreach (var model in models)
+                    {
+                        var traceData = list.First(d => d.ComCode == model.ComCode);
+                        model.SetExtra(traceData);
+                    }
+                };
+                return group;
+            });
             if (!loading.Start())
                 loading.ShowDialog(this);
 
@@ -110,10 +129,14 @@ namespace StockApp
             groups.RemoveAll(g => g.Name == group00900.Name);
             groups.Add(group00900);
 
+            var groupTrace = taskTrace.Result;
+            groups.RemoveAll(g => g.Name == groupTrace.Name);
+            groups.Add(groupTrace);
+
             this.CustomGroups = groups;
 
             foreach (var group in groups)
-                AddFavoriteCustomGroupMenuItem(group.Name);
+                AddFavoriteCustomGroupMenuItem(group.Name, group.IsFavorite);
 
             List<string> favoriteComCodes = taskFavorite.Result;
             this.FavoriteComCodes = favoriteComCodes;
@@ -482,15 +505,18 @@ namespace StockApp
                 grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = Color.Red;
         }
 
-        private void AddFavoriteCustomGroupMenuItem(string text)
+        private void AddFavoriteCustomGroupMenuItem(string text, bool allowAddFavorite = true)
         {
             var newMainMenuItem = new ToolStripMenuItem(text);
             newMainMenuItem.Click += CustomGroupMenuItem_Click; ;
             觀察清單ToolStripMenuItem.DropDownItems.Add(newMainMenuItem);
 
-            var newcontextMenuItem = new ToolStripMenuItem(text);
-            newcontextMenuItem.Click += favoriteCustomGroup_Click;
-            addFavoriteToolStripMenuItem.DropDownItems.Insert(addFavoriteToolStripMenuItem.DropDownItems.Count - 1, newcontextMenuItem);
+            if (allowAddFavorite)
+            {
+                var newcontextMenuItem = new ToolStripMenuItem(text);
+                newcontextMenuItem.Click += favoriteCustomGroup_Click;
+                addFavoriteToolStripMenuItem.DropDownItems.Insert(addFavoriteToolStripMenuItem.DropDownItems.Count - 1, newcontextMenuItem);
+            }
         }
 
         #region Main Menu
@@ -516,7 +542,7 @@ namespace StockApp
                 MessageBox.Show($"{text} Group not exists");
                 return;
             }
-            LoadData(group.ComCodes.ToArray());
+            LoadData(group.ComCodes.ToArray(), beforeBindingHandler: group.BeforeBindingHandler);
         }
 
         private void 排除清單ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -707,6 +733,20 @@ namespace StockApp
             var data = (DisplayModel)grow.DataBoundItem;
 
             var editor = new FrmMemo(data);
+            if (editor.ShowDialog() == DialogResult.OK)
+            {
+                RefreshCellStyle(grow);
+                dataGridView1.Refresh();
+            }
+        }
+
+        private void editTraceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            var editor = new FrmMemo(data);
+            editor.ShowTrace();
             if (editor.ShowDialog() == DialogResult.OK)
             {
                 RefreshCellStyle(grow);
