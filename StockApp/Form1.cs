@@ -95,15 +95,16 @@ namespace StockApp
             });
             var taskTrace = loading.AddTask("追蹤價格", () =>
             {
-                var list = TraceMemoContent.Load();
                 var group = new CustomGroup()
                 {
                     Name = "追蹤價格",
-                    ComCodes = list.Select(t => t.ComCode).ToList(),
+                    ComCodes = TraceMemoContent.Load()
+                        .Select(t => t.ComCode).ToList(),
                     IsFavorite = false,
                 };
                 group.BeforeBindingHandler = models =>
                 {
+                    var list = TraceMemoContent.Load();
                     foreach (var model in models)
                     {
                         var traceData = list.First(d => d.ComCode == model.ComCode);
@@ -751,6 +752,10 @@ namespace StockApp
             {
                 RefreshCellStyle(grow);
                 dataGridView1.Refresh();
+
+                var group = this.CustomGroups.FirstOrDefault(g => g.Name == "追蹤價格");
+                group.ComCodes = TraceMemoContent.Load()
+                    .Select(d => d.ComCode).ToList();
             }
         }
 
