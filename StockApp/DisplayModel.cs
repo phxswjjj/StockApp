@@ -75,7 +75,13 @@ namespace StockApp
         internal void SetExtra(CompanyExDividend find)
         {
             if (find.ExDividendDate.HasValue)
-                this.ExDividendDateT = (int)(find.ExDividendDate.Value - DateTime.Today).TotalDays;
+            {
+                var t = (int)(find.ExDividendDate.Value - DateTime.Today).TotalDays;
+                //已除息，股息無效
+                if (t < 0)
+                    return;
+                this.ExDividendDateT = t;
+            }
             this.ExDividendBonus = find.ExDividendBonus;
         }
         internal void SetExtra(CompanyDayVolume find)
