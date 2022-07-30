@@ -102,15 +102,6 @@ namespace StockApp
                         .Select(t => t.ComCode).ToList(),
                     IsFavorite = false,
                 };
-                group.BeforeBindingHandler = models =>
-                {
-                    var list = TraceMemoContent.Load();
-                    foreach (var model in models)
-                    {
-                        var traceData = list.First(d => d.ComCode == model.ComCode);
-                        model.SetExtra(traceData);
-                    }
-                };
                 return group;
             });
             if (!loading.Start())
@@ -249,12 +240,17 @@ namespace StockApp
             {
                 return CompanyAvgBonus.GetAll();
             });
+            var taskTraceMemo = loading.AddTask("追蹤價格", () =>
+            {
+                return TraceMemoContent.Load();
+            });
             var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
             var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
             if (!loading.Start())
                 loading.ShowDialog(this);
 
             var memoList = taskMemo.Result;
+            var traceMemoList = taskTraceMemo.Result;
 
             var list = taskDayVolume.Result;
 
@@ -297,7 +293,9 @@ namespace StockApp
                         continue;
                     list2.Add(data);
                 }
-                foreach (var code in memoList.Select(m => m.ComCode))
+                foreach (var code in memoList
+                    .Select(m => m.ComCode)
+                    .Union(traceMemoList.Select(m => m.ComCode)))
                 {
                     if (list2.Any(l => l.ComCode == code))
                         continue;
@@ -326,6 +324,10 @@ namespace StockApp
                 var find = memoList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
+
+                var findTrace = traceMemoList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                if (findTrace != null)
+                    l.SetExtra(findTrace);
             });
 
             var kdjList = taskKDJ.Result;
@@ -430,6 +432,14 @@ namespace StockApp
                         color = Color.FromArgb(0x2FDB7A82);
                     maxYield = 0.1m;
                     curYield = Math.Abs(data.CurrentPrice - data.HoldValue.Value) / data.HoldValue.Value;
+                    break;
+                case nameof(DisplayModel.TraceValue):
+                    if (!data.TraceValue.HasValue)
+                        return;
+                    else if (data.CurrentPrice > data.TraceValue.Value)
+                        color = Color.FromArgb(0x2FDB7A82);
+                    maxYield = 0.1m;
+                    curYield = Math.Abs(data.CurrentPrice - data.TraceValue.Value) / data.TraceValue.Value;
                     break;
                 case nameof(DisplayModel.ValueKDJ):
                     maxYield = 1m;

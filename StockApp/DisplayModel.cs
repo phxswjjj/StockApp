@@ -50,6 +50,8 @@ namespace StockApp
         public int? HoldStock { get; private set; }
         [DisplayName("成本")]
         public decimal? HoldValue { get; private set; }
+        [DisplayName("追蹤")]
+        public decimal? TraceValue { get; private set; }
         protected decimal ValueK { get; private set; }
         protected decimal ValueJ { get; private set; }
         [DisplayName("K")]
@@ -95,10 +97,13 @@ namespace StockApp
             this.HoldStock = data.HoldStock;
             this.HoldValue = data.HoldValue;
         }
+        internal void SetExtra(TraceMemoContent data)
+        {
+            this.TraceValue = data.TraceValue;
+        }
         internal void SetExtra(IMemoContent data)
         {
-            this.HoldStock = data.Stock;
-            this.HoldValue = data.Value;
+            data.UpdateModel(this);
         }
 
         internal void SetExtra(CompanyAvgBonus d)

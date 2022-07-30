@@ -64,5 +64,10 @@ namespace StockApp
                 JsonCache.Store(FilePath, list);
             }
         }
+
+        public void UpdateModel(DisplayModel model)
+        {
+            model.SetExtra(this);
+        }
     }
 }

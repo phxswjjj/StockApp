@@ -62,6 +62,11 @@ namespace StockApp
                 JsonCache.Store(FilePath, list);
             }
         }
+
+        public void UpdateModel(DisplayModel model)
+        {
+            model.SetExtra(this);
+        }
     }
 
     interface IMemoContent
@@ -71,5 +76,6 @@ namespace StockApp
 
         void Update();
         void Remove();
+        void UpdateModel(DisplayModel model);
     }
 }
