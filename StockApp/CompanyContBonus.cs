@@ -45,7 +45,6 @@ namespace StockApp
                 return caches;
 
             var request = WebRequest.CreateGoodInfo();
-            request.DefaultRequestHeaders.Add("Referer", RefererUrl);
             var resp = request.PostAsync(QueryBaseUrl, null).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);

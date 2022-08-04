@@ -12,15 +12,16 @@ namespace StockApp.Web
     class GoodInfoClient : HttpClient
     {
         static readonly object LockObject = new object();
+        static readonly Uri BaseUri = new Uri("https://goodinfo.tw");
         static DateTime NextFireTime = DateTime.MinValue;
         //每次請求安全的間隔時間(ms)
-        const int WaitMS = 20000;
+        const int WaitMS = 30_000;
 
         static Lazy<HttpClientHandler> Handler = new Lazy<HttpClientHandler>(() =>
         {
-            var uri = new Uri("https://goodinfo.tw");
             var handler = new HttpClientHandler();
-            handler.CookieContainer.SetCookies(uri, Properties.Settings.Default.GoodInfoLogin);
+            handler.CookieContainer.SetCookies(BaseUri, Properties.Settings.Default.GoodInfoLogin);
+            handler.AllowAutoRedirect = false;
             return handler;
         });
 
@@ -30,22 +31,43 @@ namespace StockApp.Web
 
         public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var task = Task.Factory.StartNew(() =>
+            var tcs = new TaskCompletionSource<HttpResponseMessage>();
+
+            lock (LockObject)
             {
-                lock (LockObject)
-                {
-                    var waitMsDiff = NextFireTime - DateTime.Now;
-                    if (waitMsDiff.TotalMilliseconds > 0)
-                        Thread.Sleep(waitMsDiff);
+                var waitMsDiff = NextFireTime - DateTime.Now;
+                if (waitMsDiff.TotalMilliseconds > 0)
+                    Thread.Sleep(waitMsDiff);
 
-                    var result = base.SendAsync(request, cancellationToken).Result;
-                    var wait = new Random().Next(WaitMS / 2, WaitMS);
-                    NextFireTime = DateTime.Now.AddMilliseconds(wait);
+                Console.WriteLine($"request: {request.RequestUri}");
+                base.SendAsync(request, cancellationToken)
+                    .ContinueWith(t =>
+                    {
+                        var resp = t.Result;
+                        if (resp.StatusCode == HttpStatusCode.Redirect)
+                        {
+                            var newRequest = new HttpRequestMessage(HttpMethod.Get, resp.Headers.Location);
 
-                    return result;
-                }
-            });
-            return task;
+                            foreach (var header in request.Headers)
+                            {
+                                newRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                            }
+                            newRequest.Headers.TryAddWithoutValidation("Referer", request.RequestUri.AbsoluteUri);
+                            foreach (var property in request.Properties)
+                            {
+                                newRequest.Properties.Add(property);
+                            }
+                            Console.WriteLine($"redirect request: {request.RequestUri}");
+                            base.SendAsync(newRequest, cancellationToken)
+                                .ContinueWith(t2 => tcs.SetResult(t2.Result));
+                        }
+                        else
+                            tcs.SetResult(resp);
+                    });
+                var wait = new Random().Next(WaitMS / 2, WaitMS * 2);
+                NextFireTime = DateTime.Now.AddMilliseconds(wait);
+            }
+            return tcs.Task;
         }
     }
 }
