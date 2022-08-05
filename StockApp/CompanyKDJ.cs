@@ -67,7 +67,7 @@ namespace StockApp
         }
         private static List<CompanyKDJ> GetAllByUrl(string url)
         {
-            var request = WebRequest.CreateGoodInfo();
+            var request = WebRequest.CreateGoodInfoGet();
             var resp = request.GetAsync(url).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
