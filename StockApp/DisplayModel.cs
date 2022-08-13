@@ -52,6 +52,9 @@ namespace StockApp
         public decimal? HoldValue { get; private set; }
         [DisplayName("追蹤")]
         public decimal? TraceValue { get; private set; }
+
+        internal Trace.StockDetail TraceData { get; private set; }
+
         protected decimal ValueK { get; private set; }
         protected decimal ValueJ { get; private set; }
         [DisplayName("K")]
@@ -97,10 +100,6 @@ namespace StockApp
             this.HoldStock = data.HoldStock;
             this.HoldValue = data.HoldValue;
         }
-        internal void SetExtra(TraceMemoContent data)
-        {
-            this.TraceValue = data.TraceValue;
-        }
         internal void SetExtra(IMemoContent data)
         {
             data.UpdateModel(this);
@@ -130,6 +129,20 @@ namespace StockApp
             }
             this.ValueK = k ?? find.DayK;
             this.ValueJ = j ?? find.DayJ;
+        }
+
+        internal void SetExtra(Trace.StockDetail findTrace)
+        {
+            if (findTrace == null)
+            {
+                this.TraceValue = null;
+                this.TraceData = null;
+            }
+            else
+            {
+                this.TraceValue = findTrace.Value;
+                this.TraceData = findTrace;
+            }
         }
 
         #region Comparer

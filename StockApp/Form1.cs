@@ -98,7 +98,7 @@ namespace StockApp
                 var group = new CustomGroup()
                 {
                     Name = "追蹤價格",
-                    ComCodes = TraceMemoContent.Load()
+                    ComCodes = Trace.StockDetail.Load()
                         .Select(t => t.ComCode).ToList(),
                     IsFavorite = false,
                 };
@@ -240,9 +240,9 @@ namespace StockApp
             {
                 return CompanyAvgBonus.GetAll();
             });
-            var taskTraceMemo = loading.AddTask("追蹤價格", () =>
+            var taskTraceStock = loading.AddTask("追蹤價格", () =>
             {
-                return TraceMemoContent.Load();
+                return Trace.StockDetail.Load();
             });
             var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
             var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
@@ -250,7 +250,7 @@ namespace StockApp
                 loading.ShowDialog(this);
 
             var memoList = taskMemo.Result;
-            var traceMemoList = taskTraceMemo.Result;
+            var traceStockList = taskTraceStock.Result;
 
             var list = taskDayVolume.Result;
 
@@ -295,7 +295,7 @@ namespace StockApp
                 }
                 foreach (var code in memoList
                     .Select(m => m.ComCode)
-                    .Union(traceMemoList.Select(m => m.ComCode)))
+                    .Union(traceStockList.Select(m => m.ComCode)))
                 {
                     if (list2.Any(l => l.ComCode == code))
                         continue;
@@ -325,7 +325,7 @@ namespace StockApp
                 if (find != null)
                     l.SetExtra(find);
 
-                var findTrace = traceMemoList.FirstOrDefault(b => b.ComCode == l.ComCode);
+                var findTrace = traceStockList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (findTrace != null)
                     l.SetExtra(findTrace);
             });
@@ -756,15 +756,14 @@ namespace StockApp
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var editor = new FrmMemo(data);
-            editor.ShowTrace();
+            var editor = new Trace.FrmEditor(data);
             if (editor.ShowDialog() == DialogResult.OK)
             {
                 RefreshCellStyle(grow);
                 dataGridView1.Refresh();
 
                 var group = this.CustomGroups.FirstOrDefault(g => g.Name == "追蹤價格");
-                group.ComCodes = TraceMemoContent.Load()
+                group.ComCodes = Trace.StockDetail.Load()
                     .Select(d => d.ComCode).ToList();
             }
         }
