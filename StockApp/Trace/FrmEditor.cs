@@ -60,6 +60,7 @@ namespace StockApp.Trace
                 tdata.Value = iStockValue;
 
             tdata.LimitDate = dpLimitDate.Value;
+            tdata.Update();
 
             rdata.SetExtra(tdata);
             this.DialogResult = DialogResult.OK;
