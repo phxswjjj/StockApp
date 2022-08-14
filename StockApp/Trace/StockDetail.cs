@@ -23,21 +23,34 @@ namespace StockApp.Trace
         public string ComCode { get; private set; }
         [JsonProperty]
         public decimal Value { get; set; }
+
+        private DateTime? _LimitDate;
         [JsonProperty]
-        public DateTime? LimitDate { get; set; }
+        public DateTime? LimitDate
+        {
+            get
+            {
+                return _LimitDate;
+            }
+            set
+            {
+                _LimitDate = value;
+                if (value.HasValue)
+                {
+                    var today = Utility.TWSEDate.Today;
+                    this.LimitDateT = (int)(value.Value - today).TotalDays;
+                }
+                else
+                    this.LimitDateT = null;
+            }
+        }
+        public int? LimitDateT { get; private set; }
 
         public static List<StockDetail> Load()
         {
             List<StockDetail> result;
             if (File.Exists(FilePath))
-            {
-                var today = Utility.TWSEDate.Today;
                 result = JsonCache.Load<List<StockDetail>>(FilePath);
-                var removeExpiredCnt = result.RemoveAll(d => d.LimitDate.HasValue
-                    && d.LimitDate.Value < today);
-                if (removeExpiredCnt > 0)
-                    JsonCache.Store(FilePath, result);
-            }
             else
                 result = new List<StockDetail>();
             return result;

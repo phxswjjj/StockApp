@@ -42,8 +42,10 @@ namespace StockApp.Trace
             if (tdata == null)
                 tdata = new StockDetail(rdata);
 
+            var today = Utility.TWSEDate.Today;
+
             var sStockValue = txtTraceValue.Text.Trim();
-            if (dpLimitDate.Value < DateTime.Today)
+            if (dpLimitDate.Value < today)
             {
                 MessageBox.Show($"{lblLimitDate.Text} 不可設定過去的日期");
                 return;

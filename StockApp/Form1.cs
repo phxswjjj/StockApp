@@ -58,6 +58,7 @@ namespace StockApp
                     case nameof(DisplayModel.ExDividendDateT):
                     case nameof(DisplayModel.ContBonusTimes):
                     case nameof(DisplayModel.HoldStock):
+                    case nameof(DisplayModel.TraceDateT):
                         col.DefaultCellStyle = bigNumCellStyle2;
                         break;
                     default:

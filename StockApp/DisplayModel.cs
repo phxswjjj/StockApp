@@ -52,6 +52,8 @@ namespace StockApp
         public decimal? HoldValue { get; private set; }
         [DisplayName("追蹤")]
         public decimal? TraceValue { get; private set; }
+        [DisplayName("追蹤T")]
+        public int? TraceDateT => this.TraceData?.LimitDateT;
 
         internal Trace.StockDetail TraceData { get; private set; }
 
