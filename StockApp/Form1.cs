@@ -45,9 +45,13 @@ namespace StockApp
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
                 switch (col.Name)
                 {
+                    case nameof(DisplayModel.ComName):
+                        col.DefaultCellStyle = textCellStyle;
+                        col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
+                        col.Width = 80;
+                        break;
                     case nameof(DisplayModel.ComType):
                     case nameof(DisplayModel.ComCode):
-                    case nameof(DisplayModel.ComName):
                         col.DefaultCellStyle = textCellStyle;
                         break;
                     case nameof(DisplayModel.LastDayVolume):

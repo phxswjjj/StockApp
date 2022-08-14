@@ -105,6 +105,7 @@ namespace StockApp.Trace
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Name = "FrmEditor";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmEditor";
             this.Load += new System.EventHandler(this.FrmEditor_Load);
             this.ResumeLayout(false);
