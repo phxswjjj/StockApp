@@ -30,6 +30,9 @@ namespace StockApp
             PreLoadData();
             LoadData();
 
+            dataGridView1.RowHeadersWidth = 55;
+            dataGridView1.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
             var textCellStyle = new DataGridViewCellStyle();
             textCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
 
@@ -355,7 +358,10 @@ namespace StockApp
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             foreach (DataGridViewRow grow in dataGridView1.Rows)
+            {
+                grow.HeaderCell.Value = (grow.Index + 1).ToString();
                 RefreshCellStyle(grow);
+            }
         }
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
