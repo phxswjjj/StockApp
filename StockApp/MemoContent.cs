@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace StockApp
 {
-    class MemoContent : IMemoContent
+    class MemoContent
     {
         const string FilePath = "MemoContent.json";
 
@@ -67,15 +67,5 @@ namespace StockApp
         {
             model.SetExtra(this);
         }
-    }
-
-    interface IMemoContent
-    {
-        int? Stock { get; set; }
-        decimal? Value { get; set; }
-
-        void Update();
-        void Remove();
-        void UpdateModel(DisplayModel model);
     }
 }

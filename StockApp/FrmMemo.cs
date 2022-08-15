@@ -13,7 +13,6 @@ namespace StockApp
     public partial class FrmMemo : Form
     {
         internal DisplayModel RefData { get; }
-        private MemoType DataType { get; set; } = MemoType.Memo;
 
         private FrmMemo()
         {
@@ -36,23 +35,9 @@ namespace StockApp
                 txtHoldValue.Text = data.HoldValue.Value.ToString();
         }
 
-        public void ShowTrace()
-        {
-            DataType = MemoType.Trace;
-            lblHoldStock.Visible = false;
-            txtHoldStock.Visible = false;
-
-            lblHoldValue.Text = "追蹤價格";
-        }
-
         private void btnSave_Click(object sender, EventArgs e)
         {
-            IMemoContent data;
-
-            if (DataType == MemoType.Trace)
-                data = new TraceMemoContent(this.RefData);
-            else
-                data = new MemoContent(this.RefData);
+            var data = new MemoContent(this.RefData);
 
             var sHoldStock = txtHoldStock.Text.Trim();
             var sHoldValue = txtHoldValue.Text.Trim();
@@ -90,12 +75,7 @@ namespace StockApp
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            IMemoContent data;
-
-            if (DataType == MemoType.Trace)
-                data = new TraceMemoContent(this.RefData);
-            else
-                data = new MemoContent(this.RefData);
+            var data = new MemoContent(this.RefData);
 
             data.Stock = null;
             data.Value = null;
@@ -103,12 +83,6 @@ namespace StockApp
 
             this.RefData.SetExtra(data);
             this.DialogResult = DialogResult.OK;
-        }
-
-        private enum MemoType
-        {
-            Memo,
-            Trace,
         }
     }
 }

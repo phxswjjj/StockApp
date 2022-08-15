@@ -102,10 +102,6 @@ namespace StockApp
             this.HoldStock = data.HoldStock;
             this.HoldValue = data.HoldValue;
         }
-        internal void SetExtra(IMemoContent data)
-        {
-            data.UpdateModel(this);
-        }
 
         internal void SetExtra(CompanyAvgBonus d)
         {
