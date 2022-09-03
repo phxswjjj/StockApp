@@ -101,6 +101,10 @@ namespace StockApp
             {
                 return new ETF.ETF00900().GetAll();
             });
+            var task00878 = loading.AddTask("00878", () =>
+            {
+                return new ETF.ETF00878().GetAll();
+            });
             var taskTrace = loading.AddTask("追蹤價格", () =>
             {
                 var group = new CustomGroup()
@@ -128,6 +132,10 @@ namespace StockApp
             var group00900 = task00900.Result;
             groups.RemoveAll(g => g.Name == group00900.Name);
             groups.Add(group00900);
+
+            var group00878 = task00878.Result;
+            groups.RemoveAll(g => g.Name == group00878.Name);
+            groups.Add(group00878);
 
             var groupTrace = taskTrace.Result;
             groups.RemoveAll(g => g.Name == groupTrace.Name);

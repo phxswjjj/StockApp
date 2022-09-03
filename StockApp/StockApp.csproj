@@ -75,6 +75,7 @@
     <Compile Include="DisplayModel.cs" />
     <Compile Include="ETF\ETF0050.cs" />
     <Compile Include="ETF\ETF0056.cs" />
+    <Compile Include="ETF\ETF00878.cs" />
     <Compile Include="ETF\ETF00900.cs" />
     <Compile Include="ETF\ETFBase.cs" />
     <Compile Include="FrmLoading.cs">
