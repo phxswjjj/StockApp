@@ -233,7 +233,7 @@ namespace StockApp
         }
 
         private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null,
-            string likeComName = null, Action<List<DisplayModel>> beforeBindingHandler = null)
+            string likeComName = null)
         {
             var groups = this.CustomGroups;
             List<string> favoriteComCodes = this.FavoriteComCodes;
@@ -355,9 +355,6 @@ namespace StockApp
             });
 
             list2.Sort(comparer);
-
-            if (beforeBindingHandler != null)
-                beforeBindingHandler(list2);
 
             var binding = new BindingList<DisplayModel>(list2);
             dataGridView1.DataSource = binding;
@@ -572,7 +569,7 @@ namespace StockApp
                 MessageBox.Show($"{text} Group not exists");
                 return;
             }
-            LoadData(group.ComCodes.ToArray(), beforeBindingHandler: group.BeforeBindingHandler);
+            LoadData(group.ComCodes.ToArray());
         }
 
         private void 排除清單ToolStripMenuItem_Click(object sender, EventArgs e)
