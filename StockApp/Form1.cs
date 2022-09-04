@@ -158,44 +158,11 @@ namespace StockApp
         private void PreLoadData()
         {
             var loading = new FrmLoading();
-            var taskGroups = loading.AddTask("自訂觀察清單", () => CustomGroup.GetAll());
             var taskROE = loading.AddTask("ROE", () =>
             {
                 var list = CompanyROE.GetAll();
                 return list;
             });
-            var taskFavorite = loading.AddTask("觀察清單", () =>
-            {
-                if (File.Exists(this.FavoriteFilePath))
-                    return JsonCache.Load<List<string>>(this.FavoriteFilePath);
-                else
-                    return new List<string>();
-            });
-            var taskHate = loading.AddTask("排除清單", () =>
-            {
-                if (File.Exists(this.HateFilePath))
-                    return JsonCache.Load<List<string>>(this.HateFilePath);
-                else
-                    return new List<string>();
-            });
-            var taskContBonus = loading.AddTask("連續股息", () =>
-            {
-                return CompanyContBonus.GetAll();
-            });
-            var taskExDividend = loading.AddTask("除息時間", () =>
-            {
-                return CompanyExDividend.GetAll();
-            });
-            var taskDayVolume = loading.AddTask("日交易量", () =>
-            {
-                return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
-            });
-            var taskAvgBonus = loading.AddTask("平均股息", () =>
-            {
-                return CompanyAvgBonus.GetAll();
-            });
-            var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
-            var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
             if (!loading.Start())
                 loading.ShowDialog(this);
         }
