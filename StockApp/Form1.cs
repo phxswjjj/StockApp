@@ -22,16 +22,14 @@ namespace StockApp
         public Form1()
         {
             InitializeComponent();
+
+            InitializeGridView(dataGridView1);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void InitializeGridView(DataGridView gridview)
         {
-            LoadSetting();
-            PreLoadData();
-            LoadData();
-
-            dataGridView1.RowHeadersWidth = 55;
-            dataGridView1.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            gridview.RowHeadersWidth = 55;
+            gridview.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
             var textCellStyle = new DataGridViewCellStyle();
             textCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -43,15 +41,12 @@ namespace StockApp
             var bigNumCellStyle2 = new DataGridViewCellStyle(numCellStyle);
             bigNumCellStyle2.Format = "#,###";
 
-            foreach (DataGridViewColumn col in dataGridView1.Columns)
+            foreach (DataGridViewColumn col in gridview.Columns)
             {
-                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
                 switch (col.Name)
                 {
                     case nameof(DisplayModel.ComName):
                         col.DefaultCellStyle = textCellStyle;
-                        col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
-                        col.Width = 80;
                         break;
                     case nameof(DisplayModel.ComType):
                     case nameof(DisplayModel.ComCode):
@@ -69,6 +64,15 @@ namespace StockApp
                         break;
                 }
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadSetting();
+            PreLoadData();
+            LoadData();
+
+            SetupGridViewFitData(dataGridView1);
         }
 
         private void LoadSetting()
@@ -194,6 +198,21 @@ namespace StockApp
             var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
             if (!loading.Start())
                 loading.ShowDialog(this);
+        }
+
+        private void SetupGridViewFitData(DataGridView gridview)
+        {
+            foreach (DataGridViewColumn col in gridview.Columns)
+            {
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                switch (col.Name)
+                {
+                    case nameof(DisplayModel.ComName):
+                        col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
+                        col.Width = 80;
+                        break;
+                }
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
