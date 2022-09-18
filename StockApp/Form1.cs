@@ -111,12 +111,11 @@ namespace StockApp
             });
             var taskTrace = loading.AddTask("追蹤價格", () =>
             {
-                var group = new CustomGroup()
+                var group = new TraceGroup()
                 {
                     Name = "追蹤價格",
                     ComCodes = Trace.StockDetail.Load()
                         .Select(t => t.ComCode).ToList(),
-                    IsFavorite = false,
                 };
                 return group;
             });

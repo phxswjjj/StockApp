@@ -18,11 +18,11 @@ namespace StockApp.ETF
             var offseted = Utility.TWSEDate.Today;
             var jsonFilePath = Path.Combine("CustomGroup", ComCode, $"{offseted:yyyyMM}.json");
 
-            var cache = JsonCache.Load<CustomGroup>(jsonFilePath);
+            var cache = JsonCache.Load<ETFGroup>(jsonFilePath);
             if (cache != null)
                 return cache;
 
-            cache = new CustomGroup()
+            cache = new ETFGroup()
             {
                 Name = $"{ComCode} 成份股",
             };

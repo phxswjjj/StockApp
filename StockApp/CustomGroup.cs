@@ -11,12 +11,14 @@ namespace StockApp
 {
     class CustomGroup
     {
+        const string JsonFilePath = "CustomGroup.json";
+
         [JsonProperty]
         public string Name { get; set; }
         [JsonProperty]
         public List<string> ComCodes { get; set; } = new List<string>();
         [JsonIgnore]
-        public bool IsFavorite { get; set; } = true;
+        public virtual bool IsFavorite { get; protected set; } = true;
 
         public static CustomGroup Create(string name)
         {
@@ -26,8 +28,7 @@ namespace StockApp
 
         internal static List<CustomGroup> GetAll()
         {
-            var jsonFilePath = "CustomGroup.json";
-            var caches = JsonCache.Load<List<CustomGroup>>(jsonFilePath);
+            var caches = JsonCache.Load<List<CustomGroup>>(JsonFilePath);
             if (caches != null)
                 return caches;
             else
@@ -41,8 +42,17 @@ namespace StockApp
 
         internal static void Store(List<CustomGroup> groups)
         {
-            var jsonFilePath = "CustomGroup.json";
-            JsonCache.Store(jsonFilePath, groups);
+            JsonCache.Store(JsonFilePath, groups);
         }
+    }
+
+    class TraceGroup : CustomGroup
+    {
+        public override bool IsFavorite => false;
+    }
+
+    class ETFGroup : CustomGroup
+    {
+        public override bool IsFavorite => false;
     }
 }
