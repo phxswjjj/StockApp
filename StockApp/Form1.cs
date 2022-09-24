@@ -164,8 +164,6 @@ namespace StockApp
                 };
                 groups.Add(favoriteGroup);
             }
-            else
-                favoriteGroup.SortIndex = FavoriteGroup.DefaultSortIndex;
             var extraFavorites = favoriteComCodes.Except(favoriteGroup.ComCodes);
             favoriteGroup.ComCodes.AddRange(extraFavorites);
             this.FavoriteComCodes = favoriteGroup.ComCodes;
@@ -179,8 +177,6 @@ namespace StockApp
                 };
                 groups.Add(hateGroup);
             }
-            else
-                hateGroup.SortIndex = HateGroup.DefaultSortIndex;
             var extraHates = hateComCodes.Except(hateGroup.ComCodes);
             hateGroup.ComCodes.AddRange(extraHates);
             this.HateComCodes = hateGroup.ComCodes;
