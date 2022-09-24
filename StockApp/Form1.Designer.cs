@@ -52,6 +52,7 @@ namespace StockApp
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
+            this.editGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -89,16 +90,17 @@ namespace StockApp
             this.editMemoToolStripMenuItem,
             this.editTraceToolStripMenuItem,
             this.simulatorToolStripMenuItem,
-            this.showYearROEToolStripMenuItem});
+            this.showYearROEToolStripMenuItem,
+            this.editGroupToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 202);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 246);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem1});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open GoodInfo";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -114,12 +116,13 @@ namespace StockApp
             this.addFavoriteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addFavoriteTextBox});
             this.addFavoriteToolStripMenuItem.Name = "addFavoriteToolStripMenuItem";
-            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addFavoriteToolStripMenuItem.Text = "Add Favorite";
             this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.addFavoriteToolStripMenuItem_Click);
             // 
             // addFavoriteTextBox
             // 
+            this.addFavoriteTextBox.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9F);
             this.addFavoriteTextBox.Name = "addFavoriteTextBox";
             this.addFavoriteTextBox.Size = new System.Drawing.Size(100, 23);
             this.addFavoriteTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.addFavoriteTextBox_KeyPress);
@@ -127,49 +130,49 @@ namespace StockApp
             // removeFavoriteToolStripMenuItem
             // 
             this.removeFavoriteToolStripMenuItem.Name = "removeFavoriteToolStripMenuItem";
-            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeFavoriteToolStripMenuItem.Text = "Remove Favorite";
             this.removeFavoriteToolStripMenuItem.Click += new System.EventHandler(this.removeFavoriteToolStripMenuItem_Click);
             // 
             // addHateToolStripMenuItem
             // 
             this.addHateToolStripMenuItem.Name = "addHateToolStripMenuItem";
-            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addHateToolStripMenuItem.Text = "Add Hate";
             this.addHateToolStripMenuItem.Click += new System.EventHandler(this.addHateToolStripMenuItem_Click);
             // 
             // removeHateToolStripMenuItem
             // 
             this.removeHateToolStripMenuItem.Name = "removeHateToolStripMenuItem";
-            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeHateToolStripMenuItem.Text = "Remove Hate";
             this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
             // 
             // editMemoToolStripMenuItem
             // 
             this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
-            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editMemoToolStripMenuItem.Text = "Edit Memo";
             this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.editMemoToolStripMenuItem_Click);
             // 
             // editTraceToolStripMenuItem
             // 
             this.editTraceToolStripMenuItem.Name = "editTraceToolStripMenuItem";
-            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editTraceToolStripMenuItem.Text = "Edit Trace";
             this.editTraceToolStripMenuItem.Click += new System.EventHandler(this.editTraceToolStripMenuItem_Click);
             // 
             // simulatorToolStripMenuItem
             // 
             this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
-            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.simulatorToolStripMenuItem.Text = "Simulator";
             this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.simulatorToolStripMenuItem_Click);
             // 
             // showYearROEToolStripMenuItem
             // 
             this.showYearROEToolStripMenuItem.Name = "showYearROEToolStripMenuItem";
-            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showYearROEToolStripMenuItem.Text = "Show Year ROE";
             this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.showYearInfoToolStripMenuItem_Click);
             // 
@@ -191,9 +194,8 @@ namespace StockApp
             // 觀察清單ToolStripMenuItem
             // 
             this.觀察清單ToolStripMenuItem.Name = "觀察清單ToolStripMenuItem";
-            this.觀察清單ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
-            this.觀察清單ToolStripMenuItem.Text = "觀察清單";
-            this.觀察清單ToolStripMenuItem.Click += new System.EventHandler(this.觀察清單ToolStripMenuItem_Click);
+            this.觀察清單ToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
+            this.觀察清單ToolStripMenuItem.Text = "觀察清單▼";
             // 
             // 排除清單ToolStripMenuItem
             // 
@@ -246,6 +248,13 @@ namespace StockApp
             this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
             this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
             // 
+            // editGroupToolStripMenuItem
+            // 
+            this.editGroupToolStripMenuItem.Name = "editGroupToolStripMenuItem";
+            this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editGroupToolStripMenuItem.Text = "Edit Group";
+            this.editGroupToolStripMenuItem.Click += new System.EventHandler(this.editGroupToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -296,6 +305,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showYearROEToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editTraceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editGroupToolStripMenuItem;
     }
 }
 

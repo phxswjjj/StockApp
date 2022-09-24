@@ -78,6 +78,12 @@
     <Compile Include="ETF\ETF00878.cs" />
     <Compile Include="ETF\ETF00900.cs" />
     <Compile Include="ETF\ETFBase.cs" />
+    <Compile Include="FrmEditGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmEditGroup.Designer.cs">
+      <DependentUpon>FrmEditGroup.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmLoading.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,6 +131,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CompanyAvgBonus.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Trace\FrmEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -140,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmBasicSetting.resx">
       <DependentUpon>FrmBasicSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmEditGroup.resx">
+      <DependentUpon>FrmEditGroup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmFavorite.resx">
       <DependentUpon>FrmFavorite.cs</DependentUpon>
@@ -158,13 +172,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Trace\FrmEditor.resx">
       <DependentUpon>FrmEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -181,6 +191,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\checked-checkbox.png" />
+    <Content Include="images\unchecked-checkbox.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

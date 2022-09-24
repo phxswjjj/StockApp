@@ -807,6 +807,19 @@ namespace StockApp
             simulator.Show(this);
 
         }
+
+        private void editGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            var editor = new FrmEditGroup(data, this.CustomGroups);
+            if (editor.ShowDialog() == DialogResult.OK)
+            {
+                RefreshCellStyle(grow);
+                dataGridView1.Refresh();
+            }
+        }
         #endregion
     }
 }
