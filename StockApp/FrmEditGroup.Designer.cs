@@ -37,6 +37,7 @@ namespace StockApp
             // btnCancel
             // 
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(324, 231);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(89, 37);
@@ -70,6 +71,7 @@ namespace StockApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(643, 275);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnCancel);
@@ -77,6 +79,7 @@ namespace StockApp
             this.Name = "FrmEditGroup";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmEditGroup";
+            this.Load += new System.EventHandler(this.FrmEditGroup_Load);
             this.ResumeLayout(false);
 
         }

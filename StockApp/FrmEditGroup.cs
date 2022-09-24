@@ -15,9 +15,13 @@ namespace StockApp
 {
     public partial class FrmEditGroup : Form
     {
+        const int GroupControlHeight = 26;
+        const int GroupControlWidth = 140;
+
         internal DisplayModel RefData { get; }
 
         private readonly List<CustomGroup> CustomGroups;
+        private TextBox txtAddGroup;
 
         public FrmEditGroup()
         {
@@ -35,28 +39,62 @@ namespace StockApp
 
         private void Init(DisplayModel data, List<CustomGroup> customGroups)
         {
-            var padding = new Padding(21, 3, 3, 3);
             foreach (var group in customGroups)
             {
-                var cbx = new CheckBox
-                {
-                    Appearance = Appearance.Button,
-                    Text = group.Name,
-                    Checked = group.ComCodes.Contains(data.ComCode),
-                    Enabled = group.IsFavorite,
-                    BackgroundImageLayout = ImageLayout.None,
-                    Height = 26,
-                    Padding = padding,
-                    Width = 140,
-                };
+                var cbx = CreateCheckBox(group.Name);
+                cbx.Checked = group.ComCodes.Contains(data.ComCode);
+                cbx.Enabled = group.IsFavorite;
                 if (group.ComCodes.Contains(data.ComCode))
                     cbx.Checked = true;
                 CheckBox_CheckedChanged(cbx, null);
-                cbx.CheckedChanged += CheckBox_CheckedChanged;
                 flowLayoutPanel1.Controls.Add(cbx);
             }
 
-            var filtedGroups = customGroups.Where(g => g.ComCodes.Contains(data.ComCode));
+            txtAddGroup = new TextBox()
+            {
+                Name = "txtAddGroup",
+                Height = GroupControlHeight,
+                Width = GroupControlWidth,
+            };
+            flowLayoutPanel1.Controls.Add(txtAddGroup);
+
+            txtAddGroup.KeyUp += TxtAddGroup_KeyUp;
+        }
+
+        private void FrmEditGroup_Load(object sender, EventArgs e)
+        {
+            txtAddGroup.Select();
+        }
+
+        private void TxtAddGroup_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            var textbox = (TextBox)sender;
+            var groupName = textbox.Text.Trim();
+            if (string.IsNullOrEmpty(groupName))
+                return;
+
+            foreach (var ctrl in flowLayoutPanel1.Controls)
+            {
+                var cbx = ctrl as CheckBox;
+                if (cbx == null)
+                    continue;
+
+                if (cbx.Text == groupName)
+                {
+                    MessageBox.Show(this, $"{groupName} exists");
+                    txtAddGroup.Text = "";
+                    return;
+                }
+            }
+
+            var newCbx = CreateCheckBox(groupName);
+            newCbx.Checked = true;
+            CheckBox_CheckedChanged(newCbx, null);
+            flowLayoutPanel1.Controls.Add(newCbx);
+            textbox.Text = "";
         }
 
         private void CheckBox_CheckedChanged(object sender, EventArgs e)
@@ -72,8 +110,11 @@ namespace StockApp
         {
             var customGroups = this.CustomGroups;
             var data = this.RefData;
-            foreach (CheckBox cbx in flowLayoutPanel1.Controls)
+            foreach (Control ctrl in flowLayoutPanel1.Controls)
             {
+                var cbx = ctrl as CheckBox;
+                if (cbx == null)
+                    continue;
                 var name = cbx.Text;
                 var group = customGroups.FirstOrDefault(g => g.Name == name);
                 if (group == null)
@@ -99,6 +140,22 @@ namespace StockApp
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private CheckBox CreateCheckBox(string name)
+        {
+            var padding = new Padding(21, 3, 3, 3);
+            var cbx = new CheckBox
+            {
+                Appearance = Appearance.Button,
+                Text = name,
+                BackgroundImageLayout = ImageLayout.None,
+                Padding = padding,
+                Height = GroupControlHeight,
+                Width = GroupControlWidth,
+            };
+            cbx.CheckedChanged += CheckBox_CheckedChanged;
+            return cbx;
         }
     }
 }
