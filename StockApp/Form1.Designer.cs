@@ -73,11 +73,11 @@ namespace StockApp
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.Size = new System.Drawing.Size(1224, 429);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.dataGridView1_CellContextMenuStripNeeded);
-            this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
-            this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
-            this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
-            this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+            this.dataGridView1.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.DataGridView_CellContextMenuStripNeeded);
+            this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellEndEdit);
+            this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.DataGridView_CellPainting);
+            this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.DataGridView_DataBindingComplete);
+            this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
             // 
             // contextMenuStrip1
             // 
@@ -102,14 +102,14 @@ namespace StockApp
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open GoodInfo";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenGoodInfo_ToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem1
             // 
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
             this.openToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.openToolStripMenuItem1.Text = "Open CMoney";
-            this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
+            this.openToolStripMenuItem1.Click += new System.EventHandler(this.OpenCMoney_ToolStripMenuItem_Click);
             // 
             // addFavoriteToolStripMenuItem
             // 
@@ -118,63 +118,63 @@ namespace StockApp
             this.addFavoriteToolStripMenuItem.Name = "addFavoriteToolStripMenuItem";
             this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addFavoriteToolStripMenuItem.Text = "Add Favorite";
-            this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.addFavoriteToolStripMenuItem_Click);
+            this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.AddFavoriteToolStripMenuItem_Click);
             // 
             // addFavoriteTextBox
             // 
             this.addFavoriteTextBox.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9F);
             this.addFavoriteTextBox.Name = "addFavoriteTextBox";
             this.addFavoriteTextBox.Size = new System.Drawing.Size(100, 23);
-            this.addFavoriteTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.addFavoriteTextBox_KeyPress);
+            this.addFavoriteTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddFavoriteTextBox_KeyPress);
             // 
             // removeFavoriteToolStripMenuItem
             // 
             this.removeFavoriteToolStripMenuItem.Name = "removeFavoriteToolStripMenuItem";
             this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeFavoriteToolStripMenuItem.Text = "Remove Favorite";
-            this.removeFavoriteToolStripMenuItem.Click += new System.EventHandler(this.removeFavoriteToolStripMenuItem_Click);
+            this.removeFavoriteToolStripMenuItem.Click += new System.EventHandler(this.RemoveFavoriteToolStripMenuItem_Click);
             // 
             // addHateToolStripMenuItem
             // 
             this.addHateToolStripMenuItem.Name = "addHateToolStripMenuItem";
             this.addHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addHateToolStripMenuItem.Text = "Add Hate";
-            this.addHateToolStripMenuItem.Click += new System.EventHandler(this.addHateToolStripMenuItem_Click);
+            this.addHateToolStripMenuItem.Click += new System.EventHandler(this.AddHateToolStripMenuItem_Click);
             // 
             // removeHateToolStripMenuItem
             // 
             this.removeHateToolStripMenuItem.Name = "removeHateToolStripMenuItem";
             this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeHateToolStripMenuItem.Text = "Remove Hate";
-            this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.removeHateToolStripMenuItem_Click);
+            this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.RemoveHateToolStripMenuItem_Click);
             // 
             // editMemoToolStripMenuItem
             // 
             this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
             this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editMemoToolStripMenuItem.Text = "Edit Memo";
-            this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.editMemoToolStripMenuItem_Click);
+            this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.ShowEditMemoToolStripMenuItem_Click);
             // 
             // editTraceToolStripMenuItem
             // 
             this.editTraceToolStripMenuItem.Name = "editTraceToolStripMenuItem";
             this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editTraceToolStripMenuItem.Text = "Edit Trace";
-            this.editTraceToolStripMenuItem.Click += new System.EventHandler(this.editTraceToolStripMenuItem_Click);
+            this.editTraceToolStripMenuItem.Click += new System.EventHandler(this.ShowEditTraceToolStripMenuItem_Click);
             // 
             // simulatorToolStripMenuItem
             // 
             this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
             this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.simulatorToolStripMenuItem.Text = "Simulator";
-            this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.simulatorToolStripMenuItem_Click);
+            this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.ShowSimulatorToolStripMenuItem_Click);
             // 
             // showYearROEToolStripMenuItem
             // 
             this.showYearROEToolStripMenuItem.Name = "showYearROEToolStripMenuItem";
             this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showYearROEToolStripMenuItem.Text = "Show Year ROE";
-            this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.showYearInfoToolStripMenuItem_Click);
+            this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.ShowYearInfoToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -253,7 +253,7 @@ namespace StockApp
             this.editGroupToolStripMenuItem.Name = "editGroupToolStripMenuItem";
             this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editGroupToolStripMenuItem.Text = "Edit Group";
-            this.editGroupToolStripMenuItem.Click += new System.EventHandler(this.editGroupToolStripMenuItem_Click);
+            this.editGroupToolStripMenuItem.Click += new System.EventHandler(this.ShowEditGroupToolStripMenuItem_Click);
             // 
             // Form1
             // 

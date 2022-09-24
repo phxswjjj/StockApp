@@ -31,15 +31,21 @@ namespace StockApp
             gridview.RowHeadersWidth = 55;
             gridview.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
-            var textCellStyle = new DataGridViewCellStyle();
-            textCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            var textCellStyle = new DataGridViewCellStyle
+            {
+                Alignment = DataGridViewContentAlignment.MiddleLeft
+            };
 
-            var numCellStyle = new DataGridViewCellStyle();
-            numCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            numCellStyle.Format = "0.00";
+            var numCellStyle = new DataGridViewCellStyle
+            {
+                Alignment = DataGridViewContentAlignment.MiddleRight,
+                Format = "0.00"
+            };
 
-            var bigNumCellStyle2 = new DataGridViewCellStyle(numCellStyle);
-            bigNumCellStyle2.Format = "#,###";
+            var bigNumCellStyle2 = new DataGridViewCellStyle(numCellStyle)
+            {
+                Format = "#,###"
+            };
 
             foreach (DataGridViewColumn col in gridview.Columns)
             {
@@ -345,7 +351,7 @@ namespace StockApp
             dataGridView1.DataSource = binding;
         }
 
-        private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void DataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             foreach (DataGridViewRow grow in dataGridView1.Rows)
             {
@@ -354,7 +360,7 @@ namespace StockApp
             }
         }
 
-        private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void DataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             var gv = (DataGridView)sender;
             var grow = gv.Rows[e.RowIndex];
@@ -364,7 +370,7 @@ namespace StockApp
             dataGridView1.Refresh();
         }
 
-        private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
+        private void DataGridView_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
         {
             contextMenuStrip1.Tag = null;
 
@@ -401,7 +407,7 @@ namespace StockApp
             }
         }
 
-        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        private void DataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
@@ -463,7 +469,7 @@ namespace StockApp
             e.Handled = true;
         }
 
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void DataGridView_SelectionChanged(object sender, EventArgs e)
         {
             lbsSelectedTotal.Text = "";
 
@@ -526,7 +532,7 @@ namespace StockApp
             if (allowAddFavorite)
             {
                 var newcontextMenuItem = new ToolStripMenuItem(text);
-                newcontextMenuItem.Click += favoriteCustomGroup_Click;
+                newcontextMenuItem.Click += ShowFavoriteCustomGroup_Click;
                 addFavoriteToolStripMenuItem.DropDownItems.Insert(addFavoriteToolStripMenuItem.DropDownItems.Count - 1, newcontextMenuItem);
             }
         }
@@ -601,21 +607,21 @@ namespace StockApp
         #endregion
 
         #region Context Menu
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenGoodInfo_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
             System.Diagnostics.Process.Start("https://goodinfo.tw/tw/StockDividendPolicy.asp?STOCK_ID=" + data.ComCode);
         }
-        private void openToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void OpenCMoney_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
             System.Diagnostics.Process.Start("https://www.cmoney.tw/forum/stock/" + data.ComCode);
         }
-        private void showYearInfoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ShowYearInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var list = new List<DisplayModel>();
             var gv = dataGridView1;
@@ -645,7 +651,7 @@ namespace StockApp
                 frm.Show(this);
         }
 
-        private void addFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AddFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -656,7 +662,7 @@ namespace StockApp
             contextMenuStrip1.Hide();
         }
 
-        private void addFavoriteTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        private void AddFavoriteTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
@@ -689,7 +695,7 @@ namespace StockApp
             }
         }
 
-        private void favoriteCustomGroup_Click(object sender, EventArgs e)
+        private void ShowFavoriteCustomGroup_Click(object sender, EventArgs e)
         {
             var item = (ToolStripMenuItem)sender;
             var text = item.Text;
@@ -710,7 +716,7 @@ namespace StockApp
             RefreshCellStyle(grow);
         }
 
-        private void removeFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RemoveFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -721,7 +727,7 @@ namespace StockApp
             RefreshCellStyle(grow);
         }
 
-        private void addHateToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AddHateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -730,7 +736,7 @@ namespace StockApp
             RefreshCellStyle(grow);
         }
 
-        private void removeHateToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RemoveHateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -739,7 +745,7 @@ namespace StockApp
             RefreshCellStyle(grow);
         }
 
-        private void editMemoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ShowEditMemoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -752,7 +758,7 @@ namespace StockApp
             }
         }
 
-        private void editTraceToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ShowEditTraceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -769,7 +775,7 @@ namespace StockApp
             }
         }
 
-        private void simulatorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ShowSimulatorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -808,7 +814,7 @@ namespace StockApp
 
         }
 
-        private void editGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ShowEditGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;

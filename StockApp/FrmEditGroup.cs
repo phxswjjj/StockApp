@@ -46,8 +46,8 @@ namespace StockApp
                     Enabled = group.IsFavorite,
                     BackgroundImageLayout = ImageLayout.None,
                     Height = 26,
+                    Padding = padding
                 };
-                cbx.Padding = padding;
                 if (group.ComCodes.Contains(data.ComCode))
                     cbx.Checked = true;
                 CheckBox_CheckedChanged(cbx, null);
@@ -67,7 +67,7 @@ namespace StockApp
                 cbx.BackgroundImage = Resources.unchecked_checkbox;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             var customGroups = this.CustomGroups;
             var data = this.RefData;
@@ -94,7 +94,7 @@ namespace StockApp
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
