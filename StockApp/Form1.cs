@@ -85,6 +85,7 @@ namespace StockApp
         {
             var loading = new FrmLoading();
             var taskGroups = loading.AddTask("自訂觀察清單", () => CustomGroup.GetAll());
+
             var taskFavorite = loading.AddTask("觀察清單", () =>
             {
                 if (File.Exists(this.FavoriteFilePath))
@@ -92,6 +93,8 @@ namespace StockApp
                 else
                     return new List<string>();
             });
+            List<string> favoriteComCodes = taskFavorite.Result;
+
             var taskHate = loading.AddTask("排除清單", () =>
             {
                 if (File.Exists(this.HateFilePath))
@@ -99,6 +102,8 @@ namespace StockApp
                 else
                     return new List<string>();
             });
+            List<string> hateComCodes = taskHate.Result;
+
             var task0050 = loading.AddTask("0050", () =>
             {
                 return new ETF.ETF0050().GetAll();
@@ -150,15 +155,36 @@ namespace StockApp
             groups.RemoveAll(g => g.Name == groupTrace.Name);
             groups.Add(groupTrace);
 
+            var favoriteGroup = groups.FirstOrDefault(g => g.Name == "觀察清單");
+            if (favoriteGroup == null)
+            {
+                favoriteGroup = new FavoriteGroup()
+                {
+                    Name = "觀察清單",
+                };
+                groups.Add(favoriteGroup);
+            }
+            var extraFavorites = favoriteComCodes.Except(favoriteGroup.ComCodes);
+            favoriteGroup.ComCodes.AddRange(extraFavorites);
+            this.FavoriteComCodes = favoriteGroup.ComCodes;
+
+            var hateGroup = groups.FirstOrDefault(g => g.Name == "排除清單");
+            if (hateGroup == null)
+            {
+                hateGroup = new HateGroup()
+                {
+                    Name = "排除清單",
+                };
+                groups.Add(hateGroup);
+            }
+            var extraHates = hateComCodes.Except(hateGroup.ComCodes);
+            hateGroup.ComCodes.AddRange(extraHates);
+            this.HateComCodes = hateGroup.ComCodes;
+
             this.CustomGroups = groups;
 
             foreach (var group in groups)
                 AddFavoriteCustomGroupMenuItem(group.Name, group.IsFavorite);
-
-            List<string> favoriteComCodes = taskFavorite.Result;
-            this.FavoriteComCodes = favoriteComCodes;
-            List<string> hateComCodes = taskHate.Result;
-            this.HateComCodes = hateComCodes;
         }
         private void PreLoadData()
         {

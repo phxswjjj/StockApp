@@ -55,4 +55,11 @@ namespace StockApp
     {
         public override bool IsFavorite => false;
     }
+
+    class FavoriteGroup : CustomGroup
+    {
+    }
+    class HateGroup : CustomGroup
+    {
+    }
 }
