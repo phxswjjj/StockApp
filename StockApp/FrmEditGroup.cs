@@ -46,7 +46,8 @@ namespace StockApp
                     Enabled = group.IsFavorite,
                     BackgroundImageLayout = ImageLayout.None,
                     Height = 26,
-                    Padding = padding
+                    Padding = padding,
+                    Width = 140,
                 };
                 if (group.ComCodes.Contains(data.ComCode))
                     cbx.Checked = true;

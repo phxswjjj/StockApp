@@ -19,6 +19,8 @@ namespace StockApp
         public List<string> ComCodes { get; set; } = new List<string>();
         [JsonIgnore]
         public virtual bool IsFavorite { get; protected set; } = true;
+        [JsonIgnore]
+        public virtual int SortIndex { get; set; } = 10000;
 
         public static CustomGroup Create(string name)
         {
@@ -46,20 +48,28 @@ namespace StockApp
         }
     }
 
-    class TraceGroup : CustomGroup
+    class FavoriteGroup : CustomGroup
     {
-        public override bool IsFavorite => false;
+        public const int DefaultSortIndex = 1;
+        public override int SortIndex => DefaultSortIndex;
+    }
+    class HateGroup : CustomGroup
+    {
+        public const int DefaultSortIndex = 2;
+        public override int SortIndex => DefaultSortIndex;
     }
 
     class ETFGroup : CustomGroup
     {
+        public const int DefaultSortIndex = 11000;
         public override bool IsFavorite => false;
+        public override int SortIndex => DefaultSortIndex;
     }
 
-    class FavoriteGroup : CustomGroup
+    class TraceGroup : CustomGroup
     {
-    }
-    class HateGroup : CustomGroup
-    {
+        public const int DefaultSortIndex = 12000;
+        public override bool IsFavorite => false;
+        public override int SortIndex => DefaultSortIndex;
     }
 }

@@ -37,7 +37,7 @@ namespace StockApp
             // btnCancel
             // 
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancel.Location = new System.Drawing.Point(306, 231);
+            this.btnCancel.Location = new System.Drawing.Point(324, 231);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(89, 37);
             this.btnCancel.TabIndex = 11;
@@ -48,7 +48,7 @@ namespace StockApp
             // btnSave
             // 
             this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSave.Location = new System.Drawing.Point(211, 231);
+            this.btnSave.Location = new System.Drawing.Point(229, 231);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(89, 37);
             this.btnSave.TabIndex = 10;
@@ -63,14 +63,14 @@ namespace StockApp
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(583, 213);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(619, 213);
             this.flowLayoutPanel1.TabIndex = 12;
             // 
             // FrmEditGroup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(607, 275);
+            this.ClientSize = new System.Drawing.Size(643, 275);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);

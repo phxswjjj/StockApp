@@ -164,6 +164,8 @@ namespace StockApp
                 };
                 groups.Add(favoriteGroup);
             }
+            else
+                favoriteGroup.SortIndex = FavoriteGroup.DefaultSortIndex;
             var extraFavorites = favoriteComCodes.Except(favoriteGroup.ComCodes);
             favoriteGroup.ComCodes.AddRange(extraFavorites);
             this.FavoriteComCodes = favoriteGroup.ComCodes;
@@ -177,10 +179,13 @@ namespace StockApp
                 };
                 groups.Add(hateGroup);
             }
+            else
+                hateGroup.SortIndex = HateGroup.DefaultSortIndex;
             var extraHates = hateComCodes.Except(hateGroup.ComCodes);
             hateGroup.ComCodes.AddRange(extraHates);
             this.HateComCodes = hateGroup.ComCodes;
 
+            groups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
             this.CustomGroups = groups;
 
             foreach (var group in groups)
@@ -197,58 +202,6 @@ namespace StockApp
             if (!loading.Start())
                 loading.ShowDialog(this);
         }
-
-        private void SetupGridViewFitData(DataGridView gridview)
-        {
-            foreach (DataGridViewColumn col in gridview.Columns)
-            {
-                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-                switch (col.Name)
-                {
-                    case nameof(DisplayModel.ComName):
-                        col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
-                        col.Width = 80;
-                        break;
-                }
-            }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            JsonCache.Store(this.FavoriteFilePath, this.FavoriteComCodes.Distinct());
-            JsonCache.Store(this.HateFilePath, this.HateComCodes.Distinct());
-
-            var groups = this.CustomGroups;
-            groups.ForEach(g => g.Distinct());
-            groups.RemoveAll(g => g.ComCodes.Count == 0);
-            CustomGroup.Store(groups);
-        }
-
-        private void Form1_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.F)
-            {
-                var findText = Microsoft.VisualBasic.Interaction.InputBox("輸入完整代號", "尋找代號")
-                    .Trim();
-                if (!string.IsNullOrEmpty(findText))
-                {
-                    foreach (DataGridViewRow grow in dataGridView1.Rows)
-                    {
-                        var data = (DisplayModel)grow.DataBoundItem;
-                        if (data.ComCode == findText)
-                        {
-                            dataGridView1.ClearSelection();
-                            grow.Selected = true;
-                            dataGridView1.FirstDisplayedScrollingRowIndex = grow.Index;
-                            return;
-                        }
-                    }
-                    LoadData(new string[] { findText }, likeComName: findText);
-                    //MessageBox.Show($"找不到 {findText}");
-                }
-            }
-        }
-
         private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null,
             string likeComName = null)
         {
@@ -375,6 +328,57 @@ namespace StockApp
 
             var binding = new BindingList<DisplayModel>(list2);
             dataGridView1.DataSource = binding;
+        }
+
+        private void SetupGridViewFitData(DataGridView gridview)
+        {
+            foreach (DataGridViewColumn col in gridview.Columns)
+            {
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                switch (col.Name)
+                {
+                    case nameof(DisplayModel.ComName):
+                        col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
+                        col.Width = 80;
+                        break;
+                }
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            JsonCache.Store(this.FavoriteFilePath, this.FavoriteComCodes.Distinct());
+            JsonCache.Store(this.HateFilePath, this.HateComCodes.Distinct());
+
+            var groups = this.CustomGroups;
+            groups.ForEach(g => g.Distinct());
+            groups.RemoveAll(g => g.ComCodes.Count == 0);
+            CustomGroup.Store(groups);
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.F)
+            {
+                var findText = Microsoft.VisualBasic.Interaction.InputBox("輸入完整代號", "尋找代號")
+                    .Trim();
+                if (!string.IsNullOrEmpty(findText))
+                {
+                    foreach (DataGridViewRow grow in dataGridView1.Rows)
+                    {
+                        var data = (DisplayModel)grow.DataBoundItem;
+                        if (data.ComCode == findText)
+                        {
+                            dataGridView1.ClearSelection();
+                            grow.Selected = true;
+                            dataGridView1.FirstDisplayedScrollingRowIndex = grow.Index;
+                            return;
+                        }
+                    }
+                    LoadData(new string[] { findText }, likeComName: findText);
+                    //MessageBox.Show($"找不到 {findText}");
+                }
+            }
         }
 
         private void DataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
