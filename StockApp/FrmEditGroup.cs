@@ -1,4 +1,5 @@
-﻿using StockApp.Properties;
+﻿using StockApp.Group;
+using StockApp.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -78,8 +79,7 @@ namespace StockApp
 
             foreach (var ctrl in flowLayoutPanel1.Controls)
             {
-                var cbx = ctrl as CheckBox;
-                if (cbx == null)
+                if (!(ctrl is CheckBox cbx))
                     continue;
 
                 if (cbx.Text == groupName)
@@ -112,8 +112,7 @@ namespace StockApp
             var data = this.RefData;
             foreach (Control ctrl in flowLayoutPanel1.Controls)
             {
-                var cbx = ctrl as CheckBox;
-                if (cbx == null)
+                if (!(ctrl is CheckBox cbx))
                     continue;
                 var name = cbx.Text;
                 var group = customGroups.FirstOrDefault(g => g.Name == name);

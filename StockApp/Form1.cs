@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockApp.Group;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;

@@ -71,7 +71,7 @@
     <Compile Include="CompanyExDividend.cs" />
     <Compile Include="CompanyKDJ.cs" />
     <Compile Include="CompanyROE.cs" />
-    <Compile Include="CustomGroup.cs" />
+    <Compile Include="Group\CustomGroup.cs" />
     <Compile Include="DisplayModel.cs" />
     <Compile Include="ETF\ETF0050.cs" />
     <Compile Include="ETF\ETF0056.cs" />
@@ -102,6 +102,10 @@
     <Compile Include="FrmYearROE.Designer.cs">
       <DependentUpon>FrmYearROE.cs</DependentUpon>
     </Compile>
+    <Compile Include="Group\ETFGroup.cs" />
+    <Compile Include="Group\FavoriteGroup.cs" />
+    <Compile Include="Group\HateGroup.cs" />
+    <Compile Include="Group\TraceGroup.cs" />
     <Compile Include="MemoContent.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

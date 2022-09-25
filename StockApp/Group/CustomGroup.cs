@@ -9,21 +9,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockApp
+namespace StockApp.Group
 {
-    class CustomGroupEqualComparer : IEqualityComparer<CustomGroup>
-    {
-        public bool Equals(CustomGroup x, CustomGroup y)
-        {
-            return x.GetHashCode() == y.GetHashCode();
-        }
-
-        public int GetHashCode(CustomGroup obj)
-        {
-            return obj.Name.GetHashCode();
-        }
-    }
-
     class CustomGroup
     {
         [JsonProperty]
@@ -95,26 +82,17 @@ namespace StockApp
             ETFGroup = 11000,
             TraceGroup = 12000,
         }
-    }
+        protected class CustomGroupEqualComparer : IEqualityComparer<CustomGroup>
+        {
+            public bool Equals(CustomGroup x, CustomGroup y)
+            {
+                return x.GetHashCode() == y.GetHashCode();
+            }
 
-    class FavoriteGroup : CustomGroup
-    {
-        public override int SortIndex => (int)DefaultSortIndexType.FavoriteGroup;
-    }
-    class HateGroup : CustomGroup
-    {
-        public override int SortIndex => (int)DefaultSortIndexType.HateGroup;
-    }
-
-    class ETFGroup : CustomGroup
-    {
-        public override bool IsFavorite => false;
-        public override int SortIndex => (int)DefaultSortIndexType.ETFGroup;
-    }
-
-    class TraceGroup : CustomGroup
-    {
-        public override bool IsFavorite => false;
-        public override int SortIndex => (int)DefaultSortIndexType.TraceGroup;
+            public int GetHashCode(CustomGroup obj)
+            {
+                return obj.Name.GetHashCode();
+            }
+        }
     }
 }
