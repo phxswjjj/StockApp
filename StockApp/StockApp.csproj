@@ -148,8 +148,8 @@
     </Compile>
     <Compile Include="Trace\StockDetail.cs" />
     <Compile Include="Utility\TWSEDate.cs" />
-    <Compile Include="WebRequest.cs" />
     <Compile Include="Web\GoodInfoClient.cs" />
+    <Compile Include="Web\WebRequest.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

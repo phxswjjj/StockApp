@@ -67,7 +67,7 @@ namespace StockApp
         }
         private static List<CompanyKDJ> GetAllByUrl(string url)
         {
-            var request = WebRequest.CreateGoodInfoGet();
+            var request = Web.WebRequest.CreateGoodInfoGet();
             var resp = request.GetAsync(url).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
@@ -83,9 +83,11 @@ namespace StockApp
             {
                 var tds = tr.QuerySelectorAll("td");
                 if (tds.Length == 0) continue;
-                var data = new CompanyKDJ();
-                data.ComCode = tds[0].Text();
-                data.ComName = tds[1].Text();
+                var data = new CompanyKDJ
+                {
+                    ComCode = tds[0].Text(),
+                    ComName = tds[1].Text()
+                };
                 var dayK = tds[7].Text();
                 if (string.IsNullOrEmpty(dayK))
                     continue;

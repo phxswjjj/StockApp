@@ -35,8 +35,8 @@ namespace StockApp
 
             var jsonLastFilePath = Path.Combine("CompanyDayVolume", $"last.json");
 
-            var request = WebRequest.Create();
-            var requestEx = WebRequest.Create();
+            var request = Web.WebRequest.Create();
+            var requestEx = Web.WebRequest.Create();
             var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date={offseted:yyyyMMdd}&type=ALL&_=1658241396683");
             var twYear = offseted.Year - 1911;
             var respEx = requestEx.GetAsync($"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={twYear}/{offseted:MM/dd}&se=AL&_=1658242781730");
@@ -54,10 +54,12 @@ namespace StockApp
             var result = new List<CompanyDayVolume>();
             foreach (var modelData in model.data9)
             {
-                var data = new CompanyDayVolume();
-                data.ComCode = modelData[0];
-                data.ComName = modelData[1];
-                data.ComType = "市";
+                var data = new CompanyDayVolume
+                {
+                    ComCode = modelData[0],
+                    ComName = modelData[1],
+                    ComType = "市"
+                };
 
                 var sPrice = modelData[8]
                     .Replace("-", "");
@@ -75,10 +77,12 @@ namespace StockApp
             var modelEx = JsonConvert.DeserializeObject<TPEXDataModel>(contentEx.Result);
             foreach (var modelData in modelEx.aaData)
             {
-                var data = new CompanyDayVolume();
-                data.ComCode = modelData[0];
-                data.ComName = modelData[1];
-                data.ComType = "櫃";
+                var data = new CompanyDayVolume
+                {
+                    ComCode = modelData[0],
+                    ComName = modelData[1],
+                    ComType = "櫃"
+                };
 
                 var sPrice = modelData[2]
                     .Replace("-", "");

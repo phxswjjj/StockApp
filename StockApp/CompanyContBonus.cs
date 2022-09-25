@@ -44,7 +44,7 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
-            var request = WebRequest.CreateGoodInfo();
+            var request = Web.WebRequest.CreateGoodInfo();
             request.DefaultRequestHeaders.Referrer = new Uri(RefererUrl);
             var resp = request.PostAsync(QueryBaseUrl, null).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
@@ -60,10 +60,12 @@ namespace StockApp
             foreach (var tr in trs)
             {
                 var tds = tr.QuerySelectorAll("td");
-                var data = new CompanyContBonus();
-                data.ComCode = tds[1].Text();
-                data.ComName = tds[2].Text();
-                data.CurrentPrice = decimal.Parse(tds[4].Text());
+                var data = new CompanyContBonus
+                {
+                    ComCode = tds[1].Text(),
+                    ComName = tds[2].Text(),
+                    CurrentPrice = decimal.Parse(tds[4].Text())
+                };
 
                 var sContBonusTimes = tds[17].Text();
                 if (string.IsNullOrEmpty(sContBonusTimes))

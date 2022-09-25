@@ -32,7 +32,7 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
-            var request = WebRequest.CreateGoodInfo();
+            var request = Web.WebRequest.CreateGoodInfo();
             var resp = request.GetAsync(QueryBaseUrl).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
@@ -49,9 +49,11 @@ namespace StockApp
                 var tds = tr.QuerySelectorAll("td");
                 if (tds.Length == 0)
                     continue;
-                var data = new CompanyExDividend();
-                data.ComCode = tds[1].Text();
-                data.ComName = tds[2].Text();
+                var data = new CompanyExDividend
+                {
+                    ComCode = tds[1].Text(),
+                    ComName = tds[2].Text()
+                };
 
                 var sBonus = tds.Last().Text();
                 data.ExDividendBonus = decimal.Parse(sBonus);

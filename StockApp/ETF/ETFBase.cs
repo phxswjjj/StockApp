@@ -29,7 +29,7 @@ namespace StockApp.ETF
             };
 
             var url = "https://www.cmoney.tw/etf/ashx/e210.ashx";
-            var request = WebRequest.Create();
+            var request = Web.WebRequest.Create();
             var formData = new FormUrlEncodedContent(new Dictionary<string, string>()
             {
                 {"action", "GetShareholdingDetails" },

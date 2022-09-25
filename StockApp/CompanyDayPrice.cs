@@ -103,7 +103,7 @@ namespace StockApp
 
             var url = $"https://www.twse.com.tw/exchangeReport/STOCK_DAY?date={year:0000}{month:00}01&stockNo={this.ComCode}";
 
-            var request = WebRequest.Create();
+            var request = Web.WebRequest.Create();
             var resp = request.GetAsync(url).Result;
             var content = resp.Content.ReadAsStringAsync().Result;
             var model = JsonConvert.DeserializeObject<DataModel>(content);
@@ -160,7 +160,7 @@ namespace StockApp
 
             var url = $"https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/st43_result.php?l=en-us&d={year:0000}/{month:00}&stkno={this.ComCode}";
 
-            var request = WebRequest.Create();
+            var request = Web.WebRequest.Create();
             var resp = request.GetAsync(url).Result;
             var content = resp.Content.ReadAsStringAsync().Result
                 .Replace(@"\/", "/");

@@ -43,7 +43,7 @@ namespace StockApp
                 list = new List<DayBonus>();
 
                 var url = BaseUrl + this.ComCode;
-                var request = WebRequest.CreateGoodInfo();
+                var request = Web.WebRequest.CreateGoodInfo();
                 var resp = request.GetAsync(url).Result;
                 var bytes = resp.Content.ReadAsByteArrayAsync().Result;
                 var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
@@ -57,10 +57,9 @@ namespace StockApp
                 {
                     var tds = tr.QuerySelectorAll("td");
                     if (tds.Length == 0) continue;
-                    DayBonus data;
 
                     if (TryParse(tds[3].Text(), tds[4].Text(),
-                        tds[14].Text(), out data))
+                        tds[14].Text(), out DayBonus data))
                     {
                         data.ExType = ExDividendType.Money;
                         list.Add(data);

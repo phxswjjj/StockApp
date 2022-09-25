@@ -38,8 +38,8 @@ namespace StockApp
 
             var jsonLastFilePath = Path.Combine("CompanyAvgBonus", $"last.json");
 
-            var request = WebRequest.Create();
-            var requestEx = WebRequest.Create();
+            var request = Web.WebRequest.Create();
+            var requestEx = Web.WebRequest.Create();
             var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date={offseted:yyyyMMdd}&selectType=ALL&_=1658329489142");
             var respEx = requestEx.GetAsync("https://www.tpex.org.tw/web/stock/aftertrading/peratio_analysis/pera_result.php?l=zh-tw&_=1658330021875");
             var content = resp.Result.Content.ReadAsStringAsync();
