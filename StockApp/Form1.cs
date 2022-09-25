@@ -185,7 +185,11 @@ namespace StockApp
             this.CustomGroups = groups;
 
             foreach (var group in groups)
-                AddFavoriteCustomGroupMenuItem(group.Name, group.IsFavorite);
+            {
+                var newMainMenuItem = new ToolStripMenuItem(group.Name);
+                newMainMenuItem.Click += CustomGroupMenuItem_Click; ;
+                觀察清單ToolStripMenuItem.DropDownItems.Add(newMainMenuItem);
+            }
         }
         private void PreLoadData()
         {
@@ -414,11 +418,6 @@ namespace StockApp
                     item.Visible = true;
 
                 var grow = gv.Rows[e.RowIndex];
-                var data = (DisplayModel)grow.DataBoundItem;
-                addFavoriteToolStripMenuItem.Visible = !FavoriteComCodes.Contains(data.ComCode);
-                removeFavoriteToolStripMenuItem.Visible = FavoriteComCodes.Contains(data.ComCode);
-                addHateToolStripMenuItem.Visible = !HateComCodes.Contains(data.ComCode);
-                removeHateToolStripMenuItem.Visible = HateComCodes.Contains(data.ComCode);
 
                 gv.ClearSelection();
                 grow.Selected = true;
@@ -549,20 +548,6 @@ namespace StockApp
                 grow.Cells[nameof(DisplayModel.Expect5)].Style.ForeColor = Color.Red;
         }
 
-        private void AddFavoriteCustomGroupMenuItem(string text, bool allowAddFavorite = true)
-        {
-            var newMainMenuItem = new ToolStripMenuItem(text);
-            newMainMenuItem.Click += CustomGroupMenuItem_Click; ;
-            觀察清單ToolStripMenuItem.DropDownItems.Add(newMainMenuItem);
-
-            if (allowAddFavorite)
-            {
-                var newcontextMenuItem = new ToolStripMenuItem(text);
-                newcontextMenuItem.Click += ShowFavoriteCustomGroup_Click;
-                addFavoriteToolStripMenuItem.DropDownItems.Insert(addFavoriteToolStripMenuItem.DropDownItems.Count - 1, newcontextMenuItem);
-            }
-        }
-
         #region Main Menu
         private void 觀察清單ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -589,17 +574,7 @@ namespace StockApp
             LoadData(group.ComCodes.ToArray());
         }
 
-        private void 排除清單ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var editor = new FrmFavorite();
-            if (editor.ShowHateDialog(this, this.HateComCodes) == DialogResult.OK)
-            {
-                this.HateComCodes = new List<string>(editor.ViewCodes);
-                LoadData(editor.ViewCodes);
-            }
-        }
-
-        private void 重新整理ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void 預設檢視ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LoadData();
         }
@@ -677,50 +652,6 @@ namespace StockApp
                 frm.Show(this);
         }
 
-        private void AddFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            FavoriteComCodes.Add(data.ComCode);
-            RefreshCellStyle(grow);
-
-            contextMenuStrip1.Hide();
-        }
-
-        private void AddFavoriteTextBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)Keys.Enter)
-            {
-                var tbx = (ToolStripTextBox)sender;
-                var text = tbx.Text;
-                if (!string.IsNullOrEmpty(text))
-                {
-                    tbx.Text = "";
-
-                    var groups = this.CustomGroups;
-                    var group = groups.FirstOrDefault(g => g.Name == text);
-                    if (group == null)
-                    {
-                        group = CustomGroup.Create(text);
-                        groups.Add(group);
-
-                        AddFavoriteCustomGroupMenuItem(text);
-                    }
-
-                    foreach (ToolStripItem item in addFavoriteToolStripMenuItem.DropDownItems)
-                    {
-                        if (item.Text == text)
-                        {
-                            item.PerformClick();
-                            break;
-                        }
-                    }
-                }
-                e.Handled = true;
-            }
-        }
-
         private void ShowFavoriteCustomGroup_Click(object sender, EventArgs e)
         {
             var item = (ToolStripMenuItem)sender;
@@ -739,35 +670,6 @@ namespace StockApp
 
             group.ComCodes.Add(data.ComCode);
             FavoriteComCodes.Add(data.ComCode);
-            RefreshCellStyle(grow);
-        }
-
-        private void RemoveFavoriteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            var groups = this.CustomGroups;
-            groups.ForEach(g => g.ComCodes.Remove(data.ComCode));
-            this.FavoriteComCodes.Remove(data.ComCode);
-            RefreshCellStyle(grow);
-        }
-
-        private void AddHateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            this.HateComCodes.Add(data.ComCode);
-            RefreshCellStyle(grow);
-        }
-
-        private void RemoveHateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            this.HateComCodes.Remove(data.ComCode);
             RefreshCellStyle(grow);
         }
 

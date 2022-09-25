@@ -34,25 +34,19 @@ namespace StockApp
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.addFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addFavoriteTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.removeFavoriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeHateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editMemoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.simulatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showYearROEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.觀察清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.排除清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.庫存清單ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.將除息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.重新整理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.預設檢視ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
-            this.editGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -83,24 +77,20 @@ namespace StockApp
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
-            this.addFavoriteToolStripMenuItem,
-            this.removeFavoriteToolStripMenuItem,
-            this.addHateToolStripMenuItem,
-            this.removeHateToolStripMenuItem,
             this.editMemoToolStripMenuItem,
             this.editTraceToolStripMenuItem,
             this.simulatorToolStripMenuItem,
             this.showYearROEToolStripMenuItem,
             this.editGroupToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 246);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(165, 136);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem1});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.openToolStripMenuItem.Text = "Open GoodInfo";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenGoodInfo_ToolStripMenuItem_Click);
             // 
@@ -111,79 +101,48 @@ namespace StockApp
             this.openToolStripMenuItem1.Text = "Open CMoney";
             this.openToolStripMenuItem1.Click += new System.EventHandler(this.OpenCMoney_ToolStripMenuItem_Click);
             // 
-            // addFavoriteToolStripMenuItem
-            // 
-            this.addFavoriteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addFavoriteTextBox});
-            this.addFavoriteToolStripMenuItem.Name = "addFavoriteToolStripMenuItem";
-            this.addFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.addFavoriteToolStripMenuItem.Text = "Add Favorite";
-            this.addFavoriteToolStripMenuItem.Click += new System.EventHandler(this.AddFavoriteToolStripMenuItem_Click);
-            // 
-            // addFavoriteTextBox
-            // 
-            this.addFavoriteTextBox.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9F);
-            this.addFavoriteTextBox.Name = "addFavoriteTextBox";
-            this.addFavoriteTextBox.Size = new System.Drawing.Size(100, 23);
-            this.addFavoriteTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddFavoriteTextBox_KeyPress);
-            // 
-            // removeFavoriteToolStripMenuItem
-            // 
-            this.removeFavoriteToolStripMenuItem.Name = "removeFavoriteToolStripMenuItem";
-            this.removeFavoriteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.removeFavoriteToolStripMenuItem.Text = "Remove Favorite";
-            this.removeFavoriteToolStripMenuItem.Click += new System.EventHandler(this.RemoveFavoriteToolStripMenuItem_Click);
-            // 
-            // addHateToolStripMenuItem
-            // 
-            this.addHateToolStripMenuItem.Name = "addHateToolStripMenuItem";
-            this.addHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.addHateToolStripMenuItem.Text = "Add Hate";
-            this.addHateToolStripMenuItem.Click += new System.EventHandler(this.AddHateToolStripMenuItem_Click);
-            // 
-            // removeHateToolStripMenuItem
-            // 
-            this.removeHateToolStripMenuItem.Name = "removeHateToolStripMenuItem";
-            this.removeHateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.removeHateToolStripMenuItem.Text = "Remove Hate";
-            this.removeHateToolStripMenuItem.Click += new System.EventHandler(this.RemoveHateToolStripMenuItem_Click);
-            // 
             // editMemoToolStripMenuItem
             // 
             this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
-            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.editMemoToolStripMenuItem.Text = "Edit Memo";
             this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.ShowEditMemoToolStripMenuItem_Click);
             // 
             // editTraceToolStripMenuItem
             // 
             this.editTraceToolStripMenuItem.Name = "editTraceToolStripMenuItem";
-            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.editTraceToolStripMenuItem.Text = "Edit Trace";
             this.editTraceToolStripMenuItem.Click += new System.EventHandler(this.ShowEditTraceToolStripMenuItem_Click);
             // 
             // simulatorToolStripMenuItem
             // 
             this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
-            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.simulatorToolStripMenuItem.Text = "Simulator";
             this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.ShowSimulatorToolStripMenuItem_Click);
             // 
             // showYearROEToolStripMenuItem
             // 
             this.showYearROEToolStripMenuItem.Name = "showYearROEToolStripMenuItem";
-            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.showYearROEToolStripMenuItem.Text = "Show Year ROE";
             this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.ShowYearInfoToolStripMenuItem_Click);
+            // 
+            // editGroupToolStripMenuItem
+            // 
+            this.editGroupToolStripMenuItem.Name = "editGroupToolStripMenuItem";
+            this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.editGroupToolStripMenuItem.Text = "Edit Group";
+            this.editGroupToolStripMenuItem.Click += new System.EventHandler(this.ShowEditGroupToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.觀察清單ToolStripMenuItem,
-            this.排除清單ToolStripMenuItem,
             this.庫存清單ToolStripMenuItem,
             this.將除息ToolStripMenuItem,
-            this.重新整理ToolStripMenuItem,
+            this.預設檢視ToolStripMenuItem,
             this.設定ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -196,13 +155,6 @@ namespace StockApp
             this.觀察清單ToolStripMenuItem.Name = "觀察清單ToolStripMenuItem";
             this.觀察清單ToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
             this.觀察清單ToolStripMenuItem.Text = "觀察清單▼";
-            // 
-            // 排除清單ToolStripMenuItem
-            // 
-            this.排除清單ToolStripMenuItem.Name = "排除清單ToolStripMenuItem";
-            this.排除清單ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
-            this.排除清單ToolStripMenuItem.Text = "排除清單";
-            this.排除清單ToolStripMenuItem.Click += new System.EventHandler(this.排除清單ToolStripMenuItem_Click);
             // 
             // 庫存清單ToolStripMenuItem
             // 
@@ -218,12 +170,12 @@ namespace StockApp
             this.將除息ToolStripMenuItem.Text = "將除息";
             this.將除息ToolStripMenuItem.Click += new System.EventHandler(this.將除息ToolStripMenuItem_Click);
             // 
-            // 重新整理ToolStripMenuItem
+            // 預設檢視ToolStripMenuItem
             // 
-            this.重新整理ToolStripMenuItem.Name = "重新整理ToolStripMenuItem";
-            this.重新整理ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
-            this.重新整理ToolStripMenuItem.Text = "重新整理";
-            this.重新整理ToolStripMenuItem.Click += new System.EventHandler(this.重新整理ToolStripMenuItem_Click);
+            this.預設檢視ToolStripMenuItem.Name = "預設檢視ToolStripMenuItem";
+            this.預設檢視ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.預設檢視ToolStripMenuItem.Text = "預設檢視";
+            this.預設檢視ToolStripMenuItem.Click += new System.EventHandler(this.預設檢視ToolStripMenuItem_Click);
             // 
             // 設定ToolStripMenuItem
             // 
@@ -247,13 +199,6 @@ namespace StockApp
             this.lbsSelectedTotal.Name = "lbsSelectedTotal";
             this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
             this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
-            // 
-            // editGroupToolStripMenuItem
-            // 
-            this.editGroupToolStripMenuItem.Name = "editGroupToolStripMenuItem";
-            this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.editGroupToolStripMenuItem.Text = "Edit Group";
-            this.editGroupToolStripMenuItem.Click += new System.EventHandler(this.ShowEditGroupToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -286,18 +231,12 @@ namespace StockApp
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 觀察清單ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 排除清單ToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem addFavoriteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem removeFavoriteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addHateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 重新整理ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem removeHateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 預設檢視ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 設定ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editMemoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 庫存清單ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripTextBox addFavoriteTextBox;
         private System.Windows.Forms.ToolStripMenuItem 將除息ToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lbsSelectedTotal;
