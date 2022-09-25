@@ -20,6 +20,7 @@ namespace StockApp
         const int GroupControlWidth = 140;
 
         internal DisplayModel RefData { get; }
+        public Button EmptyButton { get; }
 
         private readonly List<CustomGroup> CustomGroups;
         private TextBox txtAddGroup;
@@ -27,6 +28,13 @@ namespace StockApp
         public FrmEditGroup()
         {
             InitializeComponent();
+
+            //避免 enter 聲音
+            this.EmptyButton = new Button()
+            {
+                Name = "EmptyButton",
+            };
+            this.AcceptButton = EmptyButton;
         }
         internal FrmEditGroup(DisplayModel data, List<CustomGroup> customGroups) : this()
         {
