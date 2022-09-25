@@ -14,6 +14,7 @@ namespace StockApp
     public partial class FrmLoading : Form
     {
         private List<Task<string>> Tasks = new List<Task<string>>();
+        private Dictionary<int, string> TaskNames = new Dictionary<int, string>();
         private readonly Stopwatch Stopwatch;
 
         public int MinimizeMilliseconds { get; set; } = 1000;
@@ -52,6 +53,7 @@ namespace StockApp
             var task = Task.Factory.StartNew(doSomething);
             var taskCompletedNaming = task.ContinueWith<string>((t) => name);
             this.Tasks.Add(taskCompletedNaming);
+            this.TaskNames.Add(taskCompletedNaming.GetHashCode(), name);
             return task;
         }
 
@@ -74,20 +76,29 @@ namespace StockApp
                     task = Task.Factory
                         .ContinueWhenAny(waitTasks, (t) => t.Result);
                 }
-                var name = task.Result;
+                var info = new ProgressInfo()
+                {
+                    CompletedJobName = task.Result,
+                };
+                var waitTask = waitTasks.FirstOrDefault(t => !t.IsCompleted);
+                if (waitTask != null)
+                    info.WaitJobName = this.TaskNames[waitTask.GetHashCode()];
 
                 var percent = (decimal)i / total * 100;
-                backgroundWorker1.ReportProgress((int)percent, name);
+                backgroundWorker1.ReportProgress((int)percent, info);
             }
-            backgroundWorker1.ReportProgress(100, "All");
+            backgroundWorker1.ReportProgress(100, new ProgressInfo() { CompletedJobName = "All" });
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            var name = (string)e.UserState;
+            var info = (ProgressInfo)e.UserState;
             var percent = e.ProgressPercentage;
             progressBar1.Value = percent;
-            this.Text = $"{name} completed({percent}%)";
+            var waitInfo = "";
+            if (!string.IsNullOrEmpty(info.WaitJobName))
+                waitInfo = $", now wait {info.WaitJobName}";
+            this.Text = $"{info.CompletedJobName} completed({percent}%){waitInfo}";
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -96,6 +107,12 @@ namespace StockApp
             //keep
             progressBar1.Value = 99;
             this.Close();
+        }
+
+        private class ProgressInfo
+        {
+            public string CompletedJobName { get; set; }
+            public string WaitJobName { get; set; }
         }
     }
 }
