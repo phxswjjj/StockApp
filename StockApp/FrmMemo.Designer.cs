@@ -107,6 +107,7 @@ namespace StockApp
             this.Controls.Add(this.lblHoldStock);
             this.MaximizeBox = false;
             this.Name = "FrmMemo";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmMemo";
             this.ResumeLayout(false);
             this.PerformLayout();

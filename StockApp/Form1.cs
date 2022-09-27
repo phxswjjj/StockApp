@@ -233,6 +233,10 @@ namespace StockApp
             });
             var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
             var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
+            var taskTradeHistory = loading.AddTask("交易記錄", () =>
+            {
+                return Trade.TradeInfo.GetAll();
+            });
             if (!loading.Start())
                 loading.ShowDialog(this);
 
@@ -323,6 +327,13 @@ namespace StockApp
                 var find = kdjList.FirstOrDefault(k => k.ComCode == l.ComCode);
                 if (find != null)
                     l.SetExtra(find);
+            });
+
+            var allTrades = taskTradeHistory.Result;
+            list2.ForEach(l =>
+            {
+                var trades = allTrades.Where(t => t.ComCode == l.ComCode);
+                l.ResetTrades(trades);
             });
 
             list2.Sort(comparer);
@@ -749,6 +760,19 @@ namespace StockApp
             var data = (DisplayModel)grow.DataBoundItem;
 
             var editor = new FrmEditGroup(data, this.CustomGroups);
+            if (editor.ShowDialog() == DialogResult.OK)
+            {
+                RefreshCellStyle(grow);
+                dataGridView1.Refresh();
+            }
+        }
+
+        private void tradeHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            var editor = new Trade.FrmTradeHistory(data);
             if (editor.ShowDialog() == DialogResult.OK)
             {
                 RefreshCellStyle(grow);

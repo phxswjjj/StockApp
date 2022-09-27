@@ -47,6 +47,7 @@ namespace StockApp
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tradeHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -81,16 +82,17 @@ namespace StockApp
             this.editTraceToolStripMenuItem,
             this.simulatorToolStripMenuItem,
             this.showYearROEToolStripMenuItem,
-            this.editGroupToolStripMenuItem});
+            this.editGroupToolStripMenuItem,
+            this.tradeHistoryToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(165, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 180);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem1});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open GoodInfo";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenGoodInfo_ToolStripMenuItem_Click);
             // 
@@ -104,35 +106,35 @@ namespace StockApp
             // editMemoToolStripMenuItem
             // 
             this.editMemoToolStripMenuItem.Name = "editMemoToolStripMenuItem";
-            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.editMemoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editMemoToolStripMenuItem.Text = "Edit Memo";
             this.editMemoToolStripMenuItem.Click += new System.EventHandler(this.ShowEditMemoToolStripMenuItem_Click);
             // 
             // editTraceToolStripMenuItem
             // 
             this.editTraceToolStripMenuItem.Name = "editTraceToolStripMenuItem";
-            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editTraceToolStripMenuItem.Text = "Edit Trace";
             this.editTraceToolStripMenuItem.Click += new System.EventHandler(this.ShowEditTraceToolStripMenuItem_Click);
             // 
             // simulatorToolStripMenuItem
             // 
             this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
-            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.simulatorToolStripMenuItem.Text = "Simulator";
             this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.ShowSimulatorToolStripMenuItem_Click);
             // 
             // showYearROEToolStripMenuItem
             // 
             this.showYearROEToolStripMenuItem.Name = "showYearROEToolStripMenuItem";
-            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showYearROEToolStripMenuItem.Text = "Show Year ROE";
             this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.ShowYearInfoToolStripMenuItem_Click);
             // 
             // editGroupToolStripMenuItem
             // 
             this.editGroupToolStripMenuItem.Name = "editGroupToolStripMenuItem";
-            this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editGroupToolStripMenuItem.Text = "Edit Group";
             this.editGroupToolStripMenuItem.Click += new System.EventHandler(this.ShowEditGroupToolStripMenuItem_Click);
             // 
@@ -200,6 +202,13 @@ namespace StockApp
             this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
             this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
             // 
+            // tradeHistoryToolStripMenuItem
+            // 
+            this.tradeHistoryToolStripMenuItem.Name = "tradeHistoryToolStripMenuItem";
+            this.tradeHistoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tradeHistoryToolStripMenuItem.Text = "Trade History";
+            this.tradeHistoryToolStripMenuItem.Click += new System.EventHandler(this.tradeHistoryToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -245,6 +254,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem showYearROEToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editTraceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editGroupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tradeHistoryToolStripMenuItem;
     }
 }
 

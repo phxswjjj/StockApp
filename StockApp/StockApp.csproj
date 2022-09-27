@@ -71,6 +71,7 @@
     <Compile Include="CompanyExDividend.cs" />
     <Compile Include="CompanyKDJ.cs" />
     <Compile Include="CompanyROE.cs" />
+    <Compile Include="Data\SortableBindingList.cs" />
     <Compile Include="Group\CustomGroup.cs" />
     <Compile Include="DisplayModel.cs" />
     <Compile Include="ETF\ETF0050.cs" />
@@ -147,6 +148,26 @@
       <DependentUpon>FrmEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Trace\StockDetail.cs" />
+    <Compile Include="Trade\FrmTradeHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Trade\FrmTradeHistory.Designer.cs">
+      <DependentUpon>FrmTradeHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trade\TradeInfo.cs" />
+    <Compile Include="UI\DataGridViewCalendarEditingControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\DataGridViewDateCell.cs" />
+    <Compile Include="UI\DataGridViewDateColumn.cs" />
+    <Compile Include="UI\DataGridViewNumericCellEditingControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\DataGridViewNumericColumn.cs" />
+    <Compile Include="UI\DataGridViewNumericUpDownCell.cs" />
+    <Compile Include="UI\NullableDateTimePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Utility\TWSEDate.cs" />
     <Compile Include="Web\GoodInfoClient.cs" />
     <Compile Include="Web\WebRequest.cs" />
@@ -181,6 +202,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Trace\FrmEditor.resx">
       <DependentUpon>FrmEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Trade\FrmTradeHistory.resx">
+      <DependentUpon>FrmTradeHistory.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

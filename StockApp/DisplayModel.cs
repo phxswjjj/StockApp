@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockApp.Trade;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -74,6 +75,8 @@ namespace StockApp
             }
         }
 
+        public List<Trade.TradeInfo> Trades { get; private set; } = new List<Trade.TradeInfo>();
+
         internal void SetExtra(CompanyContBonus b)
         {
             this.ContBonusTimes = b.ContBonusTimes;
@@ -141,6 +144,12 @@ namespace StockApp
                 this.TraceValue = findTrace.Value;
                 this.TraceData = findTrace;
             }
+        }
+
+        internal void ResetTrades(IEnumerable<TradeInfo> trades)
+        {
+            this.Trades.Clear();
+            this.Trades.AddRange(trades);
         }
 
         #region Comparer
