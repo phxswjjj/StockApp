@@ -48,9 +48,29 @@ namespace StockApp
         [DisplayName("股利")]
         public decimal? ExDividendBonus { get; private set; }
         [DisplayName("庫存")]
-        public int? HoldStock { get; private set; }
+        public int? HoldStock
+        {
+            get
+            {
+                var v = this.Trades.Sum(t => t.TradeVolume);
+                if (v == 0)
+                    return null;
+                return v;
+            }
+        }
         [DisplayName("成本")]
-        public decimal? HoldValue { get; private set; }
+        public decimal? HoldValue
+        {
+            get
+            {
+                var totalVolume = this.HoldStock;
+                if (!totalVolume.HasValue || totalVolume.Value == 0)
+                    return null;
+                var totalValue = this.Trades.Sum(t => t.TradeVolume * t.TradePrice);
+                var avg = totalValue / totalVolume.Value;
+                return Math.Floor(avg * 100) / 100;
+            }
+        }
         [DisplayName("追蹤")]
         public decimal? TraceValue { get; private set; }
         [DisplayName("追蹤T")]
@@ -99,11 +119,6 @@ namespace StockApp
             this.CurrentPrice = find.CurrentPrice;
             this.LastDayVolume = find.DayVolume;
             this.ComType = find.ComType;
-        }
-        internal void SetExtra(MemoContent data)
-        {
-            this.HoldStock = data.HoldStock;
-            this.HoldValue = data.HoldValue;
         }
 
         internal void SetExtra(CompanyAvgBonus d)

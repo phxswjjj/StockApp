@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -231,7 +232,6 @@ namespace StockApp
             {
                 return Trace.StockDetail.Load();
             });
-            var taskMemo = loading.AddTask("備忘", () => MemoContent.Load());
             var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
             var taskTradeHistory = loading.AddTask("交易記錄", () =>
             {
@@ -240,7 +240,6 @@ namespace StockApp
             if (!loading.Start())
                 loading.ShowDialog(this);
 
-            var memoList = taskMemo.Result;
             var traceStockList = taskTraceStock.Result;
 
             var list = taskDayVolume.Result;
@@ -284,9 +283,7 @@ namespace StockApp
                         continue;
                     list2.Add(data);
                 }
-                foreach (var code in memoList
-                    .Select(m => m.ComCode)
-                    .Union(traceStockList.Select(m => m.ComCode)))
+                foreach (var code in traceStockList.Select(m => m.ComCode))
                 {
                     if (list2.Any(l => l.ComCode == code))
                         continue;
@@ -312,10 +309,6 @@ namespace StockApp
 
             list2.ForEach(l =>
             {
-                var find = memoList.FirstOrDefault(b => b.ComCode == l.ComCode);
-                if (find != null)
-                    l.SetExtra(find);
-
                 var findTrace = traceStockList.FirstOrDefault(b => b.ComCode == l.ComCode);
                 if (findTrace != null)
                     l.SetExtra(findTrace);
@@ -602,7 +595,14 @@ namespace StockApp
 
         private void 庫存清單ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var list = MemoContent.Load();
+            var loading = new FrmLoading();
+            var taskTradeHistory = loading.AddTask("交易記錄", () =>
+            {
+                return Trade.TradeInfo.GetAll();
+            });
+            if (!loading.Start())
+                loading.ShowDialog(this);
+            var list = taskTradeHistory.Result;
             LoadData(list.Select(l => l.ComCode).ToArray());
         }
 
@@ -683,19 +683,6 @@ namespace StockApp
             group.ComCodes.Add(data.ComCode);
             FavoriteComCodes.Add(data.ComCode);
             RefreshCellStyle(grow);
-        }
-
-        private void ShowEditMemoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            var editor = new FrmMemo(data);
-            if (editor.ShowDialog() == DialogResult.OK)
-            {
-                RefreshCellStyle(grow);
-                dataGridView1.Refresh();
-            }
         }
 
         private void ShowEditTraceToolStripMenuItem_Click(object sender, EventArgs e)

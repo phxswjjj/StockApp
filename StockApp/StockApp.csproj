@@ -107,7 +107,6 @@
     <Compile Include="Group\FavoriteGroup.cs" />
     <Compile Include="Group\HateGroup.cs" />
     <Compile Include="Group\TraceGroup.cs" />
-    <Compile Include="MemoContent.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,12 +124,6 @@
     </Compile>
     <Compile Include="FrmFavorite.Designer.cs">
       <DependentUpon>FrmFavorite.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FrmMemo.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmMemo.Designer.cs">
-      <DependentUpon>FrmMemo.cs</DependentUpon>
     </Compile>
     <Compile Include="JsonCache.cs" />
     <Compile Include="Program.cs" />
@@ -185,9 +178,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmLoading.resx">
       <DependentUpon>FrmLoading.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmMemo.resx">
-      <DependentUpon>FrmMemo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSimulator.resx">
       <DependentUpon>FrmSimulator.cs</DependentUpon>
