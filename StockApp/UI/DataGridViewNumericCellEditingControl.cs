@@ -119,7 +119,10 @@ namespace StockApp.UI
         public void PrepareEditingControlForEdit(bool selectAll)
         {
             // No preparation needs to be done.
+            if (selectAll)
+                this.Select(0, this.Text.Length);
         }
+        public override string Text { get => base.Text; set => base.Text = value; }
 
         // Implements the IDataGridViewEditingControl.RepositionEditingControlOnValueChange property. 
         public bool RepositionEditingControlOnValueChange
