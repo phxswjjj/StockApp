@@ -35,6 +35,14 @@ namespace StockApp.UI
             return v;
         }
 
+        public override void InitializeEditingControl(int rowIndex, object initialFormattedValue, DataGridViewCellStyle dataGridViewCellStyle)
+        {
+            base.InitializeEditingControl(rowIndex, initialFormattedValue, dataGridViewCellStyle);
+            var editor = this.DataGridView.EditingControl as DataGridViewCalendarEditingControl;
+            editor.Value = (DateTime?)this.Value;
+            editor.Checked = editor.Value.HasValue;
+        }
+
         public override Type EditType
         {
             get
@@ -53,6 +61,6 @@ namespace StockApp.UI
                 return typeof(DateTime);
             }
         }
-        public override object DefaultNewRowValue => DateTime.Today;
+        public override object DefaultNewRowValue => null;
     }
 }

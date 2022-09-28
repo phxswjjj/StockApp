@@ -49,6 +49,7 @@ namespace StockApp.UI
         public NullableDateTimePicker()
         {
             this.ShowCheckBox = true;
+            this.Checked = false;
         }
         #endregion
 

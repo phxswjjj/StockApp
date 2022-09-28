@@ -31,22 +31,29 @@ namespace StockApp.UI
             }
             set
             {
-                if (value is String)
+                if (value is String s)
                 {
-                    try
-                    {
-                        // This will throw an exception of the string is
-                        // null, empty, or not in the format of a date.
-                        this.Value = DateTime.Parse((String)value);
-                    }
-                    catch
-                    {
-                        // In the case of an exception, just use the
-                        // default value so we're not left with a null
-                        // value.
+                    if (string.IsNullOrEmpty(s))
                         this.Value = null;
+                    else
+                    {
+                        try
+                        {
+                            // This will throw an exception of the string is
+                            // null, empty, or not in the format of a date.
+                            this.Value = DateTime.Parse(s);
+                        }
+                        catch
+                        {
+                            // In the case of an exception, just use the
+                            // default value so we're not left with a null
+                            // value.
+                            this.Value = null;
+                        }
                     }
                 }
+                else
+                    this.Value = (DateTime?)Value;
             }
         }
 
