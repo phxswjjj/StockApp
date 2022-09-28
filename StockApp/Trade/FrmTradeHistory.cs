@@ -64,11 +64,14 @@ namespace StockApp.Trade
             };
             stockCenterCol.Items.AddRange(Enum.GetNames(typeof(StockCenterType)));
 
+            var currentValueCol = CreateNumColumn(nameof(TradeInfo.CurrentValue), "價值");
+            currentValueCol.ReadOnly = true;
+
             dataGridView.Columns.Add(tradeDataCol);
             dataGridView.Columns.Add(CreateNumColumn(nameof(TradeInfo.TradePrice), "交易價格"));
             dataGridView.Columns.Add(tradeVolumeCol);
             dataGridView.Columns.Add(stockCenterCol);
-            dataGridView.Columns.Add(CreateNumColumn(nameof(TradeInfo.CurrentValue), "價值"));
+            dataGridView.Columns.Add(currentValueCol);
             dataGridView.Columns.Add(nameof(TradeInfo.Memo), "備註");
 
         }
@@ -152,18 +155,24 @@ namespace StockApp.Trade
                 if (grow.IsNewRow)
                     continue;
 
-                DataGridViewCell FindGridViewCell(string columnName)
+                T GetGridViewCellValue<T>(string columnName)
                 {
                     var colIndex = dataGridView.Columns[columnName].Index;
-                    return grow.Cells[colIndex];
+                    var cell = grow.Cells[colIndex];
+                    if (cell.Value == null)
+                        return default(T);
+                    else
+                    {
+                        return (T)cell.Value;
+                    }
                 }
                 var trade = new TradeInfo(this.RefData)
                 {
-                    TradeDate = (DateTime?)FindGridViewCell(nameof(TradeInfo.TradeDate)).Value,
-                    TradePrice = (decimal)FindGridViewCell(nameof(TradeInfo.TradePrice)).Value,
-                    TradeVolume = (int)(decimal)FindGridViewCell(nameof(TradeInfo.TradeVolume)).Value,
-                    StockCenter = (StockCenterType)Enum.Parse(typeof(StockCenterType), (string)FindGridViewCell(nameof(TradeInfo.StockCenter)).Value),
-                    Memo = (string)FindGridViewCell(nameof(TradeInfo.Memo)).Value,
+                    TradeDate = GetGridViewCellValue<DateTime?>(nameof(TradeInfo.TradeDate)),
+                    TradePrice = GetGridViewCellValue<decimal>(nameof(TradeInfo.TradePrice)),
+                    TradeVolume = (int)GetGridViewCellValue<decimal>(nameof(TradeInfo.TradeVolume)),
+                    StockCenter = (StockCenterType)Enum.Parse(typeof(StockCenterType), GetGridViewCellValue<string>(nameof(TradeInfo.StockCenter))),
+                    Memo = GetGridViewCellValue<string>(nameof(TradeInfo.Memo)),
                 };
                 editTrades.Add(trade);
             }

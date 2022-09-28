@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,6 +13,26 @@ namespace StockApp.UI
         public DataGridViewDateCell() : base()
         {
             this.Style.Format = "d";
+        }
+
+        protected override object GetValue(int rowIndex)
+        {
+            var v = base.GetValue(rowIndex);
+            if (v is string s)
+            {
+                try
+                {
+                    return DateTime.Parse(s);
+                }
+                catch (Exception)
+                {
+                    if (string.IsNullOrEmpty(s))
+                        return this.DefaultNewRowValue;
+                    else
+                        throw;
+                }
+            }
+            return v;
         }
 
         public override Type EditType

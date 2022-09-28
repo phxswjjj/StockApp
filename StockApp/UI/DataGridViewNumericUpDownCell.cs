@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -46,6 +47,28 @@ namespace StockApp.UI
             obj.Maximum = this.Maximum;
             obj.DefaultValue = this.DefaultValue;
             return obj;
+        }
+
+        protected override object GetValue(int rowIndex)
+        {
+            var v = base.GetValue(rowIndex);
+            if (v is string s)
+            {
+                try
+                {
+                    return decimal.Parse(s);
+                }
+                catch (Exception)
+                {
+                    if (string.IsNullOrEmpty(s))
+                        return this.DefaultNewRowValue;
+                    else
+                        throw;
+                }
+            }
+            else if (v is int i)
+                return decimal.Parse(i.ToString());
+            return v;
         }
 
         public override Type EditType
