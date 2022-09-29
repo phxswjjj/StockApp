@@ -54,6 +54,7 @@ namespace StockApp.Trade
             var tradeVolumeCol = CreateNumColumn(nameof(TradeInfo.TradeVolume), "交易股數");
             tradeVolumeCol.DefaultValue = 1000;
             tradeVolumeCol.Increment = 1000;
+            tradeVolumeCol.Minimum = -1000_000;
             tradeVolumeCol.Maximum = 1000_000;
 
             var stockCenterCol = new DataGridViewComboBoxColumn()
