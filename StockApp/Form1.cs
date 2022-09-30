@@ -32,46 +32,6 @@ namespace StockApp
         {
             gridview.RowHeadersWidth = 55;
             gridview.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-
-            var textCellStyle = new DataGridViewCellStyle
-            {
-                Alignment = DataGridViewContentAlignment.MiddleLeft
-            };
-
-            var numCellStyle = new DataGridViewCellStyle
-            {
-                Alignment = DataGridViewContentAlignment.MiddleRight,
-                Format = "0.00"
-            };
-
-            var bigNumCellStyle2 = new DataGridViewCellStyle(numCellStyle)
-            {
-                Format = "#,###"
-            };
-
-            foreach (DataGridViewColumn col in gridview.Columns)
-            {
-                switch (col.Name)
-                {
-                    case nameof(DisplayModel.ComName):
-                        col.DefaultCellStyle = textCellStyle;
-                        break;
-                    case nameof(DisplayModel.ComType):
-                    case nameof(DisplayModel.ComCode):
-                        col.DefaultCellStyle = textCellStyle;
-                        break;
-                    case nameof(DisplayModel.LastDayVolume):
-                    case nameof(DisplayModel.ExDividendDateT):
-                    case nameof(DisplayModel.ContBonusTimes):
-                    case nameof(DisplayModel.HoldStock):
-                    case nameof(DisplayModel.TraceDateT):
-                        col.DefaultCellStyle = bigNumCellStyle2;
-                        break;
-                    default:
-                        col.DefaultCellStyle = numCellStyle;
-                        break;
-                }
-            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -340,11 +300,22 @@ namespace StockApp
             foreach (DataGridViewColumn col in gridview.Columns)
             {
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                //default
+                col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
                 switch (col.Name)
                 {
+                    case nameof(DisplayModel.ComType):
+                        col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        break;
                     case nameof(DisplayModel.ComName):
                         col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
-                        col.Width = 80;
+                        col.Width = 100;
+                        col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                        break;
+                    case nameof(DisplayModel.HoldStock):
+                    case nameof(DisplayModel.LastDayVolume):
+                        col.DefaultCellStyle.Format = "N0";
                         break;
                 }
             }
