@@ -357,13 +357,40 @@ namespace StockApp
             }
         }
 
+        #region DataGridView
         private void DataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
+            int totalVolume = 0;
+            decimal totalValue = 0m;    //volume * current price
+            decimal totalCost = 0m;     //volume * cost
             foreach (DataGridViewRow grow in dataGridView1.Rows)
             {
                 grow.HeaderCell.Value = (grow.Index + 1).ToString();
                 RefreshCellStyle(grow);
+
+                var volume = grow.Cells[nameof(DisplayModel.HoldStock)].Value as int?;
+                var price = grow.Cells[nameof(DisplayModel.CurrentPrice)].Value as decimal?;
+                var cost = grow.Cells[nameof(DisplayModel.HoldValue)].Value as decimal?;
+
+                if (!volume.HasValue || !price.HasValue || !cost.HasValue)
+                    continue;
+
+                totalVolume += volume.Value;
+                totalValue += volume.Value * price.Value;
+                totalCost += volume.Value * cost.Value;
             }
+
+            var benfit = totalValue - totalCost;
+            var benfitPercent = 0m;
+            if (totalCost != 0)
+                benfitPercent = Math.Abs(benfit / totalCost);
+            lbsTotalCost.Text = $"總成本={totalCost:N0}";
+            lbsTotalValue.Text = $"總價值={totalValue:N0}";
+            lbsBenfit.Text = $"{benfit:+#,###;-#,###;0}({benfitPercent:P1})";
+            if (benfit > 0)
+                lbsBenfit.ForeColor = Color.Red;
+            else if (benfit < 0)
+                lbsBenfit.ForeColor = Color.Green;
         }
 
         private void DataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -469,35 +496,7 @@ namespace StockApp
             e.PaintContent(e.CellBounds);
             e.Handled = true;
         }
-
-        private void DataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            lbsSelectedTotal.Text = "";
-
-            var grid = (DataGridView)sender;
-            var lastSelectedCell = grid.CurrentCell;
-            if (lastSelectedCell == null)
-                return;
-            switch (lastSelectedCell.OwningColumn.Name)
-            {
-                case nameof(DisplayModel.ComType):
-                case nameof(DisplayModel.ComCode):
-                case nameof(DisplayModel.ComName):
-                    return;
-            }
-
-            var total = 0m;
-            foreach (DataGridViewCell cell in grid.SelectedCells)
-            {
-                if (cell.ColumnIndex != lastSelectedCell.ColumnIndex)
-                    continue;
-                if (cell.Value == null)
-                    continue;
-                var v = decimal.Parse(cell.Value.ToString());
-                total += v;
-            }
-            lbsSelectedTotal.Text = $"Total: {total:#,##0.##}";
-        }
+        #endregion
 
         private void RefreshCellStyle(DataGridViewRow grow)
         {

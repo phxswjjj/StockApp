@@ -46,7 +46,12 @@ namespace StockApp
             this.預設檢視ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.lbsSelectedTotal = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbsTotalCost = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbsTotalValue = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbsBenfit = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -71,7 +76,6 @@ namespace StockApp
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellEndEdit);
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.DataGridView_CellPainting);
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.DataGridView_DataBindingComplete);
-            this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
             // 
             // contextMenuStrip1
             // 
@@ -187,18 +191,53 @@ namespace StockApp
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lbsSelectedTotal});
+            this.lbsTotalCost,
+            this.toolStripStatusLabel1,
+            this.lbsTotalValue,
+            this.toolStripStatusLabel3,
+            this.toolStripStatusLabel4,
+            this.lbsBenfit});
             this.statusStrip1.Location = new System.Drawing.Point(0, 459);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1270, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // lbsSelectedTotal
+            // lbsTotalCost
             // 
-            this.lbsSelectedTotal.Name = "lbsSelectedTotal";
-            this.lbsSelectedTotal.Size = new System.Drawing.Size(128, 17);
-            this.lbsSelectedTotal.Text = "toolStripStatusLabel1";
+            this.lbsTotalCost.Name = "lbsTotalCost";
+            this.lbsTotalCost.Size = new System.Drawing.Size(77, 17);
+            this.lbsTotalCost.Text = "lbsTotalCost";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(16, 17);
+            this.toolStripStatusLabel1.Text = " | ";
+            // 
+            // lbsTotalValue
+            // 
+            this.lbsTotalValue.Name = "lbsTotalValue";
+            this.lbsTotalValue.Size = new System.Drawing.Size(84, 17);
+            this.lbsTotalValue.Text = "lbsTotalValue";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(16, 17);
+            this.toolStripStatusLabel3.Text = " | ";
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(40, 17);
+            this.toolStripStatusLabel4.Text = "損益=";
+            // 
+            // lbsBenfit
+            // 
+            this.lbsBenfit.Name = "lbsBenfit";
+            this.lbsBenfit.Size = new System.Drawing.Size(55, 17);
+            this.lbsBenfit.Text = "lbsBenfit";
             // 
             // Form1
             // 
@@ -238,13 +277,18 @@ namespace StockApp
         private System.Windows.Forms.ToolStripMenuItem 庫存清單ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 將除息ToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel lbsSelectedTotal;
+        private System.Windows.Forms.ToolStripStatusLabel lbsTotalCost;
         private System.Windows.Forms.ToolStripMenuItem simulatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showYearROEToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editTraceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tradeHistoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel lbsTotalValue;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.ToolStripStatusLabel lbsBenfit;
     }
 }
 
