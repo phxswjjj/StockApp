@@ -380,17 +380,17 @@ namespace StockApp
                 totalCost += volume.Value * cost.Value;
             }
 
-            var benfit = totalValue - totalCost;
+            var benefit = totalValue - totalCost;
             var benfitPercent = 0m;
             if (totalCost != 0)
-                benfitPercent = Math.Abs(benfit / totalCost);
+                benfitPercent = Math.Abs(benefit / totalCost);
             lbsTotalCost.Text = $"總成本={totalCost:N0}";
             lbsTotalValue.Text = $"總價值={totalValue:N0}";
-            lbsBenfit.Text = $"{benfit:+#,###;-#,###;0}({benfitPercent:P1})";
-            if (benfit > 0)
-                lbsBenfit.ForeColor = Color.Red;
-            else if (benfit < 0)
-                lbsBenfit.ForeColor = Color.Green;
+            lbsBenefit.Text = $"{benefit:+#,###;-#,###;0}({benfitPercent:P1})";
+            if (benefit > 0)
+                lbsBenefit.ForeColor = Color.Red;
+            else if (benefit < 0)
+                lbsBenefit.ForeColor = Color.Green;
         }
 
         private void DataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)

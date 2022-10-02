@@ -51,7 +51,7 @@ namespace StockApp
             this.lbsTotalValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lbsBenfit = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbsBenefit = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -196,7 +196,7 @@ namespace StockApp
             this.lbsTotalValue,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel4,
-            this.lbsBenfit});
+            this.lbsBenefit});
             this.statusStrip1.Location = new System.Drawing.Point(0, 459);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1270, 22);
@@ -235,9 +235,9 @@ namespace StockApp
             // 
             // lbsBenfit
             // 
-            this.lbsBenfit.Name = "lbsBenfit";
-            this.lbsBenfit.Size = new System.Drawing.Size(55, 17);
-            this.lbsBenfit.Text = "lbsBenfit";
+            this.lbsBenefit.Name = "lbsBenfit";
+            this.lbsBenefit.Size = new System.Drawing.Size(55, 17);
+            this.lbsBenefit.Text = "lbsBenfit";
             // 
             // Form1
             // 
@@ -288,7 +288,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripStatusLabel lbsTotalValue;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
-        private System.Windows.Forms.ToolStripStatusLabel lbsBenfit;
+        private System.Windows.Forms.ToolStripStatusLabel lbsBenefit;
     }
 }
 
