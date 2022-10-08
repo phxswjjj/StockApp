@@ -17,7 +17,7 @@ namespace StockApp
             InitializeComponent();
 
             cbxKDJRange.Items.Clear();
-            foreach(DisplayModel.KDJRangeType range in Enum.GetValues(typeof(DisplayModel.KDJRangeType)))
+            foreach (DisplayModel.KDJRangeType range in Enum.GetValues(typeof(DisplayModel.KDJRangeType)))
             {
                 cbxKDJRange.Items.Add(range);
             }
@@ -29,12 +29,15 @@ namespace StockApp
             txtPriceLimit.Text = setting.PriceLimit.ToString();
             txtContBonusTimes.Text = setting.ContBonusTimesLimit.ToString();
             txtSimulateMonths.Text = setting.SimulateMaxMonths.ToString();
+            numTraceDays.Value = setting.TraceDays;
 
             cbxKDJRange.SelectedIndex = (int)setting.KDJRange;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            var setting = Properties.Settings.Default;
+
             decimal price;
             if (!decimal.TryParse(txtPriceLimit.Text, out price))
             {
@@ -42,7 +45,7 @@ namespace StockApp
                 txtPriceLimit.Focus();
                 return;
             }
-            Properties.Settings.Default.PriceLimit = price;
+            setting.PriceLimit = price;
 
             int times;
             if (!int.TryParse(txtContBonusTimes.Text, out times))
@@ -51,7 +54,7 @@ namespace StockApp
                 txtContBonusTimes.Focus();
                 return;
             }
-            Properties.Settings.Default.ContBonusTimesLimit = times;
+            setting.ContBonusTimesLimit = times;
 
             int months;
             if (!int.TryParse(txtSimulateMonths.Text, out months))
@@ -60,10 +63,12 @@ namespace StockApp
                 txtSimulateMonths.Focus();
                 return;
             }
-            Properties.Settings.Default.SimulateMaxMonth = months;
-            Properties.Settings.Default.KDJRange = cbxKDJRange.SelectedIndex;
+            setting.SimulateMaxMonth = months;
+            setting.KDJRange = cbxKDJRange.SelectedIndex;
 
-            Properties.Settings.Default.Save();
+            setting.TraceDays = (int)numTraceDays.Value;
+
+            setting.Save();
             BasicSetting.Instance.Load();
 
             this.DialogResult = DialogResult.OK;

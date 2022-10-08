@@ -23,7 +23,7 @@ namespace StockApp.Trace
 
         private void FrmEditor_Load(object sender, EventArgs e)
         {
-            dpLimitDate.Value = Utility.TWSEDate.Today.AddMonths(1);
+            dpLimitDate.Value = Utility.TWSEDate.Today.AddDays(Properties.Settings.Default.TraceDays);
 
             var rdata = this.RefData;
             var tdata = rdata.TraceData;

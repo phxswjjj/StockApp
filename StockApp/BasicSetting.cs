@@ -19,13 +19,17 @@ namespace StockApp
         public int ContBonusTimesLimit { get; private set; }
         public int SimulateMaxMonths { get; internal set; }
         public DisplayModel.KDJRangeType KDJRange { get; private set; }
+        public int TraceDays { get; private set; }
 
         public void Load()
         {
-            this.PriceLimit = Properties.Settings.Default.PriceLimit;
-            this.ContBonusTimesLimit = Properties.Settings.Default.ContBonusTimesLimit;
-            this.SimulateMaxMonths = Properties.Settings.Default.SimulateMaxMonth;
+            var setting = Properties.Settings.Default;
+
+            this.PriceLimit = setting.PriceLimit;
+            this.ContBonusTimesLimit = setting.ContBonusTimesLimit;
+            this.SimulateMaxMonths = setting.SimulateMaxMonth;
             this.KDJRange = (DisplayModel.KDJRangeType)Properties.Settings.Default.KDJRange;
+            this.TraceDays = setting.TraceDays;
         }
     }
 }

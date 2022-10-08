@@ -17,5 +17,8 @@
     <Setting Name="GoodInfoLogin" Type="System.String" Scope="User">
       <Value Profile="(Default)">LOGIN=</Value>
     </Setting>
+    <Setting Name="TraceDays" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">32</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

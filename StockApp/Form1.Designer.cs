@@ -233,9 +233,9 @@ namespace StockApp
             this.toolStripStatusLabel4.Size = new System.Drawing.Size(40, 17);
             this.toolStripStatusLabel4.Text = "損益=";
             // 
-            // lbsBenfit
+            // lbsBenefit
             // 
-            this.lbsBenefit.Name = "lbsBenfit";
+            this.lbsBenefit.Name = "lbsBenefit";
             this.lbsBenefit.Size = new System.Drawing.Size(55, 17);
             this.lbsBenefit.Text = "lbsBenfit";
             // 
@@ -250,6 +250,7 @@ namespace StockApp
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
