@@ -41,6 +41,8 @@ namespace StockApp.UI
             var editor = this.DataGridView.EditingControl as DataGridViewCalendarEditingControl;
             editor.Value = (DateTime?)this.Value;
             editor.Checked = editor.Value.HasValue;
+            if (!editor.Checked)
+                editor.ResetText();
         }
 
         public override Type EditType
