@@ -96,6 +96,7 @@ namespace StockApp
         }
 
         public List<Trade.TradeInfo> Trades { get; private set; } = new List<Trade.TradeInfo>();
+        public bool IsETF => this.ComCode.StartsWith("0");
 
         internal void SetExtra(CompanyContBonus b)
         {

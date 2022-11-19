@@ -53,6 +53,7 @@ namespace StockApp
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbsBenefit = new System.Windows.Forms.ToolStripStatusLabel();
+            this.analysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -85,10 +86,11 @@ namespace StockApp
             this.editTraceToolStripMenuItem,
             this.simulatorToolStripMenuItem,
             this.showYearROEToolStripMenuItem,
+            this.analysisToolStripMenuItem,
             this.editGroupToolStripMenuItem,
             this.tradeHistoryToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(162, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 180);
             // 
             // openToolStripMenuItem
             // 
@@ -96,55 +98,55 @@ namespace StockApp
             this.openToolStripMenuItem1,
             this.openGoodInfoToolStripMenuItem});
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Query..";
             // 
             // openToolStripMenuItem1
             // 
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(164, 22);
             this.openToolStripMenuItem1.Text = "Open CMoney";
             this.openToolStripMenuItem1.Click += new System.EventHandler(this.OpenCMoney_ToolStripMenuItem_Click);
             // 
             // openGoodInfoToolStripMenuItem
             // 
             this.openGoodInfoToolStripMenuItem.Name = "openGoodInfoToolStripMenuItem";
-            this.openGoodInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openGoodInfoToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.openGoodInfoToolStripMenuItem.Text = "Open GoodInfo";
             this.openGoodInfoToolStripMenuItem.Click += new System.EventHandler(this.OpenGoodInfo_ToolStripMenuItem_Click);
             // 
             // editTraceToolStripMenuItem
             // 
             this.editTraceToolStripMenuItem.Name = "editTraceToolStripMenuItem";
-            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.editTraceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editTraceToolStripMenuItem.Text = "Edit Trace";
             this.editTraceToolStripMenuItem.Click += new System.EventHandler(this.ShowEditTraceToolStripMenuItem_Click);
             // 
             // simulatorToolStripMenuItem
             // 
             this.simulatorToolStripMenuItem.Name = "simulatorToolStripMenuItem";
-            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.simulatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.simulatorToolStripMenuItem.Text = "Simulator";
             this.simulatorToolStripMenuItem.Click += new System.EventHandler(this.ShowSimulatorToolStripMenuItem_Click);
             // 
             // showYearROEToolStripMenuItem
             // 
             this.showYearROEToolStripMenuItem.Name = "showYearROEToolStripMenuItem";
-            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.showYearROEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showYearROEToolStripMenuItem.Text = "Show Year ROE";
             this.showYearROEToolStripMenuItem.Click += new System.EventHandler(this.ShowYearInfoToolStripMenuItem_Click);
             // 
             // editGroupToolStripMenuItem
             // 
             this.editGroupToolStripMenuItem.Name = "editGroupToolStripMenuItem";
-            this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.editGroupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editGroupToolStripMenuItem.Text = "Edit Group";
             this.editGroupToolStripMenuItem.Click += new System.EventHandler(this.ShowEditGroupToolStripMenuItem_Click);
             // 
             // tradeHistoryToolStripMenuItem
             // 
             this.tradeHistoryToolStripMenuItem.Name = "tradeHistoryToolStripMenuItem";
-            this.tradeHistoryToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.tradeHistoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tradeHistoryToolStripMenuItem.Text = "Trade History";
             this.tradeHistoryToolStripMenuItem.Click += new System.EventHandler(this.tradeHistoryToolStripMenuItem_Click);
             // 
@@ -247,6 +249,13 @@ namespace StockApp
             this.lbsBenefit.Size = new System.Drawing.Size(55, 17);
             this.lbsBenefit.Text = "lbsBenfit";
             // 
+            // analysisToolStripMenuItem
+            // 
+            this.analysisToolStripMenuItem.Name = "analysisToolStripMenuItem";
+            this.analysisToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.analysisToolStripMenuItem.Text = "Analysis";
+            this.analysisToolStripMenuItem.Click += new System.EventHandler(this.analysisToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -299,6 +308,7 @@ namespace StockApp
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
         private System.Windows.Forms.ToolStripStatusLabel lbsBenefit;
         private System.Windows.Forms.ToolStripMenuItem openGoodInfoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisToolStripMenuItem;
     }
 }
 

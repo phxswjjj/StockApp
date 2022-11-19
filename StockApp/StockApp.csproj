@@ -63,6 +63,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\FrmStock.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Analysis\FrmStock.Designer.cs">
+      <DependentUpon>FrmStock.cs</DependentUpon>
+    </Compile>
     <Compile Include="BasicSetting.cs" />
     <Compile Include="CompanyBonusHistory.cs" />
     <Compile Include="CompanyContBonus.cs" />
@@ -214,5 +220,6 @@
     <Content Include="images\checked-checkbox.png" />
     <Content Include="images\unchecked-checkbox.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

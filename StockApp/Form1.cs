@@ -410,6 +410,7 @@ namespace StockApp
             var gv = (DataGridView)sender;
             if (e.RowIndex == -1)
             {
+                //沒選擇 => 不顯示
                 foreach (ToolStripItem item in contextMenuStrip1.Items)
                     item.Visible = false;
                 return;
@@ -417,10 +418,14 @@ namespace StockApp
 
             if (gv.SelectedRows.Count <= 1)
             {
+                //單選
                 foreach (ToolStripItem item in contextMenuStrip1.Items)
                     item.Visible = true;
 
                 var grow = gv.Rows[e.RowIndex];
+                var data = (DisplayModel)grow.DataBoundItem;
+                if (data.IsETF)
+                    analysisToolStripMenuItem.Visible = false;
 
                 gv.ClearSelection();
                 grow.Selected = true;
@@ -428,6 +433,7 @@ namespace StockApp
             }
             else
             {
+                //多選
                 foreach (ToolStripItem item in contextMenuStrip1.Items)
                     item.Visible = false;
 
@@ -735,6 +741,20 @@ namespace StockApp
                 RefreshCellStyle(grow);
                 dataGridView1.Refresh();
             }
+        }
+
+        private void analysisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
+            var data = (DisplayModel)grow.DataBoundItem;
+
+            var loading = new FrmLoading();
+
+            if (!loading.Start())
+                loading.ShowDialog(this);
+
+            var frmStock = new Analysis.FrmStock();
+            frmStock.Show(this);
         }
         #endregion
     }
