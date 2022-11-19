@@ -19,8 +19,9 @@ namespace StockApp
             this.SetExtra(d);
         }
 
-        [DisplayName("市")]
+        [DisplayName("市/櫃")]
         public string ComType { get; private set; }
+        internal bool IsTwSE => this.ComType == "市";
         [DisplayName("代號")]
         public string ComCode { get; private set; }
         [DisplayName("名稱")]
@@ -96,7 +97,7 @@ namespace StockApp
         }
 
         public List<Trade.TradeInfo> Trades { get; private set; } = new List<Trade.TradeInfo>();
-        public bool IsETF => this.ComCode.StartsWith("0");
+        internal bool IsETF => this.ComCode.StartsWith("0");
 
         internal void SetExtra(CompanyContBonus b)
         {

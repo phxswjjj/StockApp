@@ -25,17 +25,10 @@ namespace StockApp
         internal static CompanyDayPrice New(DisplayModel data)
         {
             CompanyDayPrice dp;
-            switch (data.ComType)
-            {
-                case "市":
-                    dp = new ListedCompanyDayPrice(data.ComCode);
-                    break;
-                case "櫃":
-                    dp = new ExListedCompanyDayPrice(data.ComCode);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+            if (data.IsTwSE)
+                dp = new ListedCompanyDayPrice(data.ComCode);
+            else
+                dp = new ExListedCompanyDayPrice(data.ComCode);
             dp.ComName = data.ComName;
             return dp;
         }
