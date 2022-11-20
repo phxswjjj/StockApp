@@ -37,9 +37,17 @@
             this.lblLastDividend = new System.Windows.Forms.Label();
             this.numLastDividend = new System.Windows.Forms.NumericUpDown();
             this.lblLastDividendTip = new System.Windows.Forms.Label();
+            this.numExceptDividend = new System.Windows.Forms.NumericUpDown();
+            this.lblExpectDividend = new System.Windows.Forms.Label();
+            this.numCurrentPrice = new System.Windows.Forms.NumericUpDown();
+            this.lblCurrentPrice = new System.Windows.Forms.Label();
+            this.lblCurrentDividendYield = new System.Windows.Forms.Label();
+            this.lblCurrentDividendYieldTitle = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numLastYearQuarter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPreviousYearQuarter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numLastDividend)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numExceptDividend)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCurrentPrice)).BeginInit();
             this.SuspendLayout();
             // 
             // lblLastYearQuarter
@@ -141,12 +149,82 @@
             this.lblLastDividendTip.Text = "lblLastDividendTip";
             this.lblLastDividendTip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // numExceptDividend
+            // 
+            this.numExceptDividend.DecimalPlaces = 2;
+            this.numExceptDividend.Location = new System.Drawing.Point(184, 124);
+            this.numExceptDividend.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
+            this.numExceptDividend.Name = "numExceptDividend";
+            this.numExceptDividend.Size = new System.Drawing.Size(90, 27);
+            this.numExceptDividend.TabIndex = 4;
+            this.numExceptDividend.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // lblExpectDividend
+            // 
+            this.lblExpectDividend.Location = new System.Drawing.Point(12, 126);
+            this.lblExpectDividend.Name = "lblExpectDividend";
+            this.lblExpectDividend.Size = new System.Drawing.Size(166, 25);
+            this.lblExpectDividend.TabIndex = 3;
+            this.lblExpectDividend.Text = "Except Dividend";
+            this.lblExpectDividend.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // numCurrentPrice
+            // 
+            this.numCurrentPrice.DecimalPlaces = 2;
+            this.numCurrentPrice.Location = new System.Drawing.Point(184, 157);
+            this.numCurrentPrice.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numCurrentPrice.Name = "numCurrentPrice";
+            this.numCurrentPrice.Size = new System.Drawing.Size(90, 27);
+            this.numCurrentPrice.TabIndex = 6;
+            this.numCurrentPrice.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // lblCurrentPrice
+            // 
+            this.lblCurrentPrice.Location = new System.Drawing.Point(12, 159);
+            this.lblCurrentPrice.Name = "lblCurrentPrice";
+            this.lblCurrentPrice.Size = new System.Drawing.Size(166, 25);
+            this.lblCurrentPrice.TabIndex = 5;
+            this.lblCurrentPrice.Text = "Current Price";
+            this.lblCurrentPrice.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblCurrentDividendYield
+            // 
+            this.lblCurrentDividendYield.Location = new System.Drawing.Point(181, 197);
+            this.lblCurrentDividendYield.Name = "lblCurrentDividendYield";
+            this.lblCurrentDividendYield.Size = new System.Drawing.Size(93, 16);
+            this.lblCurrentDividendYield.TabIndex = 2;
+            this.lblCurrentDividendYield.Text = "lblCurrentDividendYield";
+            this.lblCurrentDividendYield.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblCurrentDividendYieldTitle
+            // 
+            this.lblCurrentDividendYieldTitle.Location = new System.Drawing.Point(16, 197);
+            this.lblCurrentDividendYieldTitle.Name = "lblCurrentDividendYieldTitle";
+            this.lblCurrentDividendYieldTitle.Size = new System.Drawing.Size(162, 16);
+            this.lblCurrentDividendYieldTitle.TabIndex = 2;
+            this.lblCurrentDividendYieldTitle.Text = "Except Dividend Yield";
+            this.lblCurrentDividendYieldTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // FrmStock
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(467, 208);
+            this.ClientSize = new System.Drawing.Size(467, 238);
+            this.Controls.Add(this.numCurrentPrice);
+            this.Controls.Add(this.lblCurrentPrice);
+            this.Controls.Add(this.numExceptDividend);
+            this.Controls.Add(this.lblExpectDividend);
             this.Controls.Add(this.lblPreviousYearQuarterTip);
+            this.Controls.Add(this.lblCurrentDividendYieldTitle);
+            this.Controls.Add(this.lblCurrentDividendYield);
             this.Controls.Add(this.lblLastDividendTip);
             this.Controls.Add(this.lblLastYearQuarterTip);
             this.Controls.Add(this.numPreviousYearQuarter);
@@ -160,9 +238,12 @@
             this.Name = "FrmStock";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FrmStock";
+            this.Load += new System.EventHandler(this.FrmStock_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numLastYearQuarter)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPreviousYearQuarter)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numLastDividend)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numExceptDividend)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCurrentPrice)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,5 +260,11 @@
         private System.Windows.Forms.Label lblLastDividend;
         private System.Windows.Forms.NumericUpDown numLastDividend;
         private System.Windows.Forms.Label lblLastDividendTip;
+        private System.Windows.Forms.NumericUpDown numExceptDividend;
+        private System.Windows.Forms.Label lblExpectDividend;
+        private System.Windows.Forms.NumericUpDown numCurrentPrice;
+        private System.Windows.Forms.Label lblCurrentPrice;
+        private System.Windows.Forms.Label lblCurrentDividendYield;
+        private System.Windows.Forms.Label lblCurrentDividendYieldTitle;
     }
 }

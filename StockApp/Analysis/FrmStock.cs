@@ -66,5 +66,40 @@ namespace StockApp.Analysis
             lblLastDividendTip.Text = lastDividend.Year.ToString();
             #endregion
         }
+
+        private void FrmStock_Load(object sender, EventArgs e)
+        {
+            RefreshExceptDividend();
+
+            numCurrentPrice.Value = this.StockData.CurrentPrice;
+
+            RefreshCurrentDividendYield();
+        }
+
+        private void RefreshExceptDividend()
+        {
+            numExceptDividend.Value = 0;
+
+            var lastEPS = numLastYearQuarter.Value;
+            var previousEPS = numPreviousYearQuarter.Value;
+            var lastDividend = numLastDividend.Value;
+
+            if (lastEPS <= 0 || previousEPS <= 0)
+                return;
+
+            numExceptDividend.Value = lastDividend * lastEPS / previousEPS;
+        }
+        private void RefreshCurrentDividendYield()
+        {
+            lblCurrentDividendYield.Text = "NA";
+
+            var currentPrice = numCurrentPrice.Value;
+            if (currentPrice == 0)
+                return;
+
+            var dividend = numExceptDividend.Value;
+            var dividendYield = dividend / currentPrice;
+            lblCurrentDividendYield.Text = $"{dividendYield:P2}";
+        }
     }
 }
