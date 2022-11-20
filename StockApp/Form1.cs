@@ -748,12 +748,7 @@ namespace StockApp
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var loading = new FrmLoading();
-
-            if (!loading.Start())
-                loading.ShowDialog(this);
-
-            var frmStock = new Analysis.FrmStock();
+            var frmStock = new Analysis.FrmStock(data);
             frmStock.Show(this);
         }
         #endregion

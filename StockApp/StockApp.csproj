@@ -69,6 +69,7 @@
     <Compile Include="Analysis\FrmStock.Designer.cs">
       <DependentUpon>FrmStock.cs</DependentUpon>
     </Compile>
+    <Compile Include="Analysis\QuarterEPS.cs" />
     <Compile Include="BasicSetting.cs" />
     <Compile Include="CompanyBonusHistory.cs" />
     <Compile Include="CompanyContBonus.cs" />
@@ -170,6 +171,9 @@
     <Compile Include="Utility\TWSEDate.cs" />
     <Compile Include="Web\GoodInfoClient.cs" />
     <Compile Include="Web\WebRequest.cs" />
+    <EmbeddedResource Include="Analysis\FrmStock.resx">
+      <DependentUpon>FrmStock.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
