@@ -33,9 +33,16 @@ namespace StockApp.Analysis
                 return quarts;
             });
 
+            var taskDividendHistory = loading.AddTask("Dividend History", () =>
+            {
+                var histories = DividendHistory.Get(data.ComCode);
+                return histories;
+            });
+
             if (!loading.Start())
                 loading.ShowDialog(this);
 
+            #region Quarter EPS
             var quarters = taskYearQuarters.Result;
             var lastYearQuarter = quarters.First();
 
@@ -50,6 +57,14 @@ namespace StockApp.Analysis
 
             numLastYearQuarter.Value = lastYearQuarter.EPS;
             numPreviousYearQuarter.Value = previousYearQuarter.EPS;
+            #endregion
+
+            #region Dividend History
+            var dividendHistories = taskDividendHistory.Result;
+            var lastDividend = dividendHistories.First(d => d.TotalDividend.HasValue);
+            numLastDividend.Value = lastDividend.TotalDividend.Value;
+            lblLastDividendTip.Text = lastDividend.Year.ToString();
+            #endregion
         }
     }
 }

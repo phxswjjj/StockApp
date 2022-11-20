@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\DividendHistory.cs" />
     <Compile Include="Analysis\FrmStock.cs">
       <SubType>Form</SubType>
     </Compile>
