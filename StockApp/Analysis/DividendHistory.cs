@@ -10,6 +10,8 @@ namespace StockApp.Analysis
 {
     internal class DividendHistory
     {
+        private static string RefererUrl = "https://goodinfo.tw/tw/index.asp";
+
         public int Year { get; set; }
         public decimal? TotalDividend { get; set; }
 
@@ -17,6 +19,8 @@ namespace StockApp.Analysis
         {
             var url = $"https://goodinfo.tw/tw/StockDividendSchedule.asp?STOCK_ID={stockCode}";
             var request = Web.WebRequest.CreateGoodInfo();
+            request.DefaultRequestHeaders.Referrer = new Uri(RefererUrl);
+            RefererUrl = url;
             var resp = request.GetAsync(url).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);

@@ -37,7 +37,10 @@ namespace StockApp.Web
             {
                 var waitMsDiff = NextFireTime - DateTime.Now;
                 if (waitMsDiff.TotalMilliseconds > 0)
+                {
+                    Console.WriteLine($"Wait {waitMsDiff.TotalMilliseconds:N0} ms..");
                     Thread.Sleep(waitMsDiff);
+                }
 
                 Console.WriteLine($"request: {request.RequestUri}");
                 base.SendAsync(request, cancellationToken)
