@@ -5,13 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.IO;
+using System.IO.Compression;
+using System.IO.Pipes;
+using StockApp.Web;
 
 namespace StockApp.Analysis
 {
     internal class QuarterEPS
     {
-        private static string RefererUrl = "https://goodinfo.tw/tw/index.asp";
-
         /// <summary>
         /// yyyyQQ
         /// </summary>
@@ -22,9 +25,8 @@ namespace StockApp.Analysis
         {
             var url = $"https://goodinfo.tw/tw/StockFinDetail.asp?RPT_CAT=IS_M_QUAR_ACC&STOCK_ID={stockCode}";
             var request = Web.WebRequest.CreateGoodInfo();
-            request.DefaultRequestHeaders.Referrer = new Uri(RefererUrl);
-            RefererUrl = url;
-            var resp = request.GetAsync(url).Result;
+            var reqMsg = new GoodInfoRequestMessage(HttpMethod.Get, url);
+            var resp = request.SendAsync(reqMsg).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
             var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
 
