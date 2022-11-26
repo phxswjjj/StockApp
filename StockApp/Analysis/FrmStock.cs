@@ -12,18 +12,37 @@ namespace StockApp.Analysis
 {
     public partial class FrmStock : Form
     {
-        private DisplayModel StockData;
+        private readonly DisplayModel StockData;
 
         public FrmStock()
         {
             InitializeComponent();
+
+            InitializeNumComponent();
         }
 
-        internal FrmStock(DisplayModel data)
+        private void InitializeNumComponent()
+        {
+            numLastYearQuarter.ValueChanged += NumLastYearQuarter_ValueChanged;
+            numPreviousYearQuarter.ValueChanged += NumLastYearQuarter_ValueChanged;
+            numLastDividend.ValueChanged += NumLastYearQuarter_ValueChanged;
+            numExceptDividend.ValueChanged += NumExceptDividend_ValueChanged;
+            numCurrentPrice.ValueChanged += NumExceptDividend_ValueChanged;
+        }
+
+        private void NumExceptDividend_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshCurrentDividendYield();
+        }
+
+        private void NumLastYearQuarter_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshExceptDividend();
+        }
+
+        internal FrmStock(DisplayModel data) : this()
         {
             this.StockData = data;
-
-            InitializeComponent();
 
             var loading = new FrmLoading();
 
@@ -69,9 +88,9 @@ namespace StockApp.Analysis
 
         private void FrmStock_Load(object sender, EventArgs e)
         {
-            RefreshExceptDividend();
-
             numCurrentPrice.Value = this.StockData.CurrentPrice;
+
+            RefreshExceptDividend();
 
             RefreshCurrentDividendYield();
         }
