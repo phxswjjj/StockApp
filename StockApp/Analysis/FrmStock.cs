@@ -98,6 +98,8 @@ namespace StockApp.Analysis
         private void RefreshExceptDividend()
         {
             numExceptDividend.Value = 0;
+            numLastYearQuarter.BackColor = default(Color);
+            numLastYearQuarter.ForeColor = NumericUpDown.DefaultForeColor;
 
             var lastEPS = numLastYearQuarter.Value;
             var previousEPS = numPreviousYearQuarter.Value;
@@ -106,11 +108,24 @@ namespace StockApp.Analysis
             if (lastEPS <= 0 || previousEPS <= 0)
                 return;
 
+            if (lastEPS > previousEPS)
+            {
+                numLastYearQuarter.BackColor = Color.Red;
+                numLastYearQuarter.ForeColor = Color.White;
+            }
+            else if (lastEPS < previousEPS)
+            {
+                numLastYearQuarter.BackColor = Color.Green;
+                numLastYearQuarter.ForeColor = Color.White;
+            }
+
             numExceptDividend.Value = lastDividend * lastEPS / previousEPS;
         }
         private void RefreshCurrentDividendYield()
         {
             lblCurrentDividendYield.Text = "NA";
+            numExceptDividend.BackColor = default(Color);
+            numExceptDividend.ForeColor = NumericUpDown.DefaultForeColor;
 
             var currentPrice = numCurrentPrice.Value;
             if (currentPrice == 0)
@@ -119,6 +134,18 @@ namespace StockApp.Analysis
             var dividend = numExceptDividend.Value;
             var dividendYield = dividend / currentPrice;
             lblCurrentDividendYield.Text = $"{dividendYield:P2}";
+
+            var lastDividend = numLastDividend.Value;
+            if (dividend > lastDividend)
+            {
+                numExceptDividend.BackColor = Color.Red;
+                numExceptDividend.ForeColor = Color.White;
+            }
+            else if (dividend < lastDividend)
+            {
+                numExceptDividend.BackColor = Color.Green;
+                numExceptDividend.ForeColor = Color.White;
+            }
         }
     }
 }
