@@ -14,9 +14,9 @@ namespace StockApp.Web
         static readonly object GoodInfoLockObject = new object();
         static DateTime GoodInfoNextFireTime = DateTime.MinValue;
         //每次請求安全的間隔時間(ms)
-        const int GoodInfoWaitMS = 10_000;
+        const int GoodInfoWaitMS = 1_000;
 
-        static Lazy<HttpClient> GoodInfoClient = new Lazy<HttpClient>(() =>
+        static readonly Lazy<HttpClient> GoodInfoClient = new Lazy<HttpClient>(() =>
         {
             var cookieHandler = new HttpClientHandler();
             cookieHandler.CookieContainer.SetCookies(new Uri("https://goodinfo.tw"),
