@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,6 +14,7 @@ namespace StockApp.Web
     {
         static readonly object LockObject = new object();
         static readonly Uri BaseUri = new Uri("https://goodinfo.tw");
+        private readonly Logger LogService;
         static DateTime NextFireTime = DateTime.MinValue;
         //每次請求安全的間隔時間(ms)
         const int WaitMS = 30_000;
@@ -27,10 +29,12 @@ namespace StockApp.Web
 
         public GoodInfoClient() : base(Handler.Value)
         {
+            this.LogService = Utility.LogHelper.Log;
         }
 
         public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            var logger = this.LogService;
             var tcs = new TaskCompletionSource<HttpResponseMessage>();
 
             lock (LockObject)
@@ -38,11 +42,11 @@ namespace StockApp.Web
                 var waitMsDiff = NextFireTime - DateTime.Now;
                 if (waitMsDiff.TotalMilliseconds > 0)
                 {
-                    Console.WriteLine($"Wait {waitMsDiff.TotalMilliseconds:N0} ms..");
+                    logger.Information($"Wait {waitMsDiff.TotalMilliseconds:N0} ms..");
                     Thread.Sleep(waitMsDiff);
                 }
 
-                Console.WriteLine($"request: {request.RequestUri}");
+                logger.Information($"request: {request.RequestUri}");
                 base.SendAsync(request, cancellationToken)
                     .ContinueWith(t =>
                     {
@@ -60,7 +64,7 @@ namespace StockApp.Web
                             {
                                 newRequest.Properties.Add(property);
                             }
-                            Console.WriteLine($"redirect request: {request.RequestUri}");
+                            logger.Information($"redirect request: {request.RequestUri}");
                             base.SendAsync(newRequest, cancellationToken)
                                 .ContinueWith(t2 => tcs.SetResult(t2.Result));
                         }

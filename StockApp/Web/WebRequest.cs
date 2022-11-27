@@ -38,13 +38,14 @@ namespace StockApp.Web
         }
         internal static HttpClient CreateGoodInfo()
         {
+            var logger = Utility.LogHelper.Log;
             //limit: 20 times/min
             lock (GoodInfoLockObject)
             {
                 var waitMsDiff = GoodInfoNextFireTime - DateTime.Now;
                 if (waitMsDiff.TotalMilliseconds > 0)
                 {
-                    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Wait {waitMsDiff.TotalMilliseconds:N0} ms..");
+                    logger.Information($"Wait {waitMsDiff.TotalMilliseconds:N0} ms..");
                     Thread.Sleep(waitMsDiff);
                 }
                 var wait = new Random().Next(GoodInfoWaitMS / 2, GoodInfoWaitMS * 2);

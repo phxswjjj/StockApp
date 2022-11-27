@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Serilog;
+using StockApp.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +16,20 @@ namespace StockApp
         [STAThread]
         static void Main()
         {
+            InitLog();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+        }
+
+        private static void InitLog()
+        {
+            var logger = new LoggerConfiguration()
+                .WriteTo.File(@"Logs\log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 3)
+                .WriteTo.Console()
+                .CreateLogger();
+            LogHelper.Log = logger;
         }
     }
 }

@@ -20,13 +20,15 @@ namespace StockApp.Web
         static Uri LastReferUri = new Uri("https://goodinfo.tw/tw/index.asp");
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            var logger = Utility.LogHelper.Log;
             var headerBuilder = request as IRequestHeaderBuilder;
             headerBuilder?.SetHeaders(request.Headers);
 
-            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Request: {request.RequestUri}");
+            logger
+                .ForContext("RequestUri", request.RequestUri)
+                .Information($"Request: {{RequestUri}}");
             if (request.Headers.Referrer == null)
                 request.Headers.Referrer = LastReferUri;
-            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Refer: {request.Headers.Referrer}");
 
             LastReferUri = request.RequestUri;
 
