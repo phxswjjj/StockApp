@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockApp.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -12,9 +13,6 @@ namespace StockApp.Web
     class WebRequest
     {
         static readonly object GoodInfoLockObject = new object();
-        static DateTime GoodInfoNextFireTime = DateTime.MinValue;
-        //每次請求安全的間隔時間(ms)
-        const int GoodInfoWaitMS = 1_000;
 
         static readonly Lazy<HttpClient> GoodInfoClient = new Lazy<HttpClient>(() =>
         {
@@ -25,6 +23,10 @@ namespace StockApp.Web
 
             var client = HttpClientFactory.Create(cookieHandler, new GoodInfoMessageHandler());
             return client;
+        });
+        static readonly Lazy<FrequenceManager> FreqMgr = new Lazy<FrequenceManager>(() =>
+        {
+            return new FrequenceManager();
         });
 
         internal static HttpClient Create()
@@ -39,17 +41,19 @@ namespace StockApp.Web
         internal static HttpClient CreateGoodInfo()
         {
             var logger = Utility.LogHelper.Log;
-            //limit: 20 times/min
+            var freqMgr = FreqMgr.Value;
+
             lock (GoodInfoLockObject)
             {
-                var waitMsDiff = GoodInfoNextFireTime - DateTime.Now;
-                if (waitMsDiff.TotalMilliseconds > 0)
+                while (!freqMgr.Execute())
                 {
-                    logger.Information($"Wait {waitMsDiff.TotalMilliseconds:N0} ms..");
-                    Thread.Sleep(waitMsDiff);
+                    var waitMsDiff = freqMgr.NextTime.Value - DateTime.Now;
+                    if (waitMsDiff.TotalMilliseconds > 0)
+                    {
+                        logger.Information($"Wait {waitMsDiff.TotalMilliseconds:N0} ms..");
+                        Thread.Sleep(waitMsDiff);
+                    }
                 }
-                var wait = new Random().Next(GoodInfoWaitMS / 2, GoodInfoWaitMS * 2);
-                GoodInfoNextFireTime = DateTime.Now.AddMilliseconds(wait);
             }
             return GoodInfoClient.Value;
         }
