@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
@@ -38,14 +39,32 @@ namespace StockApp.Web
             task.ContinueWith(t =>
             {
                 var resp = t.Result;
-                if (resp.Content.Headers.ContentEncoding.FirstOrDefault() == "gzip")
+                if (resp.StatusCode == HttpStatusCode.Redirect)
+                {
+                    var newRequest = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, resp.Headers.Location);
+
+                    foreach (var header in request.Headers)
+                    {
+                        newRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                    }
+                    newRequest.Headers.TryAddWithoutValidation("Referer", request.RequestUri.AbsoluteUri);
+                    foreach (var property in request.Properties)
+                    {
+                        newRequest.Properties.Add(property);
+                    }
+                    logger.Information($"redirect request: {request.RequestUri}");
+                    base.SendAsync(newRequest, cancellationToken)
+                        .ContinueWith(t2 => tcs.SetResult(t2.Result));
+                }
+                else if (resp.Content.Headers.ContentEncoding.FirstOrDefault() == "gzip")
                 {
                     var stream = new GZipStream(resp.Content.ReadAsStreamAsync().Result,
                         CompressionMode.Decompress);
                     resp.Content = new DecompressedContent(resp.Content, stream);
+                    tcs.SetResult(resp);
                 }
-
-                tcs.SetResult(resp);
+                else
+                    tcs.SetResult(resp);
             });
             return tcs.Task;
         }

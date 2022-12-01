@@ -19,7 +19,7 @@ namespace StockApp.Web
             var cookieHandler = new HttpClientHandler();
             cookieHandler.CookieContainer.SetCookies(new Uri("https://goodinfo.tw"),
                 Properties.Settings.Default.GoodInfoLogin);
-            cookieHandler.AllowAutoRedirect = true;
+            cookieHandler.AllowAutoRedirect = false;
 
             var client = HttpClientFactory.Create(cookieHandler, new GoodInfoMessageHandler());
             return client;
