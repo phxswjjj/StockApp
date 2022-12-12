@@ -11,19 +11,20 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using StockApp.Web;
+using StockApp.Utility;
 
 namespace StockApp.ETF
 {
     abstract class YuanTaETFBase
     {
         public abstract string ComCode { get; }
-        private static readonly object LockObject = new object();
 
         internal CustomGroup GetAll()
         {
             var offseted = Utility.TWSEDate.Today;
             //有問題，先拿舊資料(11 月)
-            if (this.ComCode != "0050")
+            if (this.ComCode != "0050" && this.ComCode != "0056")
                 offseted = new DateTime(2022, 11, 1);
             var jsonFilePath = Path.Combine("CustomGroup", ComCode, $"{offseted:yyyyMM}.json");
 
@@ -39,23 +40,15 @@ namespace StockApp.ETF
             var url = $"https://www.yuantaetfs.com/product/detail/{ComCode}/ratio";
 
             string content;
-            using (var browserFetcher = new BrowserFetcher())
+            using (var page = ChromiumBrowser.NewPage(url))
             {
-                lock (LockObject)
-                    browserFetcher.DownloadAsync().Wait();
-                using (var browser = Puppeteer.LaunchAsync(new LaunchOptions { Headless = true }).Result)
-                {
-                    using (var page = browser.NewPageAsync().Result)
-                    {
-                        page.SetUserAgentAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36").Wait();
-                        page.GoToAsync(url, WaitUntilNavigation.DOMContentLoaded).Wait();
-                        page.ClickAsync("div.moreBtn").Wait();
-                        page.WaitForSelectorAsync("div.each_table:nth-child(1) div.tr:nth-child(6)");
-                        content = page.EvaluateFunctionAsync<string>(@"() => {
+                //等抓到第一個項目再點 more
+                page.WaitForSelectorAsync("div.each_table div.tr:nth-child(1)").Wait();
+                page.ClickAsync("div.moreBtn").Wait();
+                page.WaitForSelectorAsync("div.each_table div.tr:nth-child(6)").Wait();
+                content = page.EvaluateFunctionAsync<string>(@"() => {
 return document.querySelectorAll('div.each_table')[1].innerHTML;
 }").Result;
-                    }
-                }
             }
 
             IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
