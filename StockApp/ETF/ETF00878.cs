@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StockApp.ETF
 {
-    class ETF00878 : ETFBase
+    class ETF00878 : YuanTaETFBase
     {
         public override string ComCode => "00878";
     }
