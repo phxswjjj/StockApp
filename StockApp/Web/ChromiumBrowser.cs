@@ -15,7 +15,7 @@ namespace StockApp.Web
             {
                 browserFetcher.DownloadAsync().Wait();
             }
-            var browser = Puppeteer.LaunchAsync(new LaunchOptions { Headless = false }).Result;
+            var browser = Puppeteer.LaunchAsync(new LaunchOptions { Headless = true }).Result;
             return browser;
         });
 
