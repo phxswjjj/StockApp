@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using StockApp.Utility;
+using StockApp.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ namespace StockApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+
+            if (ChromiumBrowser.Instance.IsValueCreated)
+                ChromiumBrowser.Instance.Value.Dispose();
         }
 
         private static void InitLog()

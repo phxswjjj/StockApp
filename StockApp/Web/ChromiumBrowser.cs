@@ -9,13 +9,13 @@ namespace StockApp.Web
 {
     internal class ChromiumBrowser
     {
-        private static Lazy<IBrowser> Instance = new Lazy<IBrowser>(() =>
+        public static Lazy<IBrowser> Instance = new Lazy<IBrowser>(() =>
         {
             using (var browserFetcher = new BrowserFetcher())
             {
                 browserFetcher.DownloadAsync().Wait();
             }
-            var browser = Puppeteer.LaunchAsync(new LaunchOptions { Headless = true }).Result;
+            var browser = Puppeteer.LaunchAsync(new LaunchOptions { Headless = false }).Result;
             return browser;
         });
 
