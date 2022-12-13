@@ -135,6 +135,7 @@
     <Compile Include="CompanyKDJ.cs" />
     <Compile Include="CompanyROE.cs" />
     <Compile Include="Data\SortableBindingList.cs" />
+    <Compile Include="ETF\CathayETFBase.cs" />
     <Compile Include="Group\CustomGroup.cs" />
     <Compile Include="DisplayModel.cs" />
     <Compile Include="ETF\ETF0050.cs" />
