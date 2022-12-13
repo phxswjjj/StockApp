@@ -23,9 +23,6 @@ namespace StockApp.ETF
         internal CustomGroup GetAll()
         {
             var offseted = Utility.TWSEDate.Today;
-            //有問題，先拿舊資料(11 月)
-            if (this.ComCode != "0050" && this.ComCode != "0056")
-                offseted = new DateTime(2022, 11, 1);
             var jsonFilePath = Path.Combine("CustomGroup", ComCode, $"{offseted:yyyyMM}.json");
 
             var cache = JsonCache.Load<ETFGroup>(jsonFilePath);
