@@ -9,5 +9,7 @@ namespace StockApp.Group
     class FavoriteGroup : CustomGroup
     {
         public override int SortIndex => (int)DefaultSortIndexType.FavoriteGroup;
+
+        public override string Name => "觀察清單";
     }
 }

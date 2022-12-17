@@ -9,5 +9,7 @@ namespace StockApp.Group
     class HateGroup : CustomGroup
     {
         public override int SortIndex => (int)DefaultSortIndexType.HateGroup;
+
+        public override string Name => "排除清單";
     }
 }

@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static StockApp.Group.CustomGroup;
 
 namespace StockApp
 {
@@ -48,24 +49,6 @@ namespace StockApp
             var loading = new FrmLoading();
             var taskGroups = loading.AddTask("自訂觀察清單", () => CustomGroup.GetAll());
 
-            var taskFavorite = loading.AddTask("觀察清單", () =>
-            {
-                if (File.Exists(this.FavoriteFilePath))
-                    return JsonCache.Load<List<string>>(this.FavoriteFilePath);
-                else
-                    return new List<string>();
-            });
-            List<string> favoriteComCodes = taskFavorite.Result;
-
-            var taskHate = loading.AddTask("排除清單", () =>
-            {
-                if (File.Exists(this.HateFilePath))
-                    return JsonCache.Load<List<string>>(this.HateFilePath);
-                else
-                    return new List<string>();
-            });
-            List<string> hateComCodes = taskHate.Result;
-
             var task0050 = loading.AddTask("0050", () =>
             {
                 return new ETF.ETF0050().GetAll();
@@ -97,6 +80,26 @@ namespace StockApp
 
             var groups = taskGroups.Result;
 
+            var taskFavorite = loading.AddTask("觀察清單", () =>
+            {
+                var group = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.FavoriteGroup);
+                if (group != null)
+                    return group.ComCodes;
+                else
+                    return new List<string>();
+            });
+            this.FavoriteComCodes = taskFavorite.Result;
+
+            var taskHate = loading.AddTask("排除清單", () =>
+            {
+                var group = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.HateGroup);
+                if (group != null)
+                    return group.ComCodes;
+                else
+                    return new List<string>();
+            });
+            this.HateComCodes = taskHate.Result;
+
             var group0050 = task0050.Result;
             groups.RemoveAll(g => g.Name == group0050.Name);
             groups.Add(group0050);
@@ -116,32 +119,6 @@ namespace StockApp
             var groupTrace = taskTrace.Result;
             groups.RemoveAll(g => g.Name == groupTrace.Name);
             groups.Add(groupTrace);
-
-            var favoriteGroup = groups.FirstOrDefault(g => g.Name == "觀察清單");
-            if (favoriteGroup == null)
-            {
-                favoriteGroup = new FavoriteGroup()
-                {
-                    Name = "觀察清單",
-                };
-                groups.Add(favoriteGroup);
-            }
-            var extraFavorites = favoriteComCodes.Except(favoriteGroup.ComCodes);
-            favoriteGroup.ComCodes.AddRange(extraFavorites);
-            this.FavoriteComCodes = favoriteGroup.ComCodes;
-
-            var hateGroup = groups.FirstOrDefault(g => g.Name == "排除清單");
-            if (hateGroup == null)
-            {
-                hateGroup = new HateGroup()
-                {
-                    Name = "排除清單",
-                };
-                groups.Add(hateGroup);
-            }
-            var extraHates = hateComCodes.Except(hateGroup.ComCodes);
-            hateGroup.ComCodes.AddRange(extraHates);
-            this.HateComCodes = hateGroup.ComCodes;
 
             groups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
             this.CustomGroups = groups;
@@ -319,17 +296,6 @@ namespace StockApp
                         break;
                 }
             }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            JsonCache.Store(this.FavoriteFilePath, this.FavoriteComCodes.Distinct());
-            JsonCache.Store(this.HateFilePath, this.HateComCodes.Distinct());
-
-            var groups = this.CustomGroups;
-            groups.ForEach(g => g.Distinct());
-            groups.RemoveAll(g => g.ComCodes.Count == 0);
-            CustomGroup.Store(groups);
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)

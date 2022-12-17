@@ -14,9 +14,12 @@ namespace StockApp.Group
     class CustomGroup
     {
         [JsonProperty]
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
         [JsonProperty]
         public List<string> ComCodes { get; set; } = new List<string>();
+        /// <summary>
+        /// true: 允許使用者異動
+        /// </summary>
         [JsonIgnore]
         public virtual bool IsFavorite { get; protected set; } = true;
         [JsonIgnore]
@@ -43,13 +46,16 @@ namespace StockApp.Group
                 .ToList();
         }
         private static List<CustomGroup> GetAll<T>()
-            where T : CustomGroup
+            where T : CustomGroup, new()
         {
             var jsonFilePath = $"CustomGroup\\{typeof(T)}.json";
 
             var caches = JsonCache.Load<List<T>>(jsonFilePath);
             if (caches == null)
                 caches = new List<T>();
+
+            if (caches.Count == 0)
+                caches.Add(new T());
 
             return caches.Cast<CustomGroup>().ToList();
         }
@@ -74,7 +80,7 @@ namespace StockApp.Group
             JsonCache.Store(jsonFilePath, groups);
         }
 
-        protected enum DefaultSortIndexType
+        public enum DefaultSortIndexType
         {
             FavoriteGroup = 1,
             HateGroup = 2,
@@ -91,7 +97,10 @@ namespace StockApp.Group
 
             public int GetHashCode(CustomGroup obj)
             {
-                return obj.Name.GetHashCode();
+                if (!string.IsNullOrEmpty(obj.Name))
+                    return obj.Name.GetHashCode();
+                else
+                    return obj.GetType().GetHashCode();
             }
         }
     }
