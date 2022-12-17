@@ -99,11 +99,11 @@ namespace StockApp
 
         private class TWSEDataModel
         {
-            public List<List<string>> data;
+            public List<List<string>> data = default;
         }
         private class TPEXDataModel
         {
-            public List<List<string>> aaData;
+            public List<List<string>> aaData = default;
         }
     }
 }

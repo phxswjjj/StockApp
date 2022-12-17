@@ -63,16 +63,16 @@ return document.querySelectorAll('div.each_table')[1].innerHTML;
 
     class DataModelE210
     {
-        public List<Company> Data;
+        public List<Company> Data = default;
 
         public class Company
         {
-            public string CommKey;
-            public string CommName;
+            public string CommKey = default;
+            public string CommName = default;
             /// <summary>
             /// 期貨, 股票
             /// </summary>
-            public string Type;
+            public string Type = default;
         }
     }
 }

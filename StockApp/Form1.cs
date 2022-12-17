@@ -19,8 +19,6 @@ namespace StockApp
         List<string> FavoriteComCodes = new List<string>();
         List<string> HateComCodes = new List<string>();
         List<CustomGroup> CustomGroups = new List<CustomGroup>();
-        private readonly string FavoriteFilePath = "Favorite.json";
-        private readonly string HateFilePath = "Hate.json";
 
         public Form1()
         {
@@ -696,7 +694,7 @@ namespace StockApp
             }
         }
 
-        private void tradeHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        private void TradeHistoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
@@ -709,7 +707,7 @@ namespace StockApp
             }
         }
 
-        private void analysisToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AnalysisToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;

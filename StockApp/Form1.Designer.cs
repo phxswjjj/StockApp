@@ -141,7 +141,7 @@ namespace StockApp
             this.analysisToolStripMenuItem.Name = "analysisToolStripMenuItem";
             this.analysisToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.analysisToolStripMenuItem.Text = "Analysis";
-            this.analysisToolStripMenuItem.Click += new System.EventHandler(this.analysisToolStripMenuItem_Click);
+            this.analysisToolStripMenuItem.Click += new System.EventHandler(this.AnalysisToolStripMenuItem_Click);
             // 
             // editGroupToolStripMenuItem
             // 
@@ -155,7 +155,7 @@ namespace StockApp
             this.tradeHistoryToolStripMenuItem.Name = "tradeHistoryToolStripMenuItem";
             this.tradeHistoryToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.tradeHistoryToolStripMenuItem.Text = "Trade History";
-            this.tradeHistoryToolStripMenuItem.Click += new System.EventHandler(this.tradeHistoryToolStripMenuItem_Click);
+            this.tradeHistoryToolStripMenuItem.Click += new System.EventHandler(this.TradeHistoryToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 

@@ -132,8 +132,8 @@ namespace StockApp
 
         private class DataModel
         {
-            public string stat;
-            public List<List<string>> data;
+            public string stat = default;
+            public List<List<string>> data = default;
         }
     }
 
@@ -190,7 +190,7 @@ namespace StockApp
 
         private class DataModel
         {
-            public List<List<string>> aaData;
+            public List<List<string>> aaData = default;
         }
     }
 }
