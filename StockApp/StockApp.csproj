@@ -184,12 +184,6 @@
     <Compile Include="FrmBasicSetting.Designer.cs">
       <DependentUpon>FrmBasicSetting.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmFavorite.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmFavorite.Designer.cs">
-      <DependentUpon>FrmFavorite.cs</DependentUpon>
-    </Compile>
     <Compile Include="JsonCache.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -248,9 +242,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmEditGroup.resx">
       <DependentUpon>FrmEditGroup.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmFavorite.resx">
-      <DependentUpon>FrmFavorite.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmLoading.resx">
       <DependentUpon>FrmLoading.cs</DependentUpon>

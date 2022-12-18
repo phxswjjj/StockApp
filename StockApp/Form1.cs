@@ -494,16 +494,6 @@ namespace StockApp
         }
 
         #region Main Menu
-        private void 觀察清單ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var editor = new FrmFavorite();
-            if (editor.ShowFavoriteDialog(this, this.FavoriteComCodes) == DialogResult.OK)
-            {
-                this.FavoriteComCodes = new List<string>(editor.ViewCodes);
-                LoadData(editor.ViewCodes);
-            }
-        }
-
         private void CustomGroupMenuItem_Click(object sender, EventArgs e)
         {
             var item = (ToolStripMenuItem)sender;
