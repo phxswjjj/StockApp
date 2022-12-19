@@ -38,6 +38,7 @@ namespace StockApp.Web
 
             return client;
         }
+        [Obsolete("改用 ChromiumBrowser", false)]
         internal static HttpClient CreateGoodInfo()
         {
             var logger = Utility.LogHelper.Log;

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace StockApp.Web
 {
+    [Obsolete("改用 ChromiumBrowser", true)]
     class GoodInfoClient : HttpClient
     {
         static readonly object LockObject = new object();

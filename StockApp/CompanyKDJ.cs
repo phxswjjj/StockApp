@@ -1,6 +1,7 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
 using Newtonsoft.Json;
+using StockApp.Web;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -67,11 +68,12 @@ namespace StockApp
         }
         private static List<CompanyKDJ> GetAllByUrl(string url)
         {
-            var request = Web.WebRequest.CreateGoodInfo();
-            var resp = request.GetAsync(url).Result;
-            var bytes = resp.Content.ReadAsByteArrayAsync().Result;
-            var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
-            resp.EnsureSuccessStatusCode();
+            string content;
+            using (var page = ChromiumBrowser.NewPage(url))
+            {
+                page.WaitForSelectorAsync("#tblStockList").Wait();
+                content = page.GetContentAsync().Result;
+            }
 
             IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
                 .OpenAsync(req => req.Content(content)).Result;
