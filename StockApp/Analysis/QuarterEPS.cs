@@ -24,11 +24,13 @@ namespace StockApp.Analysis
         public static List<QuarterEPS> Get(string stockCode)
         {
             var url = $"https://goodinfo.tw/tw/StockFinDetail.asp?RPT_CAT=IS_M_QUAR_ACC&STOCK_ID={stockCode}";
-            var request = Web.WebRequest.CreateGoodInfo();
-            var reqMsg = new GoodInfoRequestMessage(HttpMethod.Get, url);
-            var resp = request.SendAsync(reqMsg).Result;
-            var bytes = resp.Content.ReadAsByteArrayAsync().Result;
-            var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+            string content;
+            using (var page = ChromiumBrowser.NewPage(url))
+            {
+                page.WaitForSelectorAsync("#divFinDetail").Wait();
+                content = page.GetContentAsync().Result;
+            }
 
             IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
                 .OpenAsync(req => req.Content(content)).Result;
