@@ -697,7 +697,7 @@ namespace StockApp
             }
         }
 
-        private void AnalysisToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ShowAnalysisToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;

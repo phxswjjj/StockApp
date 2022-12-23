@@ -141,7 +141,7 @@ namespace StockApp
             this.analysisToolStripMenuItem.Name = "analysisToolStripMenuItem";
             this.analysisToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.analysisToolStripMenuItem.Text = "Analysis";
-            this.analysisToolStripMenuItem.Click += new System.EventHandler(this.AnalysisToolStripMenuItem_Click);
+            this.analysisToolStripMenuItem.Click += new System.EventHandler(this.ShowAnalysisToolStripMenuItem_Click);
             // 
             // editGroupToolStripMenuItem
             // 

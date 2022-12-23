@@ -10,21 +10,32 @@ using System.IO;
 using System.IO.Compression;
 using System.IO.Pipes;
 using StockApp.Web;
+using PuppeteerSharp;
+using StockApp.Group;
+using System.Reflection.Emit;
+using Newtonsoft.Json;
 
 namespace StockApp.Analysis
 {
     internal class QuarterEPS
     {
+        static readonly TimeSpan CacheTimeSpan = new TimeSpan(7, 0, 0, 0);
+
         /// <summary>
         /// yyyyQQ
         /// </summary>
+        [JsonProperty]
         public string YearQuarter { get; private set; }
+        [JsonProperty]
         public decimal EPS { get; private set; }
-
         public static List<QuarterEPS> Get(string stockCode)
         {
-            var url = $"https://goodinfo.tw/tw/StockFinDetail.asp?RPT_CAT=IS_M_QUAR_ACC&STOCK_ID={stockCode}";
+            var jsonFilePath = Path.Combine("Analysis", $"{stockCode}-QuarterEPS.json");
+            var cache = JsonCache.Load<List<QuarterEPS>>(jsonFilePath, CacheTimeSpan);
+            if (cache != null)
+                return cache;
 
+            var url = $"https://goodinfo.tw/tw/StockFinDetail.asp?RPT_CAT=IS_M_QUAR_ACC&STOCK_ID={stockCode}";
             string content;
             using (var page = ChromiumBrowser.NewPage(url))
             {
@@ -55,6 +66,8 @@ namespace StockApp.Analysis
                 //skip empty
                 epsTds.MoveNext();
             }
+            if (quarts.Count > 0)
+                JsonCache.Store(jsonFilePath, quarts);
             return quarts;
         }
     }
