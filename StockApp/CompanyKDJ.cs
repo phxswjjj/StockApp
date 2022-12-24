@@ -114,6 +114,7 @@ namespace StockApp
                 return null;
             var formattedText = text
                 .Replace("↗", "")
+                .Replace("→", "")
                 .Replace("↘", "");
             return decimal.Parse(formattedText);
         }
