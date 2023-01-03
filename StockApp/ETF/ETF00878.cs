@@ -10,6 +10,6 @@ namespace StockApp.ETF
     {
         public override string ComCode => "00878";
 
-        protected override string SiteCode => "ECN";
+        protected override string SiteCode => "CN";
     }
 }
