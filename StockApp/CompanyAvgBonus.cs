@@ -29,6 +29,8 @@ namespace StockApp
 
         public static List<CompanyAvgBonus> GetAll()
         {
+            var logger = Utility.LogHelper.Log;
+
             //offset 1330
             var offseted = Utility.TWSEDate.Today;
             var jsonFilePath = Path.Combine("CompanyAvgBonus", $"{offseted:yyyyMMdd}.json");
@@ -36,6 +38,7 @@ namespace StockApp
             if (caches != null)
                 return caches;
 
+            //如果拿不到資料，使用最後一次的結果
             var jsonLastFilePath = Path.Combine("CompanyAvgBonus", $"last.json");
 
             var request = Web.WebRequest.Create();
@@ -49,6 +52,7 @@ namespace StockApp
             var model = JsonConvert.DeserializeObject<TWSEDataModel>(content.Result);
             if (model.data == null)
             {
+                logger.Information("CompanyAvgBonus execute fail. use latest data");
                 var cashesLast = JsonCache.Load<List<CompanyAvgBonus>>(jsonLastFilePath);
                 if (cashesLast != null)
                     return cashesLast;
