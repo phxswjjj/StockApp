@@ -177,6 +177,8 @@ namespace StockApp.Trade
                 };
                 editTrades.Add(trade);
             }
+            //依交易日期遞增排序
+            editTrades.Sort((x, y) => x.TradeDate.Value.CompareTo(y.TradeDate));
             TradeInfo.Store(data.ComCode, editTrades);
             data.ResetTrades(editTrades);
 
