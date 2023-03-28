@@ -36,7 +36,6 @@ namespace StockApp
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadSetting();
-            PreLoadData();
             LoadData();
 
             SetupGridViewFitData(dataGridView1);
@@ -73,30 +72,24 @@ namespace StockApp
                 };
                 return group;
             });
+            var taskROE = loading.AddTask("ROE", () =>
+            {
+                var list = CompanyROE.GetAll();
+                return list;
+            });
             if (!loading.Start())
                 loading.ShowDialog(this);
 
             var groups = taskGroups.Result;
+            var favoriteGroup = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.FavoriteGroup);
+            this.FavoriteComCodes = new List<string>();
+            if (favoriteGroup != null)
+                this.FavoriteComCodes.AddRange(favoriteGroup.ComCodes);
 
-            var taskFavorite = loading.AddTask("觀察清單", () =>
-            {
-                var group = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.FavoriteGroup);
-                if (group != null)
-                    return group.ComCodes;
-                else
-                    return new List<string>();
-            });
-            this.FavoriteComCodes = taskFavorite.Result;
-
-            var taskHate = loading.AddTask("排除清單", () =>
-            {
-                var group = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.HateGroup);
-                if (group != null)
-                    return group.ComCodes;
-                else
-                    return new List<string>();
-            });
-            this.HateComCodes = taskHate.Result;
+            var hateGroup = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.HateGroup);
+            this.HateComCodes = new List<string>();
+            if (hateGroup != null)
+                this.HateComCodes.AddRange(hateGroup.ComCodes);
 
             var group0050 = task0050.Result;
             groups.RemoveAll(g => g.Name == group0050.Name);
@@ -127,17 +120,6 @@ namespace StockApp
                 newMainMenuItem.Click += CustomGroupMenuItem_Click; ;
                 觀察清單ToolStripMenuItem.DropDownItems.Add(newMainMenuItem);
             }
-        }
-        private void PreLoadData()
-        {
-            var loading = new FrmLoading();
-            var taskROE = loading.AddTask("ROE", () =>
-            {
-                var list = CompanyROE.GetAll();
-                return list;
-            });
-            if (!loading.Start())
-                loading.ShowDialog(this);
         }
         private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null,
             string likeComName = null)
