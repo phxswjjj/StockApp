@@ -131,7 +131,7 @@ namespace StockApp
 
         internal void SetExtra(CompanyKDJ find)
         {
-            var range = (KDJRangeType)Properties.Settings.Default.KDJRange;
+            var range = BasicSetting.Instance.KDJRange;
             var k = find.MonthK;
             var j = find.MonthJ;
             switch (range)

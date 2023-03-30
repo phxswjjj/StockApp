@@ -417,7 +417,7 @@ namespace StockApp
                         return;
                     else if (data.CurrentPrice > data.HoldValue.Value)
                         color = Color.FromArgb(0x2FDB7A82);
-                    maxYield = 0.1m;
+                    maxYield = BasicSetting.Instance.HoldValueMaxRatio;
                     curYield = Math.Abs(data.CurrentPrice - data.HoldValue.Value) / data.HoldValue.Value;
                     break;
                 case nameof(DisplayModel.TraceValue):
@@ -619,7 +619,7 @@ namespace StockApp
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var months = Properties.Settings.Default.SimulateMaxMonth;
+            var months = BasicSetting.Instance.SimulateMaxMonths;
             var dp = CompanyDayPrice.New(data);
             var bh = CompanyBonusHistory.New(data);
 

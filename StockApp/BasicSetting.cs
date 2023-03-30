@@ -20,6 +20,7 @@ namespace StockApp
         public int SimulateMaxMonths { get; internal set; }
         public DisplayModel.KDJRangeType KDJRange { get; private set; }
         public int TraceDays { get; private set; }
+        public decimal HoldValueMaxRatio { get; private set; }
 
         public void Load()
         {
@@ -30,6 +31,7 @@ namespace StockApp
             this.SimulateMaxMonths = setting.SimulateMaxMonth;
             this.KDJRange = (DisplayModel.KDJRangeType)Properties.Settings.Default.KDJRange;
             this.TraceDays = setting.TraceDays;
+            this.HoldValueMaxRatio = setting.HoldValueMaxRatio;
         }
     }
 }

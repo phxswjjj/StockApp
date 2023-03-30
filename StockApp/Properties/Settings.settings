@@ -20,5 +20,8 @@
     <Setting Name="TraceDays" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">32</Value>
     </Setting>
+    <Setting Name="HoldValueMaxRatio" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

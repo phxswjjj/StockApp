@@ -30,6 +30,7 @@ namespace StockApp
             txtContBonusTimes.Text = setting.ContBonusTimesLimit.ToString();
             txtSimulateMonths.Text = setting.SimulateMaxMonths.ToString();
             numTraceDays.Value = setting.TraceDays;
+            numHoldValueMaxRatio.Value = setting.HoldValueMaxRatio;
 
             cbxKDJRange.SelectedIndex = (int)setting.KDJRange;
         }
@@ -67,6 +68,8 @@ namespace StockApp
             setting.KDJRange = cbxKDJRange.SelectedIndex;
 
             setting.TraceDays = (int)numTraceDays.Value;
+
+            setting.HoldValueMaxRatio = numHoldValueMaxRatio.Value;
 
             setting.Save();
             BasicSetting.Instance.Load();
