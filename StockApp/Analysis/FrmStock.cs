@@ -13,6 +13,7 @@ namespace StockApp.Analysis
     public partial class FrmStock : Form
     {
         private readonly DisplayModel StockData;
+        private readonly DividendHistory LastDividend;
 
         public FrmStock()
         {
@@ -83,6 +84,8 @@ namespace StockApp.Analysis
             var lastDividend = dividendHistories.First(d => d.TotalDividend.HasValue);
             numLastDividend.Value = lastDividend.TotalDividend.Value;
             lblLastDividendTip.Text = lastDividend.Year.ToString();
+
+            this.LastDividend = lastDividend;
             #endregion
         }
 
@@ -119,7 +122,13 @@ namespace StockApp.Analysis
                 numLastYearQuarter.ForeColor = Color.White;
             }
 
-            numExceptDividend.Value = lastDividend * lastEPS / previousEPS;
+            var epsRatio = lastEPS / previousEPS;
+
+            var lastDividendData = this.LastDividend;
+            //除息為當年度，不計算期望除息
+            if (lastDividendData?.Year == DateTime.Now.Year)
+                epsRatio = 1;
+            numExceptDividend.Value = lastDividend * epsRatio;
         }
         private void RefreshCurrentDividendYield()
         {
