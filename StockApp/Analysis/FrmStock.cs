@@ -108,9 +108,6 @@ namespace StockApp.Analysis
             var previousEPS = numPreviousYearQuarter.Value;
             var lastDividend = numLastDividend.Value;
 
-            if (lastEPS <= 0 || previousEPS <= 0)
-                return;
-
             if (lastEPS > previousEPS)
             {
                 numLastYearQuarter.BackColor = Color.Red;
@@ -122,7 +119,9 @@ namespace StockApp.Analysis
                 numLastYearQuarter.ForeColor = Color.White;
             }
 
-            var epsRatio = lastEPS / previousEPS;
+            var epsRatio = 1m;
+            if (previousEPS > 0)
+                epsRatio = lastEPS / previousEPS;
 
             var lastDividendData = this.LastDividend;
             //除息為當年度，不計算期望除息
