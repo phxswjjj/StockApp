@@ -15,17 +15,15 @@ namespace StockApp.Group
     class CustomGroup
     {
         [BsonId]
-        [JsonProperty]
         public virtual string Name { get; set; }
-        [JsonProperty]
         public List<string> ComCodes { get; set; } = new List<string>();
         /// <summary>
         /// true: 允許使用者異動
         /// </summary>
-        [JsonIgnore]
         public virtual bool IsFavorite { get; protected set; } = true;
-        [JsonIgnore]
-        public virtual int SortIndex { get; set; } = (int)DefaultSortIndexType.CustomGroup;
+        [BsonIgnore]
+        public virtual int SortIndex { get; set; } = (int)GroupType.CustomGroup;
+        public virtual GroupType Group { get; set; } = GroupType.CustomGroup;
         public DateTime Timestamp { get; set; } = DateTime.Now;
 
         public static CustomGroup Create(string name)
@@ -34,7 +32,7 @@ namespace StockApp.Group
             return group;
         }
 
-        public enum DefaultSortIndexType
+        public enum GroupType
         {
             FavoriteGroup = 1,
             HateGroup = 2,

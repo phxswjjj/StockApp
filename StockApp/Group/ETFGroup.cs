@@ -9,6 +9,7 @@ namespace StockApp.Group
     class ETFGroup : CustomGroup
     {
         public override bool IsFavorite => false;
-        public override int SortIndex => (int)DefaultSortIndexType.ETFGroup;
+        public override int SortIndex => (int)GroupType.ETFGroup;
+        public override GroupType Group => GroupType.ETFGroup;
     }
 }

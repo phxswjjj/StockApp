@@ -24,8 +24,11 @@ namespace StockApp.Group
             var db = this.Db;
 
             var imported = db.GetCollection<Data.LocalDb.ImportHistory>();
-            var anyData = imported.FindOne(x => x.Name == typeof(T).Name);
-            if (anyData != null)
+            var everImportRecord = imported.Query()
+                .Where(x => x.Name == typeof(T).Name)
+                .OrderByDescending(x => x.Timestamp)
+                .FirstOrDefault();
+            if (everImportRecord != null)
                 return true;
 
             var jsonFilePath = $"CustomGroup\\{typeof(T)}.json";
@@ -40,7 +43,10 @@ namespace StockApp.Group
             var list = db.GetCollection<CustomGroup>();
             //匯入資料
             foreach (var cache in caches)
+            {
+                cache.Group = (GroupType)cache.SortIndex;
                 list.Insert(cache);
+            }
             list.EnsureIndex(d => d.Name);
 
             imported.Insert(new Data.LocalDb.ImportHistory(typeof(T).Name));
@@ -66,7 +72,7 @@ namespace StockApp.Group
                         existsGroup.Timestamp = DateTime.Now;
                         list.Update(existsGroup);
                     }
-                    else if (existsGroup.SortIndex == (int)DefaultSortIndexType.CustomGroup)
+                    else if (existsGroup.Group == GroupType.CustomGroup)
                         list.Delete(existsGroup.Name);
                 }
                 else if (customGroup.ComCodes.Count > 0)

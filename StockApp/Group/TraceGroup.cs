@@ -9,6 +9,7 @@ namespace StockApp.Group
     class TraceGroup : CustomGroup
     {
         public override bool IsFavorite => false;
-        public override int SortIndex => (int)DefaultSortIndexType.TraceGroup;
+        public override int SortIndex => (int)GroupType.TraceGroup;
+        public override GroupType Group => GroupType.TraceGroup;
     }
 }

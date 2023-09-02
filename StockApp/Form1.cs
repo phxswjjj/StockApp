@@ -67,18 +67,18 @@ namespace StockApp
 
                 groups = taskGroups.Result;
 
-                var favoriteGroup = groups.FirstOrDefault(g => g.SortIndex == (int)CustomGroup.DefaultSortIndexType.FavoriteGroup);
+                var favoriteGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.FavoriteGroup);
                 this.FavoriteComCodes = new List<string>();
                 if (favoriteGroup != null)
                     this.FavoriteComCodes.AddRange(favoriteGroup.ComCodes);
 
-                var hateGroup = groups.FirstOrDefault(g => g.SortIndex == (int)CustomGroup.DefaultSortIndexType.HateGroup);
+                var hateGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.HateGroup);
                 this.HateComCodes = new List<string>();
                 if (hateGroup != null)
                     this.HateComCodes.AddRange(hateGroup.ComCodes);
             }
 
-            groups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
+            groups.Sort((x, y) => x.Group.CompareTo(y.Group));
             this.CustomGroups = groups;
 
             foreach (var group in groups)
