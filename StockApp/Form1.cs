@@ -19,9 +19,10 @@ namespace StockApp
 {
     public partial class Form1 : Form
     {
-        List<string> FavoriteComCodes = new List<string>();
-        List<string> HateComCodes = new List<string>();
-        List<CustomGroup> CustomGroups = new List<CustomGroup>();
+        internal CustomGroup FavoriteGroup { get; private set; }
+        internal CustomGroup HateGroup { get; private set; }
+
+        List<CustomGroup> CustomGroups { get; set; }
 
         public Form1()
         {
@@ -68,14 +69,14 @@ namespace StockApp
                 groups = taskGroups.Result;
 
                 var favoriteGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.FavoriteGroup);
-                this.FavoriteComCodes = new List<string>();
-                if (favoriteGroup != null)
-                    this.FavoriteComCodes.AddRange(favoriteGroup.ComCodes);
+                if (favoriteGroup == null)
+                    favoriteGroup = new FavoriteGroup();
+                this.FavoriteGroup = favoriteGroup;
 
                 var hateGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.HateGroup);
-                this.HateComCodes = new List<string>();
-                if (hateGroup != null)
-                    this.HateComCodes.AddRange(hateGroup.ComCodes);
+                if (hateGroup == null)
+                    hateGroup = new HateGroup();
+                this.HateGroup = hateGroup;
             }
 
             groups.Sort((x, y) => x.Group.CompareTo(y.Group));
@@ -92,8 +93,8 @@ namespace StockApp
             string likeComName = null)
         {
             var groups = this.CustomGroups;
-            List<string> favoriteComCodes = this.FavoriteComCodes;
-            List<string> hateComCodes = this.HateComCodes;
+            var favoriteComCodes = this.FavoriteGroup.ComCodes;
+            var hateComCodes = this.HateGroup.ComCodes;
 
             var loading = new FrmLoading();
             var taskContBonus = loading.AddTask("連續股息", () =>
@@ -421,9 +422,9 @@ namespace StockApp
         {
             var data = (DisplayModel)grow.DataBoundItem;
 
-            if (FavoriteComCodes.Contains(data.ComCode))
+            if (this.FavoriteGroup.ComCodes.Contains(data.ComCode))
                 grow.DefaultCellStyle.BackColor = Color.LightYellow;
-            else if (HateComCodes.Contains(data.ComCode))
+            else if (this.HateGroup.ComCodes.Contains(data.ComCode))
                 grow.DefaultCellStyle.BackColor = Color.LightGray;
             else
                 grow.DefaultCellStyle.BackColor = Color.White;
@@ -541,27 +542,6 @@ namespace StockApp
                 frm.AddData(data);
             if (!frm.Visible)
                 frm.Show(this);
-        }
-
-        private void ShowFavoriteCustomGroup_Click(object sender, EventArgs e)
-        {
-            var item = (ToolStripMenuItem)sender;
-            var text = item.Text;
-
-            var groups = this.CustomGroups;
-            var group = groups.FirstOrDefault(g => g.Name == text);
-            if (group == null)
-            {
-                MessageBox.Show($"找不到自訂群組: {text}");
-                return;
-            }
-
-            var grow = (DataGridViewRow)contextMenuStrip1.Tag;
-            var data = (DisplayModel)grow.DataBoundItem;
-
-            group.ComCodes.Add(data.ComCode);
-            FavoriteComCodes.Add(data.ComCode);
-            RefreshCellStyle(grow);
         }
 
         private void ShowEditTraceToolStripMenuItem_Click(object sender, EventArgs e)
