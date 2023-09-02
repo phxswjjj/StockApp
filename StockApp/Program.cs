@@ -1,11 +1,14 @@
 ﻿using Serilog;
+using StockApp.Data;
 using StockApp.Utility;
 using StockApp.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Unity;
 
 namespace StockApp
 {
@@ -18,6 +21,9 @@ namespace StockApp
         static void Main()
         {
             InitLog();
+            InitUnity();
+
+            LocalDb.Initialize();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -34,6 +40,13 @@ namespace StockApp
                 .WriteTo.Console()
                 .CreateLogger();
             LogHelper.Log = logger;
+        }
+
+        private static void InitUnity()
+        {
+            IUnityContainer container = new UnityContainer();
+            container.RegisterInstance<ILogger>(LogHelper.Log);
+            UnityHelper.Initialize(container);
         }
     }
 }

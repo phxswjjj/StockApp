@@ -1,5 +1,9 @@
-﻿using StockApp.Group;
+﻿using LiteDB;
+using Serilog;
+using StockApp.Data;
+using StockApp.Group;
 using StockApp.Properties;
+using StockApp.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +15,7 @@ using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Unity;
 
 namespace StockApp
 {
@@ -137,7 +142,32 @@ namespace StockApp
                 else if (!group.ComCodes.Contains(data.ComCode) && cbx.Checked)
                     group.ComCodes.Add(data.ComCode);
             }
-            CustomGroup.Store(customGroups);
+
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
+            {
+                container.RegisterInstance(db);
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                var logger = container.Resolve<ILogger>()
+                    .ForContext("class", this.GetType())
+                    .ForContext("event", nameof(BtnSave_Click));
+
+                if (db.BeginTrans())
+                {
+                    try
+                    {
+                        custGroupRepo.Updates(customGroups);
+                        db.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, ex.Message);
+                        db.Rollback();
+                        MessageBox.Show(ex.Message);
+                        return;
+                    }
+                }
+            }
 
             this.DialogResult = DialogResult.OK;
             this.Close();

@@ -1,4 +1,7 @@
-﻿using StockApp.Group;
+﻿using LiteDB;
+using StockApp.Data;
+using StockApp.Group;
+using StockApp.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static StockApp.Group.CustomGroup;
+using Unity;
 
 namespace StockApp
 {
@@ -44,72 +47,36 @@ namespace StockApp
         private void LoadSetting()
         {
             var loading = new FrmLoading();
-            var taskGroups = loading.AddTask("自訂觀察清單", () => CustomGroup.GetAll());
+            List<CustomGroup> groups;
 
-            var task0050 = loading.AddTask("0050", () =>
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
             {
-                return new ETF.ETF0050().GetAll();
-            });
-            var task0056 = loading.AddTask("0056", () =>
-            {
-                return new ETF.ETF0056().GetAll();
-            });
-            var task00900 = loading.AddTask("00900", () =>
-            {
-                return new ETF.ETF00900().GetAll();
-            });
-            var task00878 = loading.AddTask("00878", () =>
-            {
-                return new ETF.ETF00878().GetAll();
-            });
-            var taskTrace = loading.AddTask("追蹤價格", () =>
-            {
-                var group = new TraceGroup()
+                container.RegisterInstance(db);
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+
+                var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll().ToList());
+
+                var taskROE = loading.AddTask("ROE", () =>
                 {
-                    Name = "追蹤價格",
-                    ComCodes = Trace.StockDetail.Load()
-                        .Select(t => t.ComCode).ToList(),
-                };
-                return group;
-            });
-            var taskROE = loading.AddTask("ROE", () =>
-            {
-                var list = CompanyROE.GetAll();
-                return list;
-            });
-            if (!loading.Start())
-                loading.ShowDialog(this);
+                    var list = CompanyROE.GetAll();
+                    return list;
+                });
+                if (!loading.Start())
+                    loading.ShowDialog(this);
 
-            var groups = taskGroups.Result;
-            var favoriteGroup = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.FavoriteGroup);
-            this.FavoriteComCodes = new List<string>();
-            if (favoriteGroup != null)
-                this.FavoriteComCodes.AddRange(favoriteGroup.ComCodes);
+                groups = taskGroups.Result;
 
-            var hateGroup = groups.FirstOrDefault(g => g.SortIndex == (int)DefaultSortIndexType.HateGroup);
-            this.HateComCodes = new List<string>();
-            if (hateGroup != null)
-                this.HateComCodes.AddRange(hateGroup.ComCodes);
+                var favoriteGroup = groups.FirstOrDefault(g => g.SortIndex == (int)CustomGroup.DefaultSortIndexType.FavoriteGroup);
+                this.FavoriteComCodes = new List<string>();
+                if (favoriteGroup != null)
+                    this.FavoriteComCodes.AddRange(favoriteGroup.ComCodes);
 
-            var group0050 = task0050.Result;
-            groups.RemoveAll(g => g.Name == group0050.Name);
-            groups.Add(group0050);
-
-            var group0056 = task0056.Result;
-            groups.RemoveAll(g => g.Name == group0056.Name);
-            groups.Add(group0056);
-
-            var group00900 = task00900.Result;
-            groups.RemoveAll(g => g.Name == group00900.Name);
-            groups.Add(group00900);
-
-            var group00878 = task00878.Result;
-            groups.RemoveAll(g => g.Name == group00878.Name);
-            groups.Add(group00878);
-
-            var groupTrace = taskTrace.Result;
-            groups.RemoveAll(g => g.Name == groupTrace.Name);
-            groups.Add(groupTrace);
+                var hateGroup = groups.FirstOrDefault(g => g.SortIndex == (int)CustomGroup.DefaultSortIndexType.HateGroup);
+                this.HateComCodes = new List<string>();
+                if (hateGroup != null)
+                    this.HateComCodes.AddRange(hateGroup.ComCodes);
+            }
 
             groups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
             this.CustomGroups = groups;
