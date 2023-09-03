@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using StockApp.Group;
+using StockApp.ROE;
 using StockApp.Utility;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,17 @@ namespace StockApp.Data
                 container.RegisterInstance(db);
 
                 InitializeGroup(container);
-
+                InitializeROE(container);
             }
             return true;
+        }
+
+        private static void InitializeROE(IUnityContainer container)
+        {
+            var roeRepo = container.Resolve<ROERepository>();
+
+            if (!roeRepo.Initialize<CompanyROE>())
+                throw new Exception($"Init {nameof(CompanyROE)} Fail");
         }
 
         private static void InitializeGroup(IUnityContainer container)

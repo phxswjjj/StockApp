@@ -58,11 +58,6 @@ namespace StockApp
 
                 var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll().ToList());
 
-                var taskROE = loading.AddTask("ROE", () =>
-                {
-                    var list = CompanyROE.GetAll();
-                    return list;
-                });
                 if (!loading.Start())
                     loading.ShowDialog(this);
 
@@ -538,8 +533,7 @@ namespace StockApp
             var frm = (FrmYearROE)this.OwnedForms.FirstOrDefault(f => f is FrmYearROE);
             if (frm == null)
                 frm = new FrmYearROE();
-            foreach (var data in list)
-                frm.AddData(data);
+            frm.AddData(list);
             if (!frm.Visible)
                 frm.Show(this);
         }

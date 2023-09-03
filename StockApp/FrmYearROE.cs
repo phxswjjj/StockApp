@@ -1,4 +1,9 @@
-﻿using System;
+﻿using LiteDB;
+using StockApp.Data;
+using StockApp.Group;
+using StockApp.ROE;
+using StockApp.Utility;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,22 +13,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using Unity;
 
 namespace StockApp
 {
-    public partial class FrmYearROE : Form
+    internal partial class FrmYearROE : Form
     {
-        internal List<CompanyROE> ROEData { get; }
-        private List<DisplayModel> ViewData = new List<DisplayModel>();
         private BindingList<FormData> DataSource = new BindingList<FormData>();
+        private List<string> Headers;
 
         public FrmYearROE()
         {
             InitializeComponent();
 
-            this.ROEData = CompanyROE.GetAll();
+            CompanyROE data;
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
+            {
+                container.RegisterInstance(db);
+                var roeRepo = container.Resolve<ROERepository>();
 
-            var data = ROEData.First();
+                data = roeRepo.GetROELastest();
+            }
+
+            if (data == null)
+                throw new Exception("ROE data Not Found");
+
             InitGrid(dataGridView1, data);
 
             chart1.Series.Clear();
@@ -57,8 +72,10 @@ namespace StockApp
                 return col;
             });
             gv.Columns.Add(addColumnFunc(nameof(FormData.ComName), "名稱"));
-            foreach (var headerText in data.ROEHeaders)
+            var headers = data.ROEHeaders;
+            foreach (var headerText in headers)
                 gv.Columns.Add(addPercentColumnFunc(headerText, headerText));
+            this.Headers = headers;
 
             gv.DataSource = this.DataSource;
         }
@@ -67,25 +84,25 @@ namespace StockApp
         {
         }
 
-        internal bool AddData(DisplayModel data)
+        internal void AddData(List<DisplayModel> list)
         {
-            if (ViewData.Any(d => d.ComCode == data.ComCode))
-                return false;
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
+            {
+                container.RegisterInstance(db);
+                var roeRepo = container.Resolve<ROERepository>();
 
-            var rdata = ROEData.FirstOrDefault(d => d.ComCode == data.ComCode);
-            if (rdata == null)
-                return false;
+                foreach (var data in list)
+                {
+                    if (this.DataSource.Any(d => d.ComCode == data.ComCode))
+                        continue;
 
-            ViewData.Add(data);
-            var fdata = new FormData(data, rdata);
-            AddGridData(fdata);
-            AddSeries(fdata);
-            return true;
-        }
-        private void AddGridData(FormData fdata)
-        {
-            var gv = dataGridView1;
-            this.DataSource.Add(fdata);
+                    var rdata = roeRepo.GetROE(data.ComCode);
+                    var fdata = new FormData(data, rdata);
+                    this.DataSource.Add(fdata);
+                    AddSeries(fdata);
+                }
+            }
         }
         private void AddSeries(FormData fdata)
         {
@@ -99,7 +116,7 @@ namespace StockApp
             series.BorderWidth = 2;
             series.IsXValueIndexed = true;
 
-            var headers = ROEData.First().ROEHeaders;
+            var headers = this.Headers;
             var list = headers.Select((h, i) => new { TimeLabel = h, YValue = fdata[i] });
             series.Points.DataBind(list,
                 "TimeLabel", "YValue", null);
@@ -157,6 +174,7 @@ namespace StockApp
             private DisplayModel Model;
             private CompanyROE ROEData;
 
+            public string ComCode => this.Model.ComCode;
             public string ComName => $"{Model.ComCode} - {Model.ComName}";
             public decimal? this[int index] => ROEData.ROEValues[index];
             public decimal? this[string key] => ROEData.ROEValues[Index(key)];

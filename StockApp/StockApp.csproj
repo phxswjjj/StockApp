@@ -205,6 +205,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ROE\ROERepository.cs" />
     <Compile Include="Trace\FrmEditor.cs">
       <SubType>Form</SubType>
     </Compile>

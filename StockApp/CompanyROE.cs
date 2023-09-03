@@ -15,6 +15,7 @@ namespace StockApp
     {
         const string QueryBaseUrl = "https://goodinfo.tw/tw/StockList.asp?SEARCH_WORD=&SHEET=%E5%B9%B4%E7%8D%B2%E5%88%A9%E8%83%BD%E5%8A%9B%5F%E8%BF%91N%E5%B9%B4%E4%B8%80%E8%A6%BD&SHEET2=ROE%28%25%29&MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E5%B9%B4%E5%BA%A6ROE%E6%9C%80%E9%AB%98%40%40%E8%82%A1%E6%9D%B1%E6%AC%8A%E7%9B%8A%E5%A0%B1%E9%85%AC%E7%8E%87+%28ROE%29%40%40%E5%B9%B4%E5%BA%A6ROE%E6%9C%80%E9%AB%98&STOCK_CODE=&RPT_TIME=%E6%9C%80%E6%96%B0%E8%B3%87%E6%96%99&STEP=DATA&RANK=99999";
 
+        public DateTime UpdateAt { get; set; }
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
@@ -30,7 +31,11 @@ namespace StockApp
             var jsonFilePath = Path.Combine("CompanyROE", $"{offseted:yyyyMM}.json");
             var caches = JsonCache.Load<List<CompanyROE>>(jsonFilePath);
             if (caches != null)
+            {
+                foreach (var cache in caches.Where(c => c.UpdateAt.Year < 2023))
+                    cache.UpdateAt = offseted.Date;
                 return caches;
+            }
 
             var request = Web.WebRequest.CreateGoodInfo();
             var resp = request.PostAsync(QueryBaseUrl, null).Result;
@@ -78,7 +83,8 @@ namespace StockApp
                 {
                     ComCode = tds[1].Text(),
                     ComName = tds[2].Text(),
-                    ROEHeaders = headerTexts
+                    ROEHeaders = headerTexts,
+                    UpdateAt = offseted.Date,
                 };
                 var roeValues = new List<decimal?>();
                 foreach (var header in headers)
