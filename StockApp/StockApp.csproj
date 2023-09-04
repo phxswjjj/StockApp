@@ -143,7 +143,7 @@
     <Compile Include="CompanyDayVolume.cs" />
     <Compile Include="CompanyExDividend.cs" />
     <Compile Include="CompanyKDJ.cs" />
-    <Compile Include="CompanyROE.cs" />
+    <Compile Include="ROE\CompanyROE.cs" />
     <Compile Include="Data\SortableBindingList.cs" />
     <Compile Include="ETF\CathayETFBase.cs" />
     <Compile Include="ETF\GoodInfoETFBase.cs" />
@@ -172,10 +172,10 @@
     <Compile Include="FrmSimulator.Designer.cs">
       <DependentUpon>FrmSimulator.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmYearROE.cs">
+    <Compile Include="ROE\FrmYearROE.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmYearROE.Designer.cs">
+    <Compile Include="ROE\FrmYearROE.Designer.cs">
       <DependentUpon>FrmYearROE.cs</DependentUpon>
     </Compile>
     <Compile Include="Group\CustomGroupRepository.cs" />
@@ -263,7 +263,7 @@
     <EmbeddedResource Include="FrmSimulator.resx">
       <DependentUpon>FrmSimulator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmYearROE.resx">
+    <EmbeddedResource Include="ROE\FrmYearROE.resx">
       <DependentUpon>FrmYearROE.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -1,5 +1,5 @@
 ﻿
-namespace StockApp
+namespace StockApp.ROE
 {
     partial class FrmYearROE
     {

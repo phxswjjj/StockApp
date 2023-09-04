@@ -15,7 +15,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Unity;
 
-namespace StockApp
+namespace StockApp.ROE
 {
     internal partial class FrmYearROE : Form
     {
