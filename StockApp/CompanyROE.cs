@@ -29,13 +29,6 @@ namespace StockApp
         {
             var offseted = Utility.TWSEDate.Today;
             var jsonFilePath = Path.Combine("CompanyROE", $"{offseted:yyyyMM}.json");
-            var caches = JsonCache.Load<List<CompanyROE>>(jsonFilePath);
-            if (caches != null)
-            {
-                foreach (var cache in caches.Where(c => c.UpdateAt.Year < 2023))
-                    cache.UpdateAt = offseted.Date;
-                return caches;
-            }
 
             var request = Web.WebRequest.CreateGoodInfo();
             var resp = request.PostAsync(QueryBaseUrl, null).Result;

@@ -20,7 +20,7 @@ namespace StockApp.ROE
             this.Db = db;
         }
 
-        internal CompanyROE GetROELastest()
+        internal CompanyROE GetROELatest()
         {
             var db = this.Db;
 
@@ -56,8 +56,8 @@ namespace StockApp.ROE
             if (everImportRecord != null)
                 return true;
 
-            var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyROE", $"{offseted:yyyyMM}.json");
+            var today = Utility.TWSEDate.Today;
+            var jsonFilePath = Path.Combine("CompanyROE", $"{today:yyyyMM}.json");
             //沒檔案=第一次執行，不拋異常
             if (!File.Exists(jsonFilePath))
                 return true;
@@ -71,9 +71,9 @@ namespace StockApp.ROE
             foreach (var cache in caches)
             {
                 if (cache.UpdateAt.Year < 2023)
-                    cache.UpdateAt = offseted.Date;
-                list.Insert(cache);
+                    cache.UpdateAt = today.Date;
             }
+            this.Imports(caches);
             list.EnsureIndex(d => new { d.ComCode, d.UpdateAt }, true);
             list.EnsureIndex(d => d.ComCode);
             list.EnsureIndex(d => d.UpdateAt);
@@ -81,6 +81,14 @@ namespace StockApp.ROE
             imported.Insert(new Data.LocalDb.ImportHistory(typeof(T).Name));
 
             return true;
+        }
+
+        internal void Imports(IEnumerable<CompanyROE> entities)
+        {
+            var db = this.Db;
+
+            var list = db.GetCollection<CompanyROE>();
+            list.Insert(entities);
         }
     }
 }

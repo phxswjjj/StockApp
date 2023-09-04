@@ -1,6 +1,8 @@
 ﻿using LiteDB;
+using Serilog;
 using StockApp.Data;
 using StockApp.Group;
+using StockApp.ROE;
 using StockApp.Utility;
 using System;
 using System.Collections.Generic;
@@ -51,12 +53,37 @@ namespace StockApp
             List<CustomGroup> groups;
 
             var container = UnityHelper.Create();
+            var logger = container.Resolve<ILogger>()
+                .ForContext("class", nameof(Form1))
+                .ForContext("event", nameof(LoadSetting));
             using (ILiteDatabase db = LocalDb.Create())
             {
                 container.RegisterInstance(db);
                 var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                var roeRepo = container.Resolve<ROERepository>();
 
                 var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll().ToList());
+
+                var taskROE = loading.AddTask("ROE", () =>
+                {
+                    var latestData = roeRepo.GetROELatest();
+                    var today = TWSEDate.Today;
+                    if (latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
+                    {
+                        var list = CompanyROE.GetAll();
+                        if (list?.Count > 300)
+                        {
+                            logger.Information("ROE GetAll Success");
+                            roeRepo.Imports(list);
+                        }
+                        else
+                        {
+                            logger.Error("ROE GetAll Fail");
+                            return false;
+                        }
+                    }
+                    return true;
+                });
 
                 if (!loading.Start())
                     loading.ShowDialog(this);
