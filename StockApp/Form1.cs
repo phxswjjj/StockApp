@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using Serilog;
+using StockApp.Bonus;
 using StockApp.Data;
 using StockApp.Group;
 using StockApp.ROE;
@@ -119,33 +120,73 @@ namespace StockApp
             var hateComCodes = this.HateGroup.ComCodes;
 
             var loading = new FrmLoading();
-            var taskContBonus = loading.AddTask("連續股息", () =>
+
+            Task<List<CompanyContBonus>> taskContBonus;
+            Task<List<CompanyExDividend>> taskExDividend;
+            Task<List<DisplayModel>> taskDayVolume;
+            Task<List<CompanyAvgBonus>> taskAvgBonus;
+            Task<List<Trace.StockDetail>> taskTraceStock;
+            Task<List<CompanyKDJ>> taskKDJ;
+            Task<List<Trade.TradeInfo>> taskTradeHistory;
+
+            var container = UnityHelper.Create();
+            var logger = container.Resolve<ILogger>()
+                .ForContext("class", nameof(Form1))
+                .ForContext("event", nameof(LoadData));
+            using (ILiteDatabase db = LocalDb.Create())
             {
-                return CompanyContBonus.GetAll();
-            });
-            var taskExDividend = loading.AddTask("除息時間", () =>
-            {
-                return CompanyExDividend.GetAll();
-            });
-            var taskDayVolume = loading.AddTask("日交易量", () =>
-            {
-                return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
-            });
-            var taskAvgBonus = loading.AddTask("平均股息", () =>
-            {
-                return CompanyAvgBonus.GetAll();
-            });
-            var taskTraceStock = loading.AddTask("追蹤價格", () =>
-            {
-                return Trace.StockDetail.Load();
-            });
-            var taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
-            var taskTradeHistory = loading.AddTask("交易記錄", () =>
-            {
-                return Trade.TradeInfo.GetAll();
-            });
-            if (!loading.Start())
-                loading.ShowDialog(this);
+                container.RegisterInstance(db);
+                var bonusRepo = container.Resolve<BonusRepository>();
+
+                taskContBonus = loading.AddTask("連續股息", () =>
+                {
+                    var latestData = bonusRepo.GetContinueBounsLatest();
+                    var today = TWSEDate.Today;
+                    List<CompanyContBonus> entities;
+                    if (latestData.UpdateAt.Year != today.Year)
+                    {
+                        entities = CompanyContBonus.GetAll();
+                        if (entities?.Count > 300)
+                        {
+                            logger.Information("Continue Bonus GetAll Success");
+                            bonusRepo.Imports(entities);
+                        }
+                        else
+                        {
+                            logger.Error("Continue Bonus GetAll Fail");
+                            return null;
+                        }
+                    }
+                    else
+                        entities = bonusRepo.GetContinueBonuses();
+
+                    return entities;
+                });
+
+                taskExDividend = loading.AddTask("除息時間", () =>
+                {
+                    return CompanyExDividend.GetAll();
+                });
+                taskDayVolume = loading.AddTask("日交易量", () =>
+                {
+                    return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
+                });
+                taskAvgBonus = loading.AddTask("平均股息", () =>
+                {
+                    return CompanyAvgBonus.GetAll();
+                });
+                taskTraceStock = loading.AddTask("追蹤價格", () =>
+                {
+                    return Trace.StockDetail.Load();
+                });
+                taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
+                taskTradeHistory = loading.AddTask("交易記錄", () =>
+                {
+                    return Trade.TradeInfo.GetAll();
+                });
+                if (!loading.Start())
+                    loading.ShowDialog(this);
+            }
 
             var traceStockList = taskTraceStock.Result;
 

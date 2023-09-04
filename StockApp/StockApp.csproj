@@ -137,6 +137,7 @@
     </Compile>
     <Compile Include="Analysis\QuarterEPS.cs" />
     <Compile Include="BasicSetting.cs" />
+    <Compile Include="Bonus\BonusRepository.cs" />
     <Compile Include="CompanyBonusHistory.cs" />
     <Compile Include="CompanyContBonus.cs" />
     <Compile Include="CompanyDayPrice.cs" />

@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using StockApp.Bonus;
 using StockApp.Group;
 using StockApp.ROE;
 using StockApp.Utility;
@@ -28,8 +29,17 @@ namespace StockApp.Data
 
                 InitializeGroup(container);
                 InitializeROE(container);
+                InitializeContinueBouns(container);
             }
             return true;
+        }
+
+        private static void InitializeContinueBouns(IUnityContainer container)
+        {
+            var bonusRepo = container.Resolve<BonusRepository>();
+
+            if (!bonusRepo.Initialize<CompanyContBonus>())
+                throw new Exception($"Init {nameof(CompanyContBonus)} Fail");
         }
 
         private static void InitializeROE(IUnityContainer container)

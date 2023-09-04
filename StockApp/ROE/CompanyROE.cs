@@ -27,9 +27,6 @@ namespace StockApp.ROE
 
         public static List<CompanyROE> GetAll()
         {
-            var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyROE", $"{offseted:yyyyMM}.json");
-
             var request = Web.WebRequest.CreateGoodInfo();
             var resp = request.PostAsync(QueryBaseUrl, null).Result;
             var bytes = resp.Content.ReadAsByteArrayAsync().Result;
@@ -67,6 +64,7 @@ namespace StockApp.ROE
                 return null;
             });
 
+            var offseted = Utility.TWSEDate.Today;
             var results = new List<CompanyROE>();
             var headerTexts = headers.Values.ToList();
             foreach (var tr in dataTrs)
@@ -87,8 +85,6 @@ namespace StockApp.ROE
                 results.Add(data);
             }
 
-            if (results.Count > 300)
-                JsonCache.Store(jsonFilePath, results);
             return results;
         }
     }
