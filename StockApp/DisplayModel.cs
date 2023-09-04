@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,21 +21,33 @@ namespace StockApp
         }
 
         [DisplayName("市/櫃")]
-        public string ComType { get; private set; }
+        public string ComType => this.DayVolumeSource?.ComType;
         internal bool IsTwSE => this.ComType == "市";
         [DisplayName("代號")]
         public string ComCode { get; private set; }
         [DisplayName("名稱")]
         public string ComName { get; private set; }
+
+        private CompanyDayVolume DayVolumeSource;
+
         [DisplayName("成交")]
-        public decimal CurrentPrice { get; set; }
+        public decimal CurrentPrice => this.DayVolumeSource?.CurrentPrice ?? 0;
+
+        private CompanyAvgBonus AvgBonusSource;
+
         [DisplayName("殖利率(%)")]
 
-        public decimal AvgYield { get; private set; }
+        public decimal AvgYield => this.AvgBonusSource?.AvgYield ?? 0;
+
+        private CompanyContBonus ContinueBounsSource;
+        private CompanyExDividend ExDividendSource;
+        private CompanyKDJ KDJSource;
+
         [DisplayName("連續次數")]
-        public int ContBonusTimes { get; private set; }
+        public int ContBonusTimes => this.ContinueBounsSource?.ContBonusTimes ?? 0;
         [DisplayName("平均股利")]
-        public decimal AvgBonus { get; set; }
+        public decimal AvgBonus => this.ContinueBounsSource?.AvgBonus ?? 0;
+
         [DisplayName("期望(5%)")]
 
         public decimal Expect5 => Math.Floor(this.AvgBonus / 0.05m * 100) / 100;
@@ -43,11 +56,28 @@ namespace StockApp
         [DisplayName("期望(9%)")]
         public decimal Expect9 => Math.Floor(this.AvgBonus / 0.09m * 100) / 100;
         [DisplayName("成交量")]
-        public int LastDayVolume { get; private set; }
+        public int LastDayVolume => this.DayVolumeSource?.DayVolume ?? 0;
+
         [DisplayName("除息T")]
-        public int? ExDividendDateT { get; private set; }
+        public int? ExDividendDateT
+        {
+            get
+            {
+                int? result = null;
+                var data = this.ExDividendSource;
+                if (data != null && data.ExDividendDate.HasValue)
+                {
+                    var t = (int)(data.ExDividendDate.Value - DateTime.Today).TotalDays;
+                    //已除息，股息無效
+                    if (t >= 0)
+                        return t;
+                }
+                return result;
+            }
+        }
+
         [DisplayName("股利")]
-        public decimal? ExDividendBonus { get; private set; }
+        public decimal? ExDividendBonus => this.ExDividendSource?.ExDividendBonus;
         [DisplayName("庫存")]
         public int? HoldStock
         {
@@ -73,14 +103,50 @@ namespace StockApp
             }
         }
         [DisplayName("追蹤")]
-        public decimal? TraceValue { get; private set; }
+        public decimal? TraceValue => this.TraceData?.Value;
         [DisplayName("追蹤T")]
         public int? TraceDateT => this.TraceData?.LimitDateT;
 
         internal Trace.StockDetail TraceData { get; private set; }
 
-        protected decimal ValueK { get; private set; }
-        protected decimal ValueJ { get; private set; }
+        protected decimal ValueK
+        {
+            get
+            {
+                var d = this.KDJSource;
+                var range = BasicSetting.Instance.KDJRange;
+                var k = d.MonthK;
+                switch (range)
+                {
+                    case KDJRangeType.Week:
+                        k = d.WeekK;
+                        break;
+                    case KDJRangeType.Day:
+                        k = d.DayK;
+                        break;
+                }
+                return k ?? d.DayK;
+            }
+        }
+        protected decimal ValueJ
+        {
+            get
+            {
+                var d = this.KDJSource;
+                var range = BasicSetting.Instance.KDJRange;
+                var j = d.MonthJ;
+                switch (range)
+                {
+                    case KDJRangeType.Week:
+                        j = d.WeekJ;
+                        break;
+                    case KDJRangeType.Day:
+                        j = d.DayJ;
+                        break;
+                }
+                return j ?? d.DayJ;
+            }
+        }
         [DisplayName("K")]
         public decimal ValueKDJ => this.ValueK;
         internal Color KDJColor
@@ -101,66 +167,30 @@ namespace StockApp
 
         internal void SetExtra(CompanyContBonus b)
         {
-            this.ContBonusTimes = b.ContBonusTimes;
-            this.AvgBonus = b.AvgBonus;
+            this.ContinueBounsSource = b;
         }
-        internal void SetExtra(CompanyExDividend find)
+        internal void SetExtra(CompanyExDividend d)
         {
-            if (find.ExDividendDate.HasValue)
-            {
-                var t = (int)(find.ExDividendDate.Value - DateTime.Today).TotalDays;
-                //已除息，股息無效
-                if (t < 0)
-                    return;
-                this.ExDividendDateT = t;
-            }
-            this.ExDividendBonus = find.ExDividendBonus;
+            this.ExDividendSource = d;
         }
-        internal void SetExtra(CompanyDayVolume find)
+        internal void SetExtra(CompanyDayVolume v)
         {
-            this.CurrentPrice = find.CurrentPrice;
-            this.LastDayVolume = find.DayVolume;
-            this.ComType = find.ComType;
+            this.DayVolumeSource = v;
         }
 
         internal void SetExtra(CompanyAvgBonus d)
         {
-            //this.AvgBonus = d.AvgBonus;
-            this.AvgYield = d.AvgYield;
+            this.AvgBonusSource = d;
         }
 
-        internal void SetExtra(CompanyKDJ find)
+        internal void SetExtra(CompanyKDJ d)
         {
-            var range = BasicSetting.Instance.KDJRange;
-            var k = find.MonthK;
-            var j = find.MonthJ;
-            switch (range)
-            {
-                case KDJRangeType.Week:
-                    k = find.WeekK;
-                    j = find.WeekJ;
-                    break;
-                case KDJRangeType.Day:
-                    k = find.DayK;
-                    j = find.DayJ;
-                    break;
-            }
-            this.ValueK = k ?? find.DayK;
-            this.ValueJ = j ?? find.DayJ;
+            this.KDJSource = d;
         }
 
-        internal void SetExtra(Trace.StockDetail findTrace)
+        internal void SetExtra(Trace.StockDetail d)
         {
-            if (findTrace == null)
-            {
-                this.TraceValue = null;
-                this.TraceData = null;
-            }
-            else
-            {
-                this.TraceValue = findTrace.Value;
-                this.TraceData = findTrace;
-            }
+            this.TraceData = d;
         }
 
         internal void ResetTrades(IEnumerable<TradeInfo> trades)
