@@ -30,8 +30,17 @@ namespace StockApp.Data
                 InitializeGroup(container);
                 InitializeROE(container);
                 InitializeContinueBouns(container);
+                InitializeDividend(container);
             }
             return true;
+        }
+
+        private static void InitializeDividend(IUnityContainer container)
+        {
+            var bonusRepo = container.Resolve<DividendRepository>();
+
+            if (!bonusRepo.Initialize<CompanyExDividend>())
+                throw new Exception($"Init {nameof(CompanyExDividend)} Fail");
         }
 
         private static void InitializeContinueBouns(IUnityContainer container)

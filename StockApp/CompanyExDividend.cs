@@ -14,6 +14,7 @@ namespace StockApp
     {
         const string QueryBaseUrl = "https://goodinfo.tw/tw/StockDividendScheduleList.asp?MARKET_CAT=%E5%85%A8%E9%83%A8&INDUSTRY_CAT=%E5%85%A8%E9%83%A8&YEAR=%E5%8D%B3%E5%B0%87%E9%99%A4%E6%AC%8A%E6%81%AF";
 
+        public DateTime UpdateAt { get; set; }
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
@@ -25,12 +26,7 @@ namespace StockApp
 
         public static List<CompanyExDividend> GetAll()
         {
-            //offset 1330
-            var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyExDividend", $"{offseted:yyyyMMdd}.json");
-            var caches = JsonCache.Load<List<CompanyExDividend>>(jsonFilePath);
-            if (caches != null)
-                return caches;
+            var today = Utility.TWSEDate.Today;
 
             var request = Web.WebRequest.CreateGoodInfo();
             var resp = request.GetAsync(QueryBaseUrl).Result;
@@ -52,7 +48,8 @@ namespace StockApp
                 var data = new CompanyExDividend
                 {
                     ComCode = tds[1].Text(),
-                    ComName = tds[2].Text()
+                    ComName = tds[2].Text(),
+                    UpdateAt = today,
                 };
 
                 var sBonus = tds.Last().Text();
@@ -72,7 +69,10 @@ namespace StockApp
             }
 
             if (result.Count > 10)
+            {
+                var jsonFilePath = Path.Combine("CompanyExDividend", $"{today:yyyyMMdd}.json");
                 JsonCache.Store(jsonFilePath, result);
+            }
             return result;
         }
     }

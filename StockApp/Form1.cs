@@ -137,6 +137,7 @@ namespace StockApp
             {
                 container.RegisterInstance(db);
                 var bonusRepo = container.Resolve<BonusRepository>();
+                var dividendRepo = container.Resolve<DividendRepository>();
 
                 taskContBonus = loading.AddTask("連續股息", () =>
                 {
@@ -165,7 +166,27 @@ namespace StockApp
 
                 taskExDividend = loading.AddTask("除息時間", () =>
                 {
-                    return CompanyExDividend.GetAll();
+                    var latestData = dividendRepo.GetDividendLatest();
+                    var today = TWSEDate.Today;
+                    List<CompanyExDividend> entities;
+                    if (latestData == null || latestData.UpdateAt.Date != today.Date)
+                    {
+                        entities = CompanyExDividend.GetAll();
+                        if (entities?.Count > 10)
+                        {
+                            logger.Information("Dividend GetAll Success");
+                            dividendRepo.Imports(entities);
+                        }
+                        else
+                        {
+                            logger.Error("Dividend GetAll Fail");
+                            return null;
+                        }
+                    }
+                    else
+                        entities = dividendRepo.GetDividends();
+
+                    return entities;
                 });
                 taskDayVolume = loading.AddTask("日交易量", () =>
                 {
@@ -554,10 +575,18 @@ namespace StockApp
             var comparer = new DisplayModel.ExDividendDateTComparer();
 
             var today = Utility.TWSEDate.Today;
-            var codes = CompanyExDividend.GetAll()
-                .Where(l => l.ExDividendDate.HasValue && l.ExDividendDate > today)
-                .Take(100)
-                .Select(l => l.ComCode).ToArray();
+
+            string[] codes;
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
+            {
+                container.RegisterInstance(db);
+                var dividendRepo = container.Resolve<DividendRepository>();
+                codes = dividendRepo.GetDividends()
+                    .Where(l => l.ExDividendDate.HasValue && l.ExDividendDate > today)
+                    .Take(100)
+                    .Select(l => l.ComCode).ToArray(); ;
+            }
             LoadData(codes, comparer);
         }
         #endregion
