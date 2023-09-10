@@ -43,6 +43,7 @@
             this.lblCurrentPrice = new System.Windows.Forms.Label();
             this.lblCurrentDividendYield = new System.Windows.Forms.Label();
             this.lblCurrentDividendYieldTitle = new System.Windows.Forms.Label();
+            this.btnApplyLastDivdend = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numLastYearQuarter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPreviousYearQuarter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numLastDividend)).BeginInit();
@@ -213,11 +214,22 @@
             this.lblCurrentDividendYieldTitle.Text = "Except Dividend Yield";
             this.lblCurrentDividendYieldTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // btnApplyLastDivdend
+            // 
+            this.btnApplyLastDivdend.Location = new System.Drawing.Point(280, 123);
+            this.btnApplyLastDivdend.Name = "btnApplyLastDivdend";
+            this.btnApplyLastDivdend.Size = new System.Drawing.Size(147, 28);
+            this.btnApplyLastDivdend.TabIndex = 7;
+            this.btnApplyLastDivdend.Text = "Apply Last Dividend";
+            this.btnApplyLastDivdend.UseVisualStyleBackColor = true;
+            this.btnApplyLastDivdend.Click += new System.EventHandler(this.btnApplyLastDivdend_Click);
+            // 
             // FrmStock
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(467, 238);
+            this.Controls.Add(this.btnApplyLastDivdend);
             this.Controls.Add(this.numCurrentPrice);
             this.Controls.Add(this.lblCurrentPrice);
             this.Controls.Add(this.numExceptDividend);
@@ -234,7 +246,7 @@
             this.Controls.Add(this.numLastYearQuarter);
             this.Controls.Add(this.lblLastYearQuarter);
             this.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FrmStock";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FrmStock";
@@ -266,5 +278,6 @@
         private System.Windows.Forms.Label lblCurrentPrice;
         private System.Windows.Forms.Label lblCurrentDividendYield;
         private System.Windows.Forms.Label lblCurrentDividendYieldTitle;
+        private System.Windows.Forms.Button btnApplyLastDivdend;
     }
 }

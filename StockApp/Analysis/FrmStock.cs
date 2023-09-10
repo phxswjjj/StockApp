@@ -31,15 +31,9 @@ namespace StockApp.Analysis
             numCurrentPrice.ValueChanged += NumExceptDividend_ValueChanged;
         }
 
-        private void NumExceptDividend_ValueChanged(object sender, EventArgs e)
-        {
-            RefreshCurrentDividendYield();
-        }
+        private void NumExceptDividend_ValueChanged(object sender, EventArgs e) => RefreshCurrentDividendYield();
 
-        private void NumLastYearQuarter_ValueChanged(object sender, EventArgs e)
-        {
-            RefreshExceptDividend();
-        }
+        private void NumLastYearQuarter_ValueChanged(object sender, EventArgs e) => RefreshExceptDividend();
 
         internal FrmStock(DisplayModel data) : this()
         {
@@ -98,6 +92,8 @@ namespace StockApp.Analysis
             RefreshCurrentDividendYield();
         }
 
+        private void btnApplyLastDivdend_Click(object sender, EventArgs e) => numExceptDividend.Value = numLastDividend.Value;
+
         private void RefreshExceptDividend()
         {
             numExceptDividend.Value = 0;
@@ -124,9 +120,6 @@ namespace StockApp.Analysis
                 epsRatio = lastEPS / previousEPS;
 
             var lastDividendData = this.LastDividend;
-            //除息為當年度，不計算期望除息
-            if (lastDividendData?.Year == DateTime.Now.Year)
-                epsRatio = 1;
             numExceptDividend.Value = lastDividend * epsRatio;
         }
         private void RefreshCurrentDividendYield()
