@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LiteDB;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,8 +11,6 @@ namespace StockApp.Trace
 {
     class StockDetail
     {
-        const string FilePath = "TraceStock.json";
-
         [JsonConstructor]
         private StockDetail() { }
         public StockDetail(DisplayModel data)
@@ -19,6 +18,7 @@ namespace StockApp.Trace
             this.ComCode = data.ComCode;
         }
 
+        [BsonId]
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
@@ -45,37 +45,5 @@ namespace StockApp.Trace
             }
         }
         public int? LimitDateT { get; private set; }
-
-        public static List<StockDetail> Load()
-        {
-            List<StockDetail> result;
-            if (File.Exists(FilePath))
-                result = JsonCache.Load<List<StockDetail>>(FilePath);
-            else
-                result = new List<StockDetail>();
-            return result;
-        }
-
-        public void Update()
-        {
-            var list = Load();
-            var existsIndex = list.FindIndex(d => d.ComCode == this.ComCode);
-            if (existsIndex == -1)
-                list.Add(this);
-            else
-                list[existsIndex] = this;
-            JsonCache.Store(FilePath, list);
-        }
-
-        public void Remove()
-        {
-            var list = Load();
-            var existsIndex = list.FindIndex(d => d.ComCode == this.ComCode);
-            if (existsIndex != -1)
-            {
-                list.RemoveAt(existsIndex);
-                JsonCache.Store(FilePath, list);
-            }
-        }
     }
 }

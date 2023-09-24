@@ -52,7 +52,7 @@ namespace StockApp.Trace
             // 
             this.btnClear.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnClear.Location = new System.Drawing.Point(202, 119);
-            this.btnClear.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.btnClear.Margin = new System.Windows.Forms.Padding(5);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(121, 46);
             this.btnClear.TabIndex = 9;
@@ -64,7 +64,7 @@ namespace StockApp.Trace
             // 
             this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnSave.Location = new System.Drawing.Point(61, 119);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(5);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(121, 46);
             this.btnSave.TabIndex = 8;
@@ -75,7 +75,7 @@ namespace StockApp.Trace
             // dpLimitDate
             // 
             this.dpLimitDate.Location = new System.Drawing.Point(147, 67);
-            this.dpLimitDate.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.dpLimitDate.Margin = new System.Windows.Forms.Padding(5);
             this.dpLimitDate.Name = "dpLimitDate";
             this.dpLimitDate.Size = new System.Drawing.Size(164, 29);
             this.dpLimitDate.TabIndex = 11;
@@ -92,8 +92,9 @@ namespace StockApp.Trace
             // 
             // numTraceValue
             // 
+            this.numTraceValue.DecimalPlaces = 2;
             this.numTraceValue.Location = new System.Drawing.Point(147, 22);
-            this.numTraceValue.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.numTraceValue.Margin = new System.Windows.Forms.Padding(5);
             this.numTraceValue.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -103,7 +104,7 @@ namespace StockApp.Trace
             1,
             0,
             0,
-            0});
+            131072});
             this.numTraceValue.Name = "numTraceValue";
             this.numTraceValue.Size = new System.Drawing.Size(166, 29);
             this.numTraceValue.TabIndex = 12;
@@ -127,7 +128,7 @@ namespace StockApp.Trace
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "FrmEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmEditor";

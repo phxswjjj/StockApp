@@ -1,4 +1,8 @@
-﻿using System;
+﻿using LiteDB;
+using StockApp.Data;
+using StockApp.Group;
+using StockApp.Utility;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Unity;
 
 namespace StockApp.Trace
 {
@@ -26,10 +31,12 @@ namespace StockApp.Trace
             dpLimitDate.Value = Utility.TWSEDate.Today.AddDays(Properties.Settings.Default.TraceDays);
 
             var rdata = this.RefData;
+            numTraceValue.Value = rdata.CurrentPrice;
+
             var tdata = rdata.TraceData;
             if (tdata != null)
             {
-                numTraceValue.Text = tdata.Value.ToString();
+                numTraceValue.Value = tdata.Value;
                 if (tdata.LimitDate.HasValue)
                     dpLimitDate.Value = tdata.LimitDate.Value;
             }
@@ -45,7 +52,18 @@ namespace StockApp.Trace
             tdata.Value = numTraceValue.Value;
 
             tdata.LimitDate = dpLimitDate.Value;
-            tdata.Update();
+
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
+            {
+                container.RegisterInstance(db);
+
+                var traceStockRepo = container.Resolve<TraceStockRepository>();
+                traceStockRepo.Update(tdata);
+
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                custGroupRepo.AddTraceStock(tdata);
+            }
 
             rdata.SetExtra(tdata);
             this.DialogResult = DialogResult.OK;
@@ -56,7 +74,19 @@ namespace StockApp.Trace
             var rdata = this.RefData;
             var tdata = rdata.TraceData;
             if (tdata != null)
-                tdata.Remove();
+            {
+                var container = UnityHelper.Create();
+                using (ILiteDatabase db = LocalDb.Create())
+                {
+                    container.RegisterInstance(db);
+
+                    var traceStockRepo = container.Resolve<TraceStockRepository>();
+                    traceStockRepo.Delete(tdata);
+
+                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    custGroupRepo.DeleteTraceStock(tdata);
+                }
+            }
 
             rdata.SetExtra((StockDetail)null);
             this.DialogResult = DialogResult.OK;

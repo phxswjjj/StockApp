@@ -215,6 +215,7 @@
       <DependentUpon>FrmEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Trace\StockDetail.cs" />
+    <Compile Include="Trace\TraceStockRepository.cs" />
     <Compile Include="Trade\FrmTradeHistory.cs">
       <SubType>Form</SubType>
     </Compile>

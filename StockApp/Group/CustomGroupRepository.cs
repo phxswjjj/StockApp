@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using StockApp.Trace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,8 @@ namespace StockApp.Group
 {
     internal class CustomGroupRepository
     {
+        const string GROUP_NAME_TRACE_STOCK = "追蹤價格";
+
         private readonly ILiteDatabase Db;
 
         public CustomGroupRepository(ILiteDatabase db)
@@ -78,6 +81,56 @@ namespace StockApp.Group
                 else if (customGroup.ComCodes.Count > 0)
                     list.Insert(customGroup);
             }
+        }
+
+        public bool AddTraceStock(StockDetail stock)
+        {
+            var db = this.Db;
+
+            var list = db.GetCollection<CustomGroup>();
+
+            var existsGroup = list.FindById(GROUP_NAME_TRACE_STOCK);
+            if (existsGroup == null)
+            {
+                var newGroup = new TraceGroup()
+                {
+                    Name = GROUP_NAME_TRACE_STOCK,
+                    ComCodes = new List<string> { stock.ComCode },
+                    Group = GroupType.TraceGroup,
+                    SortIndex = (int)GroupType.TraceGroup,
+                };
+                list.Insert(newGroup);
+                return true;
+            }
+            else
+            {
+                if (!existsGroup.ComCodes.Contains(stock.ComCode))
+                {
+                    existsGroup.ComCodes.Add(stock.ComCode);
+                    list.Update(existsGroup);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal bool DeleteTraceStock(StockDetail stock)
+        {
+            var db = this.Db;
+
+            var list = db.GetCollection<CustomGroup>();
+
+            var existsGroup = list.FindById(GROUP_NAME_TRACE_STOCK);
+            if (existsGroup != null)
+            {
+                if (existsGroup.ComCodes.Contains(stock.ComCode))
+                {
+                    existsGroup.ComCodes.Remove(stock.ComCode);
+                    list.Update(existsGroup);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

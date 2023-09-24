@@ -31,8 +31,17 @@ namespace StockApp.Data
                 InitializeROE(container);
                 InitializeContinueBouns(container);
                 InitializeDividend(container);
+                InitializeTraceStock(container);
             }
             return true;
+        }
+
+        private static void InitializeTraceStock(IUnityContainer container)
+        {
+            var traceStockRepo = container.Resolve<Trace.TraceStockRepository>();
+
+            if (!traceStockRepo.Initialize<Trace.StockDetail>())
+                throw new Exception($"Init TraceStock Fail");
         }
 
         private static void InitializeDividend(IUnityContainer container)

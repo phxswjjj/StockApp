@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Unity;
 
 namespace StockApp
@@ -115,7 +116,6 @@ namespace StockApp
         private void LoadData(string[] assignCodes = null, IComparer<DisplayModel> comparer = null,
             string likeComName = null)
         {
-            var groups = this.CustomGroups;
             var favoriteComCodes = this.FavoriteGroup.ComCodes;
             var hateComCodes = this.HateGroup.ComCodes;
 
@@ -136,11 +136,10 @@ namespace StockApp
             using (ILiteDatabase db = LocalDb.Create())
             {
                 container.RegisterInstance(db);
-                var bonusRepo = container.Resolve<BonusRepository>();
-                var dividendRepo = container.Resolve<DividendRepository>();
 
                 taskContBonus = loading.AddTask("連續股息", () =>
                 {
+                    var bonusRepo = container.Resolve<BonusRepository>();
                     var latestData = bonusRepo.GetContinueBounsLatest();
                     var today = TWSEDate.Today;
                     List<CompanyContBonus> entities;
@@ -166,6 +165,7 @@ namespace StockApp
 
                 taskExDividend = loading.AddTask("除息時間", () =>
                 {
+                    var dividendRepo = container.Resolve<DividendRepository>();
                     var latestData = dividendRepo.GetDividendLatest();
                     var today = TWSEDate.Today;
                     List<CompanyExDividend> entities;
@@ -198,7 +198,8 @@ namespace StockApp
                 });
                 taskTraceStock = loading.AddTask("追蹤價格", () =>
                 {
-                    return Trace.StockDetail.Load();
+                    var traceStockRepo = container.Resolve<Trace.TraceStockRepository>();
+                    return traceStockRepo.GetAll().ToList();
                 });
                 taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
                 taskTradeHistory = loading.AddTask("交易記錄", () =>
@@ -533,12 +534,19 @@ namespace StockApp
             var item = (ToolStripMenuItem)sender;
             var text = item.Text;
 
-            var groups = this.CustomGroups;
-            var group = groups.FirstOrDefault(g => g.Name == text);
-            if (group == null)
+            CustomGroup group;
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
             {
-                MessageBox.Show($"{text} Group not exists");
-                return;
+                container.RegisterInstance(db);
+
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                group = custGroupRepo.GetAll().FirstOrDefault(g => g.Name == text);
+                if (group == null)
+                {
+                    MessageBox.Show($"{text} Group not exists");
+                    return;
+                }
             }
             LoadData(group.ComCodes.ToArray());
         }
@@ -645,10 +653,6 @@ namespace StockApp
             {
                 RefreshCellStyle(grow);
                 dataGridView1.Refresh();
-
-                var group = this.CustomGroups.FirstOrDefault(g => g.Name == "追蹤價格");
-                group.ComCodes = Trace.StockDetail.Load()
-                    .Select(d => d.ComCode).ToList();
             }
         }
 
