@@ -27,7 +27,6 @@ namespace StockApp
         internal DisplayModel RefData { get; }
         public Button EmptyButton { get; }
 
-        private readonly List<CustomGroup> CustomGroups;
         private TextBox txtAddGroup;
 
         public FrmEditGroup()
@@ -41,18 +40,27 @@ namespace StockApp
             };
             this.AcceptButton = EmptyButton;
         }
-        internal FrmEditGroup(DisplayModel data, List<CustomGroup> customGroups) : this()
+        internal FrmEditGroup(DisplayModel data) : this()
         {
             this.Text = $"{data.ComCode} {data.ComName}";
 
             this.RefData = data;
-            this.CustomGroups = customGroups;
 
-            this.Init(data, customGroups);
+            this.Init(data);
         }
 
-        private void Init(DisplayModel data, List<CustomGroup> customGroups)
+        private void Init(DisplayModel data)
         {
+            List<CustomGroup> customGroups;
+            var container = UnityHelper.Create();
+            using (ILiteDatabase db = LocalDb.Create())
+            {
+                container.RegisterInstance(db);
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                customGroups = custGroupRepo.GetAll().ToList();
+            }
+
+            customGroups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
             foreach (var group in customGroups)
             {
                 var cbx = CreateCheckBox(group.Name);
@@ -121,27 +129,7 @@ namespace StockApp
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            var customGroups = this.CustomGroups;
             var data = this.RefData;
-            foreach (Control ctrl in flowLayoutPanel1.Controls)
-            {
-                if (!(ctrl is CheckBox cbx))
-                    continue;
-                var name = cbx.Text;
-                var group = customGroups.FirstOrDefault(g => g.Name == name);
-                if (group == null)
-                {
-                    group = new CustomGroup()
-                    {
-                        Name = name,
-                    };
-                    customGroups.Add(group);
-                }
-                if (group.ComCodes.Contains(data.ComCode) && !cbx.Checked)
-                    group.ComCodes.Remove(data.ComCode);
-                else if (!group.ComCodes.Contains(data.ComCode) && cbx.Checked)
-                    group.ComCodes.Add(data.ComCode);
-            }
 
             var container = UnityHelper.Create();
             using (ILiteDatabase db = LocalDb.Create())
@@ -152,11 +140,40 @@ namespace StockApp
                     .ForContext("class", this.GetType())
                     .ForContext("event", nameof(BtnSave_Click));
 
-                if (db.BeginTrans())
+                var customGroups = custGroupRepo.GetAll().ToList();
+                var changedGroups = new List<CustomGroup>();
+
+                foreach (Control ctrl in flowLayoutPanel1.Controls)
+                {
+                    if (!(ctrl is CheckBox cbx))
+                        continue;
+                    var name = cbx.Text;
+                    var group = customGroups.FirstOrDefault(g => g.Name == name);
+                    if (group == null)
+                    {
+                        group = new CustomGroup()
+                        {
+                            Name = name,
+                        };
+                        changedGroups.Add(group);
+                    }
+                    if (group.ComCodes.Contains(data.ComCode) && !cbx.Checked)
+                    {
+                        group.ComCodes.Remove(data.ComCode);
+                        changedGroups.Add(group);
+                    }
+                    else if (!group.ComCodes.Contains(data.ComCode) && cbx.Checked)
+                    {
+                        group.ComCodes.Add(data.ComCode);
+                        changedGroups.Add(group);
+                    }
+                }
+
+                if (changedGroups.Count > 0 && db.BeginTrans())
                 {
                     try
                     {
-                        custGroupRepo.Updates(customGroups);
+                        custGroupRepo.Updates(changedGroups);
                         db.Commit();
                     }
                     catch (Exception ex)

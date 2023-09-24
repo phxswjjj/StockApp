@@ -103,9 +103,7 @@ namespace StockApp
                 this.HateGroup = hateGroup;
             }
 
-            groups.Sort((x, y) => x.Group.CompareTo(y.Group));
-            this.CustomGroups = groups;
-
+            groups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
             foreach (var group in groups)
             {
                 var newMainMenuItem = new ToolStripMenuItem(group.Name);
@@ -700,7 +698,7 @@ namespace StockApp
             var grow = (DataGridViewRow)contextMenuStrip1.Tag;
             var data = (DisplayModel)grow.DataBoundItem;
 
-            var editor = new FrmEditGroup(data, this.CustomGroups);
+            var editor = new FrmEditGroup(data);
             if (editor.ShowDialog() == DialogResult.OK)
             {
                 RefreshCellStyle(grow);
