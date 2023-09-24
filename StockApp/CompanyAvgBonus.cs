@@ -1,5 +1,6 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
+using LiteDB;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -13,6 +14,7 @@ namespace StockApp
 {
     class CompanyAvgBonus
     {
+        public DateTime UpdateAt { get; internal set; }
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
@@ -29,36 +31,21 @@ namespace StockApp
 
         public static List<CompanyAvgBonus> GetAll()
         {
-            var logger = Utility.LogHelper.Log;
-
-            //offset 1330
-            var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyAvgBonus", $"{offseted:yyyyMMdd}.json");
-            var caches = JsonCache.Load<List<CompanyAvgBonus>>(jsonFilePath);
-            if (caches != null)
-                return caches;
-
-            //如果拿不到資料，使用最後一次的結果
-            var jsonLastFilePath = Path.Combine("CompanyAvgBonus", $"last.json");
+            var today = Utility.TWSEDate.Today;
 
             var request = Web.WebRequest.Create();
             var requestEx = Web.WebRequest.Create();
             //source: https://www.twse.com.tw/zh/page/trading/exchange/BWIBBU_d.html
-            var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date={offseted:yyyyMMdd}&selectType=ALL&_=1658329489142");
+            var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date={today:yyyyMMdd}&selectType=ALL&_=1658329489142");
             var respEx = requestEx.GetAsync("https://www.tpex.org.tw/web/stock/aftertrading/peratio_analysis/pera_result.php?l=zh-tw&_=1658330021875");
             var content = resp.Result.Content.ReadAsStringAsync();
             var contentEx = respEx.Result.Content.ReadAsStringAsync();
 
             var model = JsonConvert.DeserializeObject<TWSEDataModel>(content.Result);
-            if (model.data == null)
-            {
-                logger.Information("CompanyAvgBonus execute fail. use latest data");
-                var cashesLast = JsonCache.Load<List<CompanyAvgBonus>>(jsonLastFilePath);
-                if (cashesLast != null)
-                    return cashesLast;
-            }
 
             var result = new List<CompanyAvgBonus>();
+            if (model.data == null)
+                return result;
             foreach (var modelData in model.data)
             {
                 var data = new CompanyAvgBonus();
@@ -95,6 +82,9 @@ namespace StockApp
 
             if (result.Count > 300)
             {
+                var jsonFilePath = Path.Combine("CompanyAvgBonus", $"{today:yyyyMMdd}.json");
+                var jsonLastFilePath = Path.Combine("CompanyAvgBonus", $"last.json");
+
                 JsonCache.Store(jsonFilePath, result);
                 JsonCache.Store(jsonLastFilePath, result);
             }

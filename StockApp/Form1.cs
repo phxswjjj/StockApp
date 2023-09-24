@@ -192,7 +192,28 @@ namespace StockApp
                 });
                 taskAvgBonus = loading.AddTask("平均股息", () =>
                 {
-                    return CompanyAvgBonus.GetAll();
+                    var bonusRepo = container.Resolve<AvgBonusRepository>();
+                    var latestData = bonusRepo.GetLatest();
+                    var today = TWSEDate.Today;
+                    List<CompanyAvgBonus> entities;
+                    if (latestData.UpdateAt.Date != today)
+                    {
+                        entities = CompanyAvgBonus.GetAll();
+                        if (entities?.Count > 300)
+                        {
+                            logger.Information("Avg Bonus GetAll Success");
+                            bonusRepo.Imports(entities);
+                        }
+                        else
+                        {
+                            logger.Error("Avg Bonus GetAll Fail, Load Latest");
+                            entities = bonusRepo.GetAll();
+                        }
+                    }
+                    else
+                        entities = bonusRepo.GetAll();
+
+                    return entities;
                 });
                 taskTraceStock = loading.AddTask("追蹤價格", () =>
                 {

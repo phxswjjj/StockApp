@@ -32,8 +32,17 @@ namespace StockApp.Data
                 InitializeContinueBouns(container);
                 InitializeDividend(container);
                 InitializeTraceStock(container);
+                InitializeAvgBonus(container);
             }
             return true;
+        }
+
+        private static void InitializeAvgBonus(IUnityContainer container)
+        {
+            var bonusRepo = container.Resolve<AvgBonusRepository>();
+
+            if (!bonusRepo.Initialize())
+                throw new Exception($"Init {nameof(AvgBonusRepository)} Fail");
         }
 
         private static void InitializeTraceStock(IUnityContainer container)
