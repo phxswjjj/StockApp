@@ -29,7 +29,7 @@ namespace StockApp.Trace
             var tdata = rdata.TraceData;
             if (tdata != null)
             {
-                txtTraceValue.Text = tdata.Value.ToString();
+                numTraceValue.Text = tdata.Value.ToString();
                 if (tdata.LimitDate.HasValue)
                     dpLimitDate.Value = tdata.LimitDate.Value;
             }
@@ -42,24 +42,7 @@ namespace StockApp.Trace
             if (tdata == null)
                 tdata = new StockDetail(rdata);
 
-            var today = Utility.TWSEDate.Today;
-
-            var sStockValue = txtTraceValue.Text.Trim();
-            if (dpLimitDate.Value < today)
-            {
-                MessageBox.Show($"{lblLimitDate.Text} 不可設定過去的日期");
-                return;
-            }
-
-            decimal iStockValue;
-            if (!decimal.TryParse(sStockValue, out iStockValue))
-            {
-                MessageBox.Show($"非數值: {sStockValue}");
-                txtTraceValue.Focus();
-                return;
-            }
-            else
-                tdata.Value = iStockValue;
+            tdata.Value = numTraceValue.Value;
 
             tdata.LimitDate = dpLimitDate.Value;
             tdata.Update();
