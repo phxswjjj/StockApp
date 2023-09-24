@@ -137,8 +137,8 @@ namespace StockApp
 
                 taskContBonus = loading.AddTask("連續股息", () =>
                 {
-                    var bonusRepo = container.Resolve<BonusRepository>();
-                    var latestData = bonusRepo.GetContinueBounsLatest();
+                    var bonusRepo = container.Resolve<ContinueBonusRepository>();
+                    var latestData = bonusRepo.GetLatest();
                     var today = TWSEDate.Today;
                     List<CompanyContBonus> entities;
                     if (latestData.UpdateAt.Year != today.Year)
@@ -156,7 +156,7 @@ namespace StockApp
                         }
                     }
                     else
-                        entities = bonusRepo.GetContinueBonuses();
+                        entities = bonusRepo.GetAll();
 
                     return entities;
                 });
@@ -388,16 +388,6 @@ namespace StockApp
                 lbsBenefit.ForeColor = Color.Red;
             else if (benefit < 0)
                 lbsBenefit.ForeColor = Color.Green;
-        }
-
-        private void DataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            var gv = (DataGridView)sender;
-            var grow = gv.Rows[e.RowIndex];
-
-            RefreshCellStyle(grow);
-
-            dataGridView1.Refresh();
         }
 
         private void DataGridView_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)

@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace StockApp.Bonus
 {
-    internal class BonusRepository
+    internal class ContinueBonusRepository
     {
         private readonly ILiteDatabase Db;
 
-        public BonusRepository(ILiteDatabase db)
+        public ContinueBonusRepository(ILiteDatabase db)
         {
             this.Db = db;
         }
@@ -67,7 +67,7 @@ namespace StockApp.Bonus
             list.Insert(entities);
         }
 
-        internal CompanyContBonus GetContinueBounsLatest()
+        internal CompanyContBonus GetLatest()
         {
             var db = this.Db;
 
@@ -78,11 +78,11 @@ namespace StockApp.Bonus
             return data;
         }
 
-        public List<CompanyContBonus> GetContinueBonuses()
+        public List<CompanyContBonus> GetAll()
         {
             var db = this.Db;
 
-            var latest = GetContinueBounsLatest();
+            var latest = GetLatest();
             if (latest == null)
                 return null;
             var list = db.GetCollection<CompanyContBonus>();

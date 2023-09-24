@@ -137,7 +137,7 @@
     </Compile>
     <Compile Include="Analysis\QuarterEPS.cs" />
     <Compile Include="BasicSetting.cs" />
-    <Compile Include="Bonus\BonusRepository.cs" />
+    <Compile Include="Bonus\ContinueBonusRepository.cs" />
     <Compile Include="Bonus\DividendRepository.cs" />
     <Compile Include="CompanyBonusHistory.cs" />
     <Compile Include="CompanyContBonus.cs" />

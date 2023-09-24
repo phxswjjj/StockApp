@@ -54,7 +54,7 @@ namespace StockApp.Data
 
         private static void InitializeContinueBouns(IUnityContainer container)
         {
-            var bonusRepo = container.Resolve<BonusRepository>();
+            var bonusRepo = container.Resolve<ContinueBonusRepository>();
 
             if (!bonusRepo.Initialize<CompanyContBonus>())
                 throw new Exception($"Init {nameof(CompanyContBonus)} Fail");
