@@ -49,6 +49,7 @@ namespace StockApp
             foreach (var modelData in model.data)
             {
                 var data = new CompanyAvgBonus();
+                data.UpdateAt = today;
                 data.ComCode = modelData[0];
                 data.ComName = modelData[1];
 
@@ -64,6 +65,7 @@ namespace StockApp
             foreach (var modelData in modelEx.aaData)
             {
                 var data = new CompanyAvgBonus();
+                data.UpdateAt = today;
                 data.ComCode = modelData[0];
                 data.ComName = modelData[1];
 
