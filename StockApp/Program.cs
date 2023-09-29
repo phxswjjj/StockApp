@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Unity;
@@ -37,7 +38,10 @@ namespace StockApp
         {
             var logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
+                .Enrich.WithProperty("app", AppDomain.CurrentDomain.FriendlyName)
+                .Enrich.WithProperty("appId", Thread.CurrentThread.ManagedThreadId)
                 .CreateLogger();
+            logger.Information("{app} init");
             LogHelper.Log = logger;
         }
 
