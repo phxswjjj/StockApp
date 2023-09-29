@@ -14,6 +14,7 @@ namespace StockApp
 {
     class CompanyKDJ
     {
+        public DateTime UpdateAt { get; set; } = DateTime.Today;
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
@@ -40,11 +41,7 @@ namespace StockApp
         public static List<CompanyKDJ> GetAll()
         {
             //offset 1330
-            var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyKDJ", $"{offseted:yyyyMMdd}.json");
-            var caches = JsonCache.Load<List<CompanyKDJ>>(jsonFilePath);
-            if (caches != null)
-                return caches;
+            var today = Utility.TWSEDate.Today;
 
             var urls = new string[] {
                 "https://goodinfo.tw/tw2/StockList.asp?MARKET_CAT=%E4%B8%8A%E5%B8%82&INDUSTRY_CAT=%E4%B8%8A%E5%B8%82%E5%85%A8%E9%83%A8&SHEET=KD%E6%8C%87%E6%A8%99&SHEET2=%E6%97%A5%2F%E9%80%B1%2F%E6%9C%88",
@@ -62,8 +59,11 @@ namespace StockApp
             foreach (var res in bags)
                 result.AddRange(res);
 
-            if (result.Count > 300)
-                JsonCache.Store(jsonFilePath, result);
+            foreach (var res in result)
+            {
+                res.UpdateAt = today;
+            }
+
             return result;
         }
         private static List<CompanyKDJ> GetAllByUrl(string url)

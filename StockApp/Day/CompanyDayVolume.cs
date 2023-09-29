@@ -47,7 +47,6 @@ namespace StockApp.Day
             {
                 var data = new CompanyDayVolume
                 {
-                    UpdateAt = today,
                     ComCode = modelData[0],
                     ComName = modelData[1],
                     ComType = "市"
@@ -89,14 +88,11 @@ namespace StockApp.Day
                 result.Add(data);
             }
 
-            if (result.Count > 300)
+            foreach (var res in result)
             {
-                var jsonFilePath = Path.Combine("CompanyDayVolume", $"{today:yyyyMMdd}.json");
-                JsonCache.Store(jsonFilePath, result);
-
-                var jsonLastFilePath = Path.Combine("CompanyDayVolume", $"last.json");
-                JsonCache.Store(jsonLastFilePath, result);
+                res.UpdateAt = today;
             }
+
             return result;
         }
 

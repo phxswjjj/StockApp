@@ -143,7 +143,7 @@ namespace StockApp
                         var latestData = bonusRepo.GetLatest();
                         var today = TWSEDate.Today;
                         List<Bonus.CompanyContBonus> entities;
-                        if (latestData.UpdateAt.Year != today.Year)
+                        if (latestData?.UpdateAt.Year != today.Year)
                         {
                             entities = Bonus.CompanyContBonus.GetAll();
                             if (entities?.Count > 300)
@@ -169,7 +169,7 @@ namespace StockApp
                         var latestData = dividendRepo.GetDividendLatest();
                         var today = TWSEDate.Today;
                         List<CompanyExDividend> entities;
-                        if (latestData == null || latestData.UpdateAt.Date != today.Date)
+                        if (latestData?.UpdateAt != today)
                         {
                             entities = CompanyExDividend.GetAll();
                             if (entities?.Count > 10)
@@ -194,7 +194,7 @@ namespace StockApp
                         var latestData = dayVolumeRepo.GetLatest();
                         var today = TWSEDate.Today;
                         List<Day.CompanyDayVolume> entities;
-                        if (latestData.UpdateAt.Date != today)
+                        if (latestData?.UpdateAt.Date != today)
                         {
                             entities = Day.CompanyDayVolume.GetAll();
                             if (entities?.Count > 300)
@@ -219,7 +219,7 @@ namespace StockApp
                         var latestData = bonusRepo.GetLatest();
                         var today = TWSEDate.Today;
                         List<Bonus.CompanyAvgBonus> entities;
-                        if (latestData.UpdateAt.Date != today)
+                        if (latestData?.UpdateAt.Date != today)
                         {
                             entities = Bonus.CompanyAvgBonus.GetAll();
                             if (entities?.Count > 300)
@@ -243,7 +243,31 @@ namespace StockApp
                         var traceStockRepo = container.Resolve<Trace.TraceStockRepository>();
                         return traceStockRepo.GetAll().ToList();
                     });
-                    taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
+                    taskKDJ = loading.AddTask("KDJ", () =>
+                    {
+                        var kdjRepo = container.Resolve<Analysis.KDJRepository>();
+                        var latestData = kdjRepo.GetLatest();
+                        var today = TWSEDate.Today;
+                        List<CompanyKDJ> entities;
+                        if (latestData?.UpdateAt != today)
+                        {
+                            entities = CompanyKDJ.GetAll();
+                            if (entities?.Count > 300)
+                            {
+                                logger.Information("KDJ GetAll Success");
+                                kdjRepo.Imports(entities);
+                            }
+                            else
+                            {
+                                logger.Error("KDJ GetAll Fail, Load Latest");
+                                entities = kdjRepo.GetAll();
+                            }
+                        }
+                        else
+                            entities = kdjRepo.GetAll();
+
+                        return entities;
+                    });
                     taskTradeHistory = loading.AddTask("交易記錄", () =>
                     {
                         return Trade.TradeInfo.GetAll();

@@ -168,6 +168,7 @@
     <Compile Include="Analysis\FrmStock.Designer.cs">
       <DependentUpon>FrmStock.cs</DependentUpon>
     </Compile>
+    <Compile Include="Analysis\KDJRepository.cs" />
     <Compile Include="Analysis\QuarterEPS.cs" />
     <Compile Include="BasicSetting.cs" />
     <Compile Include="Bonus\AvgBonusRepository.cs" />
