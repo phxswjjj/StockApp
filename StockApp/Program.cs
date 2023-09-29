@@ -36,8 +36,7 @@ namespace StockApp
         private static void InitLog()
         {
             var logger = new LoggerConfiguration()
-                .WriteTo.File(@"Logs\log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 3)
-                .WriteTo.Console()
+                .ReadFrom.AppSettings()
                 .CreateLogger();
             LogHelper.Log = logger;
         }
