@@ -193,7 +193,28 @@ namespace StockApp
                     });
                     taskDayVolume = loading.AddTask("日交易量", () =>
                     {
-                        return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
+                        var dayVolumeRepo = container.Resolve<Day.DayVolumeRepository>();
+                        var latestData = dayVolumeRepo.GetLatest();
+                        var today = TWSEDate.Today;
+                        List<CompanyDayVolume> entities;
+                        if (latestData.UpdateAt.Date != today)
+                        {
+                            entities = CompanyDayVolume.GetAll();
+                            if (entities?.Count > 300)
+                            {
+                                logger.Information("Day Volume GetAll Success");
+                                dayVolumeRepo.Imports(entities);
+                            }
+                            else
+                            {
+                                logger.Error("Day Volume GetAll Fail, Load Latest");
+                                entities = dayVolumeRepo.GetAll();
+                            }
+                        }
+                        else
+                            entities = dayVolumeRepo.GetAll();
+
+                        return entities.ConvertAll(d => new DisplayModel(d));
                     });
                     taskAvgBonus = loading.AddTask("平均股息", () =>
                     {

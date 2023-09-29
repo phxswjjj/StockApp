@@ -179,6 +179,7 @@
     <Compile Include="CompanyDayVolume.cs" />
     <Compile Include="CompanyExDividend.cs" />
     <Compile Include="CompanyKDJ.cs" />
+    <Compile Include="Day\DayVolumeRepository.cs" />
     <Compile Include="ROE\CompanyROE.cs" />
     <Compile Include="Data\SortableBindingList.cs" />
     <Compile Include="ETF\CathayETFBase.cs" />

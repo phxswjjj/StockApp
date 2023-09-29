@@ -13,6 +13,7 @@ namespace StockApp
 {
     class CompanyDayVolume
     {
+        public DateTime UpdateAt { get; set; } = DateTime.Today;
         [JsonProperty]
         public string ComCode { get; private set; }
         [JsonProperty]
@@ -27,35 +28,26 @@ namespace StockApp
         public static List<CompanyDayVolume> GetAll()
         {
             //offset 1330
-            var offseted = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyDayVolume", $"{offseted:yyyyMMdd}.json");
-            var caches = JsonCache.Load<List<CompanyDayVolume>>(jsonFilePath);
-            if (caches != null)
-                return caches;
-
-            var jsonLastFilePath = Path.Combine("CompanyDayVolume", $"last.json");
+            var today = Utility.TWSEDate.Today;
 
             var request = Web.WebRequest.Create();
             var requestEx = Web.WebRequest.Create();
-            var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date={offseted:yyyyMMdd}&type=ALL&_=1658241396683");
-            var twYear = offseted.Year - 1911;
-            var respEx = requestEx.GetAsync($"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={twYear}/{offseted:MM/dd}&se=AL&_=1658242781730");
+            var resp = request.GetAsync($"https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date={today:yyyyMMdd}&type=ALL&_=1658241396683");
+            var twYear = today.Year - 1911;
+            var respEx = requestEx.GetAsync($"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={twYear}/{today:MM/dd}&se=AL&_=1658242781730");
             var content = resp.Result.Content.ReadAsStringAsync();
             var contentEx = respEx.Result.Content.ReadAsStringAsync();
 
             var model = JsonConvert.DeserializeObject<TWSEDataModel>(content.Result);
             if (model.data9 == null)
-            {
-                var cashesLast = JsonCache.Load<List<CompanyDayVolume>>(jsonLastFilePath);
-                if (cashesLast != null)
-                    return cashesLast;
-            }
+                return null;
 
             var result = new List<CompanyDayVolume>();
             foreach (var modelData in model.data9)
             {
                 var data = new CompanyDayVolume
                 {
+                    UpdateAt = today,
                     ComCode = modelData[0],
                     ComName = modelData[1],
                     ComType = "市"
@@ -99,7 +91,10 @@ namespace StockApp
 
             if (result.Count > 300)
             {
+                var jsonFilePath = Path.Combine("CompanyDayVolume", $"{today:yyyyMMdd}.json");
                 JsonCache.Store(jsonFilePath, result);
+
+                var jsonLastFilePath = Path.Combine("CompanyDayVolume", $"last.json");
                 JsonCache.Store(jsonLastFilePath, result);
             }
             return result;
