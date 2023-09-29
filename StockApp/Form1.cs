@@ -58,49 +58,52 @@ namespace StockApp
             var logger = container.Resolve<ILogger>()
                 .ForContext("class", nameof(Form1))
                 .ForContext("event", nameof(LoadSetting));
-            using (ILiteDatabase db = LocalDb.Create())
+            lock (LocalDb.DbLocker)
             {
-                container.RegisterInstance(db);
-                var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                var roeRepo = container.Resolve<ROERepository>();
-
-                var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll().ToList());
-
-                var taskROE = loading.AddTask("ROE", () =>
+                using (ILiteDatabase db = LocalDb.Create())
                 {
-                    var latestData = roeRepo.GetROELatest();
-                    var today = TWSEDate.Today;
-                    if (latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
+                    container.RegisterInstance(db);
+                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    var roeRepo = container.Resolve<ROERepository>();
+
+                    var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll().ToList());
+
+                    var taskROE = loading.AddTask("ROE", () =>
                     {
-                        var list = CompanyROE.GetAll();
-                        if (list?.Count > 300)
+                        var latestData = roeRepo.GetROELatest();
+                        var today = TWSEDate.Today;
+                        if (latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
                         {
-                            logger.Information("ROE GetAll Success");
-                            roeRepo.Imports(list);
+                            var list = CompanyROE.GetAll();
+                            if (list?.Count > 300)
+                            {
+                                logger.Information("ROE GetAll Success");
+                                roeRepo.Imports(list);
+                            }
+                            else
+                            {
+                                logger.Error("ROE GetAll Fail");
+                                return false;
+                            }
                         }
-                        else
-                        {
-                            logger.Error("ROE GetAll Fail");
-                            return false;
-                        }
-                    }
-                    return true;
-                });
+                        return true;
+                    });
 
-                if (!loading.Start())
-                    loading.ShowDialog(this);
+                    if (!loading.Start())
+                        loading.ShowDialog(this);
 
-                groups = taskGroups.Result;
+                    groups = taskGroups.Result;
 
-                var favoriteGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.FavoriteGroup);
-                if (favoriteGroup == null)
-                    favoriteGroup = new FavoriteGroup();
-                this.FavoriteGroup = favoriteGroup;
+                    var favoriteGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.FavoriteGroup);
+                    if (favoriteGroup == null)
+                        favoriteGroup = new FavoriteGroup();
+                    this.FavoriteGroup = favoriteGroup;
 
-                var hateGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.HateGroup);
-                if (hateGroup == null)
-                    hateGroup = new HateGroup();
-                this.HateGroup = hateGroup;
+                    var hateGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.HateGroup);
+                    if (hateGroup == null)
+                        hateGroup = new HateGroup();
+                    this.HateGroup = hateGroup;
+                }
             }
 
             groups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
@@ -131,102 +134,105 @@ namespace StockApp
             var logger = container.Resolve<ILogger>()
                 .ForContext("class", nameof(Form1))
                 .ForContext("event", nameof(LoadData));
-            using (ILiteDatabase db = LocalDb.Create())
+            lock (LocalDb.DbLocker)
             {
-                container.RegisterInstance(db);
-
-                taskContBonus = loading.AddTask("連續股息", () =>
+                using (ILiteDatabase db = LocalDb.Create())
                 {
-                    var bonusRepo = container.Resolve<ContinueBonusRepository>();
-                    var latestData = bonusRepo.GetLatest();
-                    var today = TWSEDate.Today;
-                    List<CompanyContBonus> entities;
-                    if (latestData.UpdateAt.Year != today.Year)
+                    container.RegisterInstance(db);
+
+                    taskContBonus = loading.AddTask("連續股息", () =>
                     {
-                        entities = CompanyContBonus.GetAll();
-                        if (entities?.Count > 300)
+                        var bonusRepo = container.Resolve<ContinueBonusRepository>();
+                        var latestData = bonusRepo.GetLatest();
+                        var today = TWSEDate.Today;
+                        List<CompanyContBonus> entities;
+                        if (latestData.UpdateAt.Year != today.Year)
                         {
-                            logger.Information("Continue Bonus GetAll Success");
-                            bonusRepo.Imports(entities);
+                            entities = CompanyContBonus.GetAll();
+                            if (entities?.Count > 300)
+                            {
+                                logger.Information("Continue Bonus GetAll Success");
+                                bonusRepo.Imports(entities);
+                            }
+                            else
+                            {
+                                logger.Error("Continue Bonus GetAll Fail");
+                                return null;
+                            }
                         }
                         else
-                        {
-                            logger.Error("Continue Bonus GetAll Fail");
-                            return null;
-                        }
-                    }
-                    else
-                        entities = bonusRepo.GetAll();
-
-                    return entities;
-                });
-
-                taskExDividend = loading.AddTask("除息時間", () =>
-                {
-                    var dividendRepo = container.Resolve<DividendRepository>();
-                    var latestData = dividendRepo.GetDividendLatest();
-                    var today = TWSEDate.Today;
-                    List<CompanyExDividend> entities;
-                    if (latestData == null || latestData.UpdateAt.Date != today.Date)
-                    {
-                        entities = CompanyExDividend.GetAll();
-                        if (entities?.Count > 10)
-                        {
-                            logger.Information("Dividend GetAll Success");
-                            dividendRepo.Imports(entities);
-                        }
-                        else
-                        {
-                            logger.Error("Dividend GetAll Fail");
-                            return null;
-                        }
-                    }
-                    else
-                        entities = dividendRepo.GetDividends();
-
-                    return entities;
-                });
-                taskDayVolume = loading.AddTask("日交易量", () =>
-                {
-                    return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
-                });
-                taskAvgBonus = loading.AddTask("平均股息", () =>
-                {
-                    var bonusRepo = container.Resolve<AvgBonusRepository>();
-                    var latestData = bonusRepo.GetLatest();
-                    var today = TWSEDate.Today;
-                    List<CompanyAvgBonus> entities;
-                    if (latestData.UpdateAt.Date != today)
-                    {
-                        entities = CompanyAvgBonus.GetAll();
-                        if (entities?.Count > 300)
-                        {
-                            logger.Information("Avg Bonus GetAll Success");
-                            bonusRepo.Imports(entities);
-                        }
-                        else
-                        {
-                            logger.Error("Avg Bonus GetAll Fail, Load Latest");
                             entities = bonusRepo.GetAll();
-                        }
-                    }
-                    else
-                        entities = bonusRepo.GetAll();
 
-                    return entities;
-                });
-                taskTraceStock = loading.AddTask("追蹤價格", () =>
-                {
-                    var traceStockRepo = container.Resolve<Trace.TraceStockRepository>();
-                    return traceStockRepo.GetAll().ToList();
-                });
-                taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
-                taskTradeHistory = loading.AddTask("交易記錄", () =>
-                {
-                    return Trade.TradeInfo.GetAll();
-                });
-                if (!loading.Start())
-                    loading.ShowDialog(this);
+                        return entities;
+                    });
+
+                    taskExDividend = loading.AddTask("除息時間", () =>
+                    {
+                        var dividendRepo = container.Resolve<DividendRepository>();
+                        var latestData = dividendRepo.GetDividendLatest();
+                        var today = TWSEDate.Today;
+                        List<CompanyExDividend> entities;
+                        if (latestData == null || latestData.UpdateAt.Date != today.Date)
+                        {
+                            entities = CompanyExDividend.GetAll();
+                            if (entities?.Count > 10)
+                            {
+                                logger.Information("Dividend GetAll Success");
+                                dividendRepo.Imports(entities);
+                            }
+                            else
+                            {
+                                logger.Error("Dividend GetAll Fail");
+                                return null;
+                            }
+                        }
+                        else
+                            entities = dividendRepo.GetDividends();
+
+                        return entities;
+                    });
+                    taskDayVolume = loading.AddTask("日交易量", () =>
+                    {
+                        return CompanyDayVolume.GetAll().ConvertAll(d => new DisplayModel(d));
+                    });
+                    taskAvgBonus = loading.AddTask("平均股息", () =>
+                    {
+                        var bonusRepo = container.Resolve<AvgBonusRepository>();
+                        var latestData = bonusRepo.GetLatest();
+                        var today = TWSEDate.Today;
+                        List<CompanyAvgBonus> entities;
+                        if (latestData.UpdateAt.Date != today)
+                        {
+                            entities = CompanyAvgBonus.GetAll();
+                            if (entities?.Count > 300)
+                            {
+                                logger.Information("Avg Bonus GetAll Success");
+                                bonusRepo.Imports(entities);
+                            }
+                            else
+                            {
+                                logger.Error("Avg Bonus GetAll Fail, Load Latest");
+                                entities = bonusRepo.GetAll();
+                            }
+                        }
+                        else
+                            entities = bonusRepo.GetAll();
+
+                        return entities;
+                    });
+                    taskTraceStock = loading.AddTask("追蹤價格", () =>
+                    {
+                        var traceStockRepo = container.Resolve<Trace.TraceStockRepository>();
+                        return traceStockRepo.GetAll().ToList();
+                    });
+                    taskKDJ = loading.AddTask("KDJ", () => CompanyKDJ.GetAll());
+                    taskTradeHistory = loading.AddTask("交易記錄", () =>
+                    {
+                        return Trade.TradeInfo.GetAll();
+                    });
+                    if (!loading.Start())
+                        loading.ShowDialog(this);
+                }
             }
 
             var traceStockList = taskTraceStock.Result;
@@ -545,12 +551,15 @@ namespace StockApp
 
             CustomGroup group;
             var container = UnityHelper.Create();
-            using (ILiteDatabase db = LocalDb.Create())
+            lock (LocalDb.DbLocker)
             {
-                container.RegisterInstance(db);
+                using (ILiteDatabase db = LocalDb.Create())
+                {
+                    container.RegisterInstance(db);
 
-                var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                group = custGroupRepo.GetAll().FirstOrDefault(g => g.Name == text);
+                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    group = custGroupRepo.GetAll().FirstOrDefault(g => g.Name == text);
+                }
             }
             if (group == null)
             {
@@ -591,18 +600,21 @@ namespace StockApp
         {
             var comparer = new DisplayModel.ExDividendDateTComparer();
 
-            var today = Utility.TWSEDate.Today;
+            var today = TWSEDate.Today;
 
             string[] codes;
             var container = UnityHelper.Create();
-            using (ILiteDatabase db = LocalDb.Create())
+            lock (LocalDb.DbLocker)
             {
-                container.RegisterInstance(db);
-                var dividendRepo = container.Resolve<DividendRepository>();
-                codes = dividendRepo.GetDividends()
-                    .Where(l => l.ExDividendDate.HasValue && l.ExDividendDate > today)
-                    .Take(100)
-                    .Select(l => l.ComCode).ToArray(); ;
+                using (ILiteDatabase db = LocalDb.Create())
+                {
+                    container.RegisterInstance(db);
+                    var dividendRepo = container.Resolve<DividendRepository>();
+                    codes = dividendRepo.GetDividends()
+                        .Where(l => l.ExDividendDate.HasValue && l.ExDividendDate > today)
+                        .Take(100)
+                        .Select(l => l.ComCode).ToArray(); ;
+                }
             }
             LoadData(codes, comparer);
         }

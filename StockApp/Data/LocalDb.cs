@@ -19,20 +19,24 @@ namespace StockApp.Data
     {
         private static Lazy<string> LazyFilePath = new Lazy<string>(() => ConfigurationManager.AppSettings["LocalDbPath"]);
         public static string FilePath => LazyFilePath.Value;
+        public readonly static object DbLocker = new object();
 
         public static bool Initialize()
         {
             var container = UnityHelper.Create();
-            using (ILiteDatabase db = Create())
+            lock (DbLocker)
             {
-                container.RegisterInstance(db);
+                using (ILiteDatabase db = Create())
+                {
+                    container.RegisterInstance(db);
 
-                InitializeGroup(container);
-                InitializeROE(container);
-                InitializeContinueBouns(container);
-                InitializeDividend(container);
-                InitializeTraceStock(container);
-                InitializeAvgBonus(container);
+                    InitializeGroup(container);
+                    InitializeROE(container);
+                    InitializeContinueBouns(container);
+                    InitializeDividend(container);
+                    InitializeTraceStock(container);
+                    InitializeAvgBonus(container);
+                }
             }
             return true;
         }

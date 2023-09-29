@@ -54,15 +54,18 @@ namespace StockApp.Trace
             tdata.LimitDate = dpLimitDate.Value;
 
             var container = UnityHelper.Create();
-            using (ILiteDatabase db = LocalDb.Create())
+            lock (LocalDb.DbLocker)
             {
-                container.RegisterInstance(db);
+                using (ILiteDatabase db = LocalDb.Create())
+                {
+                    container.RegisterInstance(db);
 
-                var traceStockRepo = container.Resolve<TraceStockRepository>();
-                traceStockRepo.Update(tdata);
+                    var traceStockRepo = container.Resolve<TraceStockRepository>();
+                    traceStockRepo.Update(tdata);
 
-                var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                custGroupRepo.AddTraceStock(tdata);
+                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    custGroupRepo.AddTraceStock(tdata);
+                }
             }
 
             rdata.SetExtra(tdata);
@@ -76,15 +79,18 @@ namespace StockApp.Trace
             if (tdata != null)
             {
                 var container = UnityHelper.Create();
-                using (ILiteDatabase db = LocalDb.Create())
+                lock (LocalDb.DbLocker)
                 {
-                    container.RegisterInstance(db);
+                    using (ILiteDatabase db = LocalDb.Create())
+                    {
+                        container.RegisterInstance(db);
 
-                    var traceStockRepo = container.Resolve<TraceStockRepository>();
-                    traceStockRepo.Delete(tdata);
+                        var traceStockRepo = container.Resolve<TraceStockRepository>();
+                        traceStockRepo.Delete(tdata);
 
-                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                    custGroupRepo.DeleteTraceStock(tdata);
+                        var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                        custGroupRepo.DeleteTraceStock(tdata);
+                    }
                 }
             }
 
