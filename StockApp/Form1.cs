@@ -1,9 +1,6 @@
 ﻿using LiteDB;
 using Serilog;
-using StockApp.Bonus;
 using StockApp.Data;
-using StockApp.Group;
-using StockApp.ROE;
 using StockApp.Utility;
 using System;
 using System.Collections.Generic;
@@ -23,10 +20,10 @@ namespace StockApp
 {
     public partial class Form1 : Form
     {
-        internal CustomGroup FavoriteGroup { get; private set; }
-        internal CustomGroup HateGroup { get; private set; }
+        internal Group.CustomGroup FavoriteGroup { get; private set; }
+        internal Group.CustomGroup HateGroup { get; private set; }
 
-        List<CustomGroup> CustomGroups { get; set; }
+        List<Group.CustomGroup> CustomGroups { get; set; }
 
         public Form1()
         {
@@ -52,7 +49,7 @@ namespace StockApp
         private void LoadSetting()
         {
             var loading = new FrmLoading();
-            List<CustomGroup> groups;
+            List<Group.CustomGroup> groups;
 
             var container = UnityHelper.Create();
             var logger = container.Resolve<ILogger>()
@@ -63,8 +60,8 @@ namespace StockApp
                 using (ILiteDatabase db = LocalDb.Create())
                 {
                     container.RegisterInstance(db);
-                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                    var roeRepo = container.Resolve<ROERepository>();
+                    var custGroupRepo = container.Resolve<Group.CustomGroupRepository>();
+                    var roeRepo = container.Resolve<ROE.ROERepository>();
 
                     var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll().ToList());
 
@@ -74,7 +71,7 @@ namespace StockApp
                         var today = TWSEDate.Today;
                         if (latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
                         {
-                            var list = CompanyROE.GetAll();
+                            var list = ROE.CompanyROE.GetAll();
                             if (list?.Count > 300)
                             {
                                 logger.Information("ROE GetAll Success");
@@ -94,14 +91,14 @@ namespace StockApp
 
                     groups = taskGroups.Result;
 
-                    var favoriteGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.FavoriteGroup);
+                    var favoriteGroup = groups.FirstOrDefault(g => g.Group == Group.CustomGroup.GroupType.FavoriteGroup);
                     if (favoriteGroup == null)
-                        favoriteGroup = new FavoriteGroup();
+                        favoriteGroup = new Group.FavoriteGroup();
                     this.FavoriteGroup = favoriteGroup;
 
-                    var hateGroup = groups.FirstOrDefault(g => g.Group == CustomGroup.GroupType.HateGroup);
+                    var hateGroup = groups.FirstOrDefault(g => g.Group == Group.CustomGroup.GroupType.HateGroup);
                     if (hateGroup == null)
-                        hateGroup = new HateGroup();
+                        hateGroup = new Group.HateGroup();
                     this.HateGroup = hateGroup;
                 }
             }
@@ -122,10 +119,10 @@ namespace StockApp
 
             var loading = new FrmLoading();
 
-            Task<List<CompanyContBonus>> taskContBonus;
+            Task<List<Bonus.CompanyContBonus>> taskContBonus;
             Task<List<CompanyExDividend>> taskExDividend;
             Task<List<DisplayModel>> taskDayVolume;
-            Task<List<CompanyAvgBonus>> taskAvgBonus;
+            Task<List<Bonus.CompanyAvgBonus>> taskAvgBonus;
             Task<List<Trace.StockDetail>> taskTraceStock;
             Task<List<CompanyKDJ>> taskKDJ;
             Task<List<Trade.TradeInfo>> taskTradeHistory;
@@ -142,13 +139,13 @@ namespace StockApp
 
                     taskContBonus = loading.AddTask("連續股息", () =>
                     {
-                        var bonusRepo = container.Resolve<ContinueBonusRepository>();
+                        var bonusRepo = container.Resolve<Bonus.ContinueBonusRepository>();
                         var latestData = bonusRepo.GetLatest();
                         var today = TWSEDate.Today;
-                        List<CompanyContBonus> entities;
+                        List<Bonus.CompanyContBonus> entities;
                         if (latestData.UpdateAt.Year != today.Year)
                         {
-                            entities = CompanyContBonus.GetAll();
+                            entities = Bonus.CompanyContBonus.GetAll();
                             if (entities?.Count > 300)
                             {
                                 logger.Information("Continue Bonus GetAll Success");
@@ -168,7 +165,7 @@ namespace StockApp
 
                     taskExDividend = loading.AddTask("除息時間", () =>
                     {
-                        var dividendRepo = container.Resolve<DividendRepository>();
+                        var dividendRepo = container.Resolve<Bonus.DividendRepository>();
                         var latestData = dividendRepo.GetDividendLatest();
                         var today = TWSEDate.Today;
                         List<CompanyExDividend> entities;
@@ -196,10 +193,10 @@ namespace StockApp
                         var dayVolumeRepo = container.Resolve<Day.DayVolumeRepository>();
                         var latestData = dayVolumeRepo.GetLatest();
                         var today = TWSEDate.Today;
-                        List<CompanyDayVolume> entities;
+                        List<Day.CompanyDayVolume> entities;
                         if (latestData.UpdateAt.Date != today)
                         {
-                            entities = CompanyDayVolume.GetAll();
+                            entities = Day.CompanyDayVolume.GetAll();
                             if (entities?.Count > 300)
                             {
                                 logger.Information("Day Volume GetAll Success");
@@ -218,13 +215,13 @@ namespace StockApp
                     });
                     taskAvgBonus = loading.AddTask("平均股息", () =>
                     {
-                        var bonusRepo = container.Resolve<AvgBonusRepository>();
+                        var bonusRepo = container.Resolve<Bonus.AvgBonusRepository>();
                         var latestData = bonusRepo.GetLatest();
                         var today = TWSEDate.Today;
-                        List<CompanyAvgBonus> entities;
+                        List<Bonus.CompanyAvgBonus> entities;
                         if (latestData.UpdateAt.Date != today)
                         {
-                            entities = CompanyAvgBonus.GetAll();
+                            entities = Bonus.CompanyAvgBonus.GetAll();
                             if (entities?.Count > 300)
                             {
                                 logger.Information("Avg Bonus GetAll Success");
@@ -570,7 +567,7 @@ namespace StockApp
             var item = (ToolStripMenuItem)sender;
             var text = item.Text;
 
-            CustomGroup group;
+            Group.CustomGroup group;
             var container = UnityHelper.Create();
             lock (LocalDb.DbLocker)
             {
@@ -578,7 +575,7 @@ namespace StockApp
                 {
                     container.RegisterInstance(db);
 
-                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    var custGroupRepo = container.Resolve<Group.CustomGroupRepository>();
                     group = custGroupRepo.GetAll().FirstOrDefault(g => g.Name == text);
                 }
             }
@@ -630,7 +627,7 @@ namespace StockApp
                 using (ILiteDatabase db = LocalDb.Create())
                 {
                     container.RegisterInstance(db);
-                    var dividendRepo = container.Resolve<DividendRepository>();
+                    var dividendRepo = container.Resolve<Bonus.DividendRepository>();
                     codes = dividendRepo.GetDividends()
                         .Where(l => l.ExDividendDate.HasValue && l.ExDividendDate > today)
                         .Take(100)
@@ -677,9 +674,9 @@ namespace StockApp
             }
             if (list.Count == 0) return;
 
-            var frm = (FrmYearROE)this.OwnedForms.FirstOrDefault(f => f is FrmYearROE);
+            var frm = (ROE.FrmYearROE)this.OwnedForms.FirstOrDefault(f => f is ROE.FrmYearROE);
             if (frm == null)
-                frm = new FrmYearROE();
+                frm = new ROE.FrmYearROE();
             frm.AddData(list);
             if (!frm.Visible)
                 frm.Show(this);

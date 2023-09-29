@@ -174,9 +174,9 @@
     <Compile Include="Bonus\ContinueBonusRepository.cs" />
     <Compile Include="Bonus\DividendRepository.cs" />
     <Compile Include="CompanyBonusHistory.cs" />
-    <Compile Include="CompanyContBonus.cs" />
+    <Compile Include="Bonus\CompanyContBonus.cs" />
     <Compile Include="CompanyDayPrice.cs" />
-    <Compile Include="CompanyDayVolume.cs" />
+    <Compile Include="Day\CompanyDayVolume.cs" />
     <Compile Include="CompanyExDividend.cs" />
     <Compile Include="CompanyKDJ.cs" />
     <Compile Include="Day\DayVolumeRepository.cs" />
@@ -236,7 +236,7 @@
     <Compile Include="JsonCache.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CompanyAvgBonus.cs" />
+    <Compile Include="Bonus\CompanyAvgBonus.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

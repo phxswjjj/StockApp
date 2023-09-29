@@ -13,7 +13,7 @@ namespace StockApp
     class DisplayModel
     {
 
-        public DisplayModel(CompanyDayVolume d)
+        public DisplayModel(Day.CompanyDayVolume d)
         {
             this.ComCode = d.ComCode;
             this.ComName = d.ComName;
@@ -28,18 +28,18 @@ namespace StockApp
         [DisplayName("名稱")]
         public string ComName { get; private set; }
 
-        private CompanyDayVolume DayVolumeSource;
+        private Day.CompanyDayVolume DayVolumeSource;
 
         [DisplayName("成交")]
         public decimal CurrentPrice => this.DayVolumeSource?.CurrentPrice ?? 0;
 
-        private CompanyAvgBonus AvgBonusSource;
+        private Bonus.CompanyAvgBonus AvgBonusSource;
 
         [DisplayName("殖利率(%)")]
 
         public decimal AvgYield => this.AvgBonusSource?.AvgYield ?? 0;
 
-        private CompanyContBonus ContinueBounsSource;
+        private Bonus.CompanyContBonus ContinueBounsSource;
         private CompanyExDividend ExDividendSource;
         private CompanyKDJ KDJSource;
 
@@ -165,7 +165,7 @@ namespace StockApp
         public List<Trade.TradeInfo> Trades { get; private set; } = new List<Trade.TradeInfo>();
         internal bool IsETF => this.ComCode.StartsWith("0");
 
-        internal void SetExtra(CompanyContBonus b)
+        internal void SetExtra(Bonus.CompanyContBonus b)
         {
             this.ContinueBounsSource = b;
         }
@@ -173,12 +173,12 @@ namespace StockApp
         {
             this.ExDividendSource = d;
         }
-        internal void SetExtra(CompanyDayVolume v)
+        internal void SetExtra(Day.CompanyDayVolume v)
         {
             this.DayVolumeSource = v;
         }
 
-        internal void SetExtra(CompanyAvgBonus d)
+        internal void SetExtra(Bonus.CompanyAvgBonus d)
         {
             this.AvgBonusSource = d;
         }
