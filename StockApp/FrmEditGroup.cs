@@ -132,58 +132,72 @@ namespace StockApp
             var data = this.RefData;
 
             var container = UnityHelper.Create();
+            List<CustomGroup> customGroups;
             using (ILiteDatabase db = LocalDb.Create())
             {
                 container.RegisterInstance(db);
                 var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                var logger = container.Resolve<ILogger>()
-                    .ForContext("class", this.GetType())
-                    .ForContext("event", nameof(BtnSave_Click));
 
-                var customGroups = custGroupRepo.GetAll().ToList();
-                var changedGroups = new List<CustomGroup>();
+                customGroups = custGroupRepo.GetAll().ToList();
+            }
 
-                foreach (Control ctrl in flowLayoutPanel1.Controls)
+            var changedGroups = new List<CustomGroup>();
+            foreach (Control ctrl in flowLayoutPanel1.Controls)
+            {
+                if (!(ctrl is CheckBox cbx))
+                    continue;
+                var name = cbx.Text;
+                var group = customGroups.FirstOrDefault(g => g.Name == name);
+                if (group == null)
                 {
-                    if (!(ctrl is CheckBox cbx))
-                        continue;
-                    var name = cbx.Text;
-                    var group = customGroups.FirstOrDefault(g => g.Name == name);
-                    if (group == null)
+                    group = new CustomGroup()
                     {
-                        group = new CustomGroup()
+                        Name = name,
+                    };
+                    changedGroups.Add(group);
+                }
+                if (group.ComCodes.Contains(data.ComCode) && !cbx.Checked)
+                {
+                    group.ComCodes.Remove(data.ComCode);
+                    changedGroups.Add(group);
+                }
+                else if (!group.ComCodes.Contains(data.ComCode) && cbx.Checked)
+                {
+                    group.ComCodes.Add(data.ComCode);
+                    changedGroups.Add(group);
+                }
+            }
+
+            try
+            {
+                using (ILiteDatabase db = LocalDb.Create())
+                {
+                    container.RegisterInstance(db);
+                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    var logger = container.Resolve<ILogger>()
+                        .ForContext("class", this.GetType())
+                        .ForContext("event", nameof(BtnSave_Click));
+
+                    if (changedGroups.Count > 0 && db.BeginTrans())
+                    {
+                        try
                         {
-                            Name = name,
-                        };
-                        changedGroups.Add(group);
-                    }
-                    if (group.ComCodes.Contains(data.ComCode) && !cbx.Checked)
-                    {
-                        group.ComCodes.Remove(data.ComCode);
-                        changedGroups.Add(group);
-                    }
-                    else if (!group.ComCodes.Contains(data.ComCode) && cbx.Checked)
-                    {
-                        group.ComCodes.Add(data.ComCode);
-                        changedGroups.Add(group);
+                            custGroupRepo.Updates(changedGroups);
+                            db.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex, ex.Message);
+                            db.Rollback();
+                            throw;
+                        }
                     }
                 }
-
-                if (changedGroups.Count > 0 && db.BeginTrans())
-                {
-                    try
-                    {
-                        custGroupRepo.Updates(changedGroups);
-                        db.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex, ex.Message);
-                        db.Rollback();
-                        MessageBox.Show(ex.Message);
-                        return;
-                    }
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
             }
 
             this.DialogResult = DialogResult.OK;

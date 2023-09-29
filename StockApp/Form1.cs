@@ -551,11 +551,11 @@ namespace StockApp
 
                 var custGroupRepo = container.Resolve<CustomGroupRepository>();
                 group = custGroupRepo.GetAll().FirstOrDefault(g => g.Name == text);
-                if (group == null)
-                {
-                    MessageBox.Show($"{text} Group not exists");
-                    return;
-                }
+            }
+            if (group == null)
+            {
+                MessageBox.Show($"{text} Group not exists");
+                return;
             }
             LoadData(group.ComCodes.ToArray());
         }
