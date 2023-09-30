@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LiteDB;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace StockApp.Trade
 {
     internal class TradeInfo
     {
-        [JsonIgnore]
+        [BsonIgnore]
         public DisplayModel Source { get; private set; }
         [JsonProperty]
         public string ComCode { get; private set; }
@@ -21,14 +22,15 @@ namespace StockApp.Trade
         public decimal TradePrice { get; set; }
         [JsonProperty]
         public int TradeVolume { get; set; }
+        [BsonIgnore]
         public decimal? CurrentValue => this.Source?.CurrentPrice * this.TradeVolume;
         [JsonProperty]
         public StockCenterType? StockCenter { get; set; }
         [JsonProperty]
         public string Memo { get; set; }
 
-        [JsonConstructor]
-        private TradeInfo() { }
+        [BsonCtor]
+        public TradeInfo() { }
         public TradeInfo(DisplayModel data)
         {
             this.Source = data;
