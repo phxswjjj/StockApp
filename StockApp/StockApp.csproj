@@ -259,6 +259,7 @@
       <DependentUpon>FrmTradeHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Trade\TradeInfo.cs" />
+    <Compile Include="Trade\TradeRepository.cs" />
     <Compile Include="UI\DataGridViewCalendarEditingControl.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -270,7 +270,8 @@ namespace StockApp
                     });
                     taskTradeHistory = loading.AddTask("交易記錄", () =>
                     {
-                        return Trade.TradeInfo.GetAll();
+                        var tradeRepo = container.Resolve<Trade.TradeRepository>();
+                        return tradeRepo.GetAll();
                     });
                     if (!loading.Start())
                         loading.ShowDialog(this);
@@ -627,15 +628,20 @@ namespace StockApp
 
         private void 庫存清單ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var loading = new FrmLoading();
-            var taskTradeHistory = loading.AddTask("交易記錄", () =>
+            List<string> comCodes;
+
+            var container = UnityHelper.Create();
+            lock (LocalDb.DbLocker)
             {
-                return Trade.TradeInfo.GetAll();
-            });
-            if (!loading.Start())
-                loading.ShowDialog(this);
-            var list = taskTradeHistory.Result;
-            LoadData(list.Select(l => l.ComCode).ToArray());
+                using (ILiteDatabase db = LocalDb.Create())
+                {
+                    container.RegisterInstance(db);
+                    var tradeRepo = container.Resolve<Trade.TradeRepository>();
+                    comCodes = tradeRepo.GetAllComCodes();
+                }
+            }
+
+            LoadData(comCodes.ToArray());
         }
 
         private void 將除息ToolStripMenuItem_Click(object sender, EventArgs e)

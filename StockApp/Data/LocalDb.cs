@@ -37,9 +37,18 @@ namespace StockApp.Data
                     InitializeTraceStock(container);
                     InitializeAvgBonus(container);
                     InitializeDayVolume(container);
+                    InitializeTradeInfo(container);
                 }
             }
             return true;
+        }
+
+        private static void InitializeTradeInfo(IUnityContainer container)
+        {
+            var tradeRepo = container.Resolve<Trade.TradeRepository>();
+
+            if (!tradeRepo.Initialize())
+                throw new Exception($"Init {nameof(Trade.TradeRepository)} Fail");
         }
 
         private static void InitializeDayVolume(IUnityContainer container)

@@ -1,6 +1,9 @@
-﻿using StockApp.Data;
+﻿using LiteDB;
+using Serilog;
+using StockApp.Data;
 using StockApp.Group;
 using StockApp.UI;
+using StockApp.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Unity;
 
 namespace StockApp.Trade
 {
@@ -179,7 +183,18 @@ namespace StockApp.Trade
             }
             //依交易日期遞增排序
             editTrades.Sort((x, y) => x.TradeDate.Value.CompareTo(y.TradeDate));
-            TradeInfo.Store(data.ComCode, editTrades);
+
+            var container = UnityHelper.Create();
+            lock (LocalDb.DbLocker)
+            {
+                using (ILiteDatabase db = LocalDb.Create())
+                {
+                    container.RegisterInstance(db);
+                    var tradeRepo = container.Resolve<TradeRepository>();
+                    tradeRepo.Updates(data.ComCode, editTrades);
+                }
+            }
+
             data.ResetTrades(editTrades);
 
             this.DialogResult = DialogResult.OK;

@@ -34,27 +34,6 @@ namespace StockApp.Trade
             this.Source = data;
             this.ComCode = data.ComCode;
         }
-
-        internal static List<TradeInfo> GetAll()
-        {
-            var folder = "Trade";
-            var trades = new List<TradeInfo>();
-            if (!Directory.Exists(folder))
-                return trades;
-            foreach (var filePath in Directory.GetFiles(folder, "*.json"))
-            {
-                var list = JsonCache.Load<List<TradeInfo>>(filePath);
-                trades.AddRange(list);
-            }
-            return trades;
-        }
-
-        internal static void Store(string comCode, List<TradeInfo> trades)
-        {
-            var folder = "Trade";
-            var filePath = Path.Combine(folder, $"{comCode}.json");
-            JsonCache.Store(filePath, trades);
-        }
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
