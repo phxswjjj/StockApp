@@ -109,11 +109,12 @@ namespace StockApp
 
         internal Trace.StockDetail TraceData { get; private set; }
 
-        protected decimal ValueK
+        protected decimal? ValueK
         {
             get
             {
                 var d = this.KDJSource;
+                if (d == null) return null;
                 var range = BasicSetting.Instance.KDJRange;
                 var k = d.MonthK;
                 switch (range)
@@ -128,11 +129,12 @@ namespace StockApp
                 return k ?? d.DayK;
             }
         }
-        protected decimal ValueJ
+        protected decimal? ValueJ
         {
             get
             {
                 var d = this.KDJSource;
+                if (d == null) return null;
                 var range = BasicSetting.Instance.KDJRange;
                 var j = d.MonthJ;
                 switch (range)
@@ -148,7 +150,7 @@ namespace StockApp
             }
         }
         [DisplayName("K")]
-        public decimal ValueKDJ => this.ValueK;
+        public decimal? ValueKDJ => this.ValueK;
         internal Color KDJColor
         {
             get

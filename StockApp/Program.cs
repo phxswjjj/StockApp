@@ -4,6 +4,7 @@ using StockApp.Utility;
 using StockApp.Web;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -39,7 +40,7 @@ namespace StockApp
             var logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .Enrich.WithProperty("app", AppDomain.CurrentDomain.FriendlyName)
-                .Enrich.WithProperty("appId", Thread.CurrentThread.ManagedThreadId)
+                .Enrich.WithProperty("PID", Process.GetCurrentProcess().Id)
                 .CreateLogger();
             logger.Information("{app} init");
             LogHelper.Log = logger;
