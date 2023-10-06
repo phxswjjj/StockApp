@@ -43,6 +43,7 @@ namespace StockApp.Trade
                 };
                 col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 col.DecimalPlaces = 2;
+                col.Minimum = 0;
                 col.Maximum = 2000;
                 return col;
             }
