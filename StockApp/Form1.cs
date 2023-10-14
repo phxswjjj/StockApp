@@ -168,23 +168,23 @@ namespace StockApp
                         var dividendRepo = container.Resolve<Bonus.DividendRepository>();
                         var latestData = dividendRepo.GetDividendLatest();
                         var today = TWSEDate.Today;
-                        List<CompanyExDividend> entities;
+                        List<CompanyExDividend> entities = null;
                         if (latestData?.UpdateAt != today)
                         {
                             entities = CompanyExDividend.GetAll();
                             if (entities?.Count > 10)
                             {
-                                logger.Information("Dividend GetAll Success");
+                                logger.Information("除息時間 GetAll Success");
                                 dividendRepo.Imports(entities);
                             }
                             else
-                            {
-                                logger.Error("Dividend GetAll Fail");
-                                return null;
-                            }
+                                logger.Error("除息時間 GetAll Fail");
                         }
-                        else
+                        if (entities == null)
+                        {
+                            logger.Information("除息時間 Load Latest");
                             entities = dividendRepo.GetDividends();
+                        }
 
                         return entities;
                     });
