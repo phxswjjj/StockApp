@@ -19,11 +19,21 @@ namespace StockApp.Trade
 {
     public partial class FrmTradeHistory : Form
     {
+        private readonly ILogger LogService;
+        /// <summary>
+        /// 介面上呈現的交易記錄，用來區分哪些記錄要刪除
+        /// </summary>
+        private List<TradeInfo> ListTrades;
+
         internal DisplayModel RefData { get; }
 
         public FrmTradeHistory()
         {
             InitializeComponent();
+
+            var container = UnityHelper.Create();
+            this.LogService = container.Resolve<ILogger>()
+                .ForContext("class", this.GetType());
 
             InitializeGridView(dataGridView1);
         }
@@ -97,6 +107,8 @@ namespace StockApp.Trade
             dataGridView1.Rows.Clear();
             foreach (var trade in trades)
                 BindData(dataGridView1, trade);
+
+            this.ListTrades = trades.ToList();
         }
 
         private DataGridViewRow BindData(DataGridView dataGridView, TradeInfo trade)
@@ -155,11 +167,22 @@ namespace StockApp.Trade
             var dataGridView = dataGridView1;
             var data = this.RefData;
 
-            var editTrades = new List<TradeInfo>();
+            var trades = this.ListTrades;
+            var updateTrades = new List<TradeInfo>();
+
+            var logger = this.LogService.ForContext("event", nameof(BtnSave_Click))
+                .ForContext("data", data);
+
+            #region 取得異動資料
             foreach (DataGridViewRow grow in dataGridView.Rows)
             {
                 if (grow.IsNewRow)
                     continue;
+
+                var trade = grow.Tag as TradeInfo;
+
+                if (trade == null)
+                    trade = new TradeInfo(this.RefData);
 
                 T GetGridViewCellValue<T>(string columnName)
                 {
@@ -172,31 +195,59 @@ namespace StockApp.Trade
                         return (T)cell.Value;
                     }
                 }
-                var trade = new TradeInfo(this.RefData)
+
+                trade.TradeDate = GetGridViewCellValue<DateTime?>(nameof(TradeInfo.TradeDate));
+                trade.TradePrice = GetGridViewCellValue<decimal>(nameof(TradeInfo.TradePrice));
+                trade.TradeVolume = (int)GetGridViewCellValue<decimal>(nameof(TradeInfo.TradeVolume));
+                if (Enum.TryParse<StockCenterType>(GetGridViewCellValue<string>(nameof(TradeInfo.StockCenter)), out var stockCenterType))
+                    trade.StockCenter = stockCenterType;
+                else
                 {
-                    TradeDate = GetGridViewCellValue<DateTime?>(nameof(TradeInfo.TradeDate)),
-                    TradePrice = GetGridViewCellValue<decimal>(nameof(TradeInfo.TradePrice)),
-                    TradeVolume = (int)GetGridViewCellValue<decimal>(nameof(TradeInfo.TradeVolume)),
-                    StockCenter = (StockCenterType)Enum.Parse(typeof(StockCenterType), GetGridViewCellValue<string>(nameof(TradeInfo.StockCenter))),
-                    Memo = GetGridViewCellValue<string>(nameof(TradeInfo.Memo)),
-                };
-                editTrades.Add(trade);
+                    MessageBox.Show($"{dataGridView.Columns[nameof(TradeInfo.StockCenter)].HeaderText} 驗證失敗");
+                    return;
+                }
+                trade.Memo = GetGridViewCellValue<string>(nameof(TradeInfo.Memo));
+                updateTrades.Add(trade);
             }
-            //依交易日期遞增排序
-            editTrades.Sort((x, y) => x.TradeDate.Value.CompareTo(y.TradeDate));
+
+            var deleteTrades = trades.Where(t => !updateTrades.Any(u => u.Id == t.Id)).ToList();
+            #endregion
 
             var container = UnityHelper.Create();
-            lock (LocalDb.DbLocker)
+            try
             {
-                using (ILiteDatabase db = LocalDb.Create())
+                lock (LocalDb.DbLocker)
                 {
-                    container.RegisterInstance(db);
-                    var tradeRepo = container.Resolve<TradeRepository>();
-                    tradeRepo.Updates(data.ComCode, editTrades);
+                    using (ILiteDatabase db = LocalDb.Create())
+                    {
+                        container.RegisterInstance(db);
+                        var tradeRepo = container.Resolve<TradeRepository>();
+
+                        db.BeginTrans();
+                        try
+                        {
+                            if (updateTrades.Count > 0)
+                                tradeRepo.Updates(updateTrades);
+                            if (deleteTrades.Count > 0)
+                                tradeRepo.Deletes(deleteTrades);
+                            db.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            db.Rollback();
+                            throw;
+                        }
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
-            data.ResetTrades(editTrades);
+            data.ResetTrades(updateTrades);
 
             this.DialogResult = DialogResult.OK;
             this.Close();

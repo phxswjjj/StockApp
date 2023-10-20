@@ -12,6 +12,8 @@ namespace StockApp.Trade
 {
     internal class TradeInfo
     {
+        [BsonId]
+        public ObjectId Id { get; set; } = ObjectId.Empty;
         [BsonIgnore]
         public DisplayModel Source { get; private set; }
         [JsonProperty]

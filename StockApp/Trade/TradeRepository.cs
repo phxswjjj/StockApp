@@ -46,21 +46,14 @@ namespace StockApp.Trade
             foreach (var filePath in Directory.GetFiles(tradeFolder, "*.json"))
             {
                 var caches = JsonCache.Load<List<T>>(filePath);
-                this.Imports(caches);
+                caches.ForEach(cache => cache.Id = ObjectId.NewObjectId());
+                list.Insert(caches);
             }
             list.EnsureIndex(d => d.ComCode);
 
             imported.Insert(new Data.LocalDb.ImportHistory(typeof(T).Name));
 
             return true;
-        }
-
-        internal void Imports(IEnumerable<TradeInfo> entities)
-        {
-            var db = this.Db;
-
-            var list = db.GetCollection<TradeInfo>();
-            list.Insert(entities);
         }
 
         public List<TradeInfo> GetAll()
@@ -81,19 +74,30 @@ namespace StockApp.Trade
             return codes;
         }
 
-        public void Updates(string comCode, IEnumerable<TradeInfo> trades)
+        internal void Updates(List<TradeInfo> updateTrades)
         {
             var db = this.Db;
 
-            foreach (var trade in trades)
+            var list = db.GetCollection<TradeInfo>();
+            foreach (var trade in updateTrades)
             {
-                if (trade.ComCode != comCode)
-                    throw new Exception($"Batch Updates 只能更新 {comCode}，但含有 {trade.ComCode}");
+                if (trade.Id == ObjectId.Empty)
+                {
+                    trade.Id = ObjectId.NewObjectId();
+                    list.Insert(trade);
+                }
+                else
+                    list.Update(trade);
             }
+        }
+
+        internal void Deletes(List<TradeInfo> deleteTrades)
+        {
+            var db = this.Db;
 
             var list = db.GetCollection<TradeInfo>();
-            list.DeleteMany(x => x.ComCode == comCode);
-            Imports(trades);
+            foreach (var trade in deleteTrades)
+                list.Delete(trade.Id);
         }
     }
 }
