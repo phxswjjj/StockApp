@@ -44,6 +44,7 @@ namespace StockApp.Trace
                     this.LimitDateT = null;
             }
         }
+        [BsonIgnore]
         public int? LimitDateT { get; private set; }
     }
 }
