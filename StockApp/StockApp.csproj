@@ -177,6 +177,7 @@
     <Compile Include="CompanyBonusHistory.cs" />
     <Compile Include="Bonus\CompanyContBonus.cs" />
     <Compile Include="CompanyDayPrice.cs" />
+    <Compile Include="Data\IPurgeHistory.cs" />
     <Compile Include="Day\CompanyDayVolume.cs" />
     <Compile Include="CompanyExDividend.cs" />
     <Compile Include="CompanyKDJ.cs" />

@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using StockApp.Bonus;
+using StockApp.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace StockApp.Day
 {
-    internal class DayVolumeRepository
+    internal class DayVolumeRepository : IPurgeHistory
     {
         private readonly ILiteDatabase Db;
 

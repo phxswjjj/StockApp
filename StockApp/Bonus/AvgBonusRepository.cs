@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using StockApp.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StockApp.Bonus
 {
-    internal class AvgBonusRepository
+    internal class AvgBonusRepository : IPurgeHistory
     {
         private readonly ILiteDatabase Db;
 

@@ -53,14 +53,22 @@ namespace StockApp.Data
                 using (ILiteDatabase db = Create())
                 {
                     container.RegisterInstance(db);
-                    var logger = container.Resolve<ILogger>();
 
-                    logger.ForContext("RowCount", container.Resolve<AvgBonusRepository>().PurgeHistory())
-                        .Information("Purge AvgBonusRepository {RowCount}");
-                    logger.ForContext("RowCount", container.Resolve<DayVolumeRepository>().PurgeHistory())
-                        .Information("Purge DayVolumeRepository {RowCount}");
+                    PurgeHistory<AvgBonusRepository>(container);
+                    PurgeHistory<DayVolumeRepository>(container);
+                    PurgeHistory<DividendRepository>(container);
                 }
             }
+        }
+        private static void PurgeHistory<T>(IUnityContainer container)
+            where T : IPurgeHistory
+        {
+            var logger = container.Resolve<ILogger>();
+
+            var repo = container.Resolve<T>();
+            logger.ForContext("PurgeItem", typeof(T).Name)
+                .ForContext("RowCount", repo.PurgeHistory())
+                .Information("Purge {PurgeItem} {RowCount}");
         }
 
         private static void InitializeTradeInfo(IUnityContainer container)

@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using PuppeteerSharp;
+using StockApp.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace StockApp.Bonus
 {
-    internal class DividendRepository
+    internal class DividendRepository : IPurgeHistory
     {
         private readonly ILiteDatabase Db;
 
@@ -88,6 +89,18 @@ namespace StockApp.Bonus
             var entities = list.Query()
                 .Where(x => x.UpdateAt == latest.UpdateAt);
             return entities.ToList();
+        }
+
+        public int PurgeHistory()
+        {
+            var db = this.Db;
+
+            var latest = GetDividendLatest();
+            if (latest == null)
+                return 0;
+
+            var list = db.GetCollection<CompanyExDividend>();
+            return list.DeleteMany(d => d.UpdateAt < latest.UpdateAt.AddDays(-7));
         }
     }
 }
