@@ -1,5 +1,7 @@
 ﻿using LiteDB;
+using Serilog;
 using StockApp.Bonus;
+using StockApp.Day;
 using StockApp.Group;
 using StockApp.ROE;
 using StockApp.Utility;
@@ -51,8 +53,12 @@ namespace StockApp.Data
                 using (ILiteDatabase db = Create())
                 {
                     container.RegisterInstance(db);
+                    var logger = container.Resolve<ILogger>();
 
-                    container.Resolve<AvgBonusRepository>().PurgeHistory();
+                    logger.ForContext("RowCount", container.Resolve<AvgBonusRepository>().PurgeHistory())
+                        .Information("Purge AvgBonusRepository {RowCount}");
+                    logger.ForContext("RowCount", container.Resolve<DayVolumeRepository>().PurgeHistory())
+                        .Information("Purge DayVolumeRepository {RowCount}");
                 }
             }
         }
