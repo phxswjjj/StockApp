@@ -43,6 +43,20 @@ namespace StockApp.Data
             return true;
         }
 
+        public static void PurgeHistory()
+        {
+            var container = UnityHelper.Create();
+            lock (DbLocker)
+            {
+                using (ILiteDatabase db = Create())
+                {
+                    container.RegisterInstance(db);
+
+                    container.Resolve<AvgBonusRepository>().PurgeHistory();
+                }
+            }
+        }
+
         private static void InitializeTradeInfo(IUnityContainer container)
         {
             var tradeRepo = container.Resolve<Trade.TradeRepository>();

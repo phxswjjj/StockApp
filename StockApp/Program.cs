@@ -26,6 +26,7 @@ namespace StockApp
             InitUnity();
 
             LocalDb.Initialize();
+            LocalDb.PurgeHistory();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

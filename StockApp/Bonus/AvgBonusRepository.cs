@@ -89,5 +89,17 @@ namespace StockApp.Bonus
                 .Where(x => x.UpdateAt == latest.UpdateAt);
             return entities.ToList();
         }
+
+        public int PurgeHistory()
+        {
+            var db = this.Db;
+
+            var latest = GetLatest();
+            if (latest == null)
+                return 0;
+
+            var list = db.GetCollection<CompanyAvgBonus>();
+            return list.DeleteMany(d => d.UpdateAt < latest.UpdateAt.AddDays(-7));
+        }
     }
 }
