@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using StockApp.Data;
 using StockApp.Group;
@@ -67,7 +68,7 @@ namespace StockApp.Trade
             };
 
             var tradeVolumeCol = CreateNumColumn(nameof(TradeInfo.TradeVolume), "交易股數");
-            tradeVolumeCol.DefaultValue = 1000;
+            tradeVolumeCol.DefaultValue = 0;
             tradeVolumeCol.Increment = 1000;
             tradeVolumeCol.Minimum = -1000_000;
             tradeVolumeCol.Maximum = 1000_000;
@@ -109,28 +110,31 @@ namespace StockApp.Trade
                 BindData(dataGridView1, trade);
 
             this.ListTrades = trades.ToList();
+
+            //預設新增資料
+            dataGridView1.CurrentCell = dataGridView1.Rows[dataGridView1.NewRowIndex].Cells[0];
         }
 
         private DataGridViewRow BindData(DataGridView dataGridView, TradeInfo trade)
         {
             var grow = (DataGridViewRow)dataGridView.RowTemplate.Clone();
-            DataGridViewCell FindGridViewCell(string columnName)
-            {
-                var colIndex = dataGridView.Columns[columnName].Index;
-                return grow.Cells[colIndex];
-            }
             grow.Tag = trade;
             grow.CreateCells(dataGridView);
 
-            FindGridViewCell(nameof(TradeInfo.TradeDate)).Value = trade.TradeDate;
-            FindGridViewCell(nameof(TradeInfo.TradePrice)).Value = trade.TradePrice;
-            FindGridViewCell(nameof(TradeInfo.TradeVolume)).Value = trade.TradeVolume;
-            FindGridViewCell(nameof(TradeInfo.StockCenter)).Value = trade.StockCenter.ToString();
-            FindGridViewCell(nameof(TradeInfo.CurrentValue)).Value = trade.CurrentValue;
-            FindGridViewCell(nameof(TradeInfo.Memo)).Value = trade.Memo;
+            FindGridViewCell(dataGridView, grow, nameof(TradeInfo.TradeDate)).Value = trade.TradeDate;
+            FindGridViewCell(dataGridView, grow, nameof(TradeInfo.TradePrice)).Value = trade.TradePrice;
+            FindGridViewCell(dataGridView, grow, nameof(TradeInfo.TradeVolume)).Value = trade.TradeVolume;
+            FindGridViewCell(dataGridView, grow, nameof(TradeInfo.StockCenter)).Value = trade.StockCenter.ToString();
+            FindGridViewCell(dataGridView, grow, nameof(TradeInfo.CurrentValue)).Value = trade.CurrentValue;
+            FindGridViewCell(dataGridView, grow, nameof(TradeInfo.Memo)).Value = trade.Memo;
 
             dataGridView.Rows.Add(grow);
             return grow;
+        }
+        private static DataGridViewCell FindGridViewCell(DataGridView dataGridView, DataGridViewRow grow, string columnName)
+        {
+            var colIndex = dataGridView.Columns[columnName].Index;
+            return grow.Cells[colIndex];
         }
 
         #region DataGridView Event
@@ -156,6 +160,8 @@ namespace StockApp.Trade
 
             foreach (DataGridViewRow grow in dataGridView.SelectedRows)
             {
+                if (grow.Index == dataGridView1.NewRowIndex)
+                    continue;
                 dataGridView.Rows.Remove(grow);
             }
         }
@@ -232,7 +238,7 @@ namespace StockApp.Trade
                                 tradeRepo.Deletes(deleteTrades);
                             db.Commit();
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             db.Rollback();
                             throw;
@@ -258,5 +264,108 @@ namespace StockApp.Trade
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
+
+        #region Short Command
+        private void btnYuanTa_Click(object sender, EventArgs e)
+        {
+            var gv = this.dataGridView1;
+
+            var selectedRow = gv.CurrentRow;
+            if (selectedRow == null)
+                selectedRow = gv.Rows[gv.NewRowIndex];
+            FindGridViewCell(gv, selectedRow, nameof(TradeInfo.StockCenter)).Value = nameof(StockCenterType.元大);
+
+            DefaultTradeDate(gv, selectedRow);
+        }
+
+        private static void DefaultTradeDate(DataGridView gv, DataGridViewRow selectedRow)
+        {
+            var dateCell = FindGridViewCell(gv, selectedRow, nameof(TradeInfo.TradeDate));
+            if (dateCell.Value == null)
+                dateCell.Value = DateTime.Today;
+        }
+
+        private void btnSinoPac_Click(object sender, EventArgs e)
+        {
+            var gv = this.dataGridView1;
+
+            var selectedRow = gv.CurrentRow;
+            if (selectedRow == null)
+                selectedRow = gv.Rows[gv.NewRowIndex];
+            FindGridViewCell(gv, selectedRow, nameof(TradeInfo.StockCenter)).Value = nameof(StockCenterType.永豐);
+
+            DefaultTradeDate(gv, selectedRow);
+        }
+
+        private void btnSell100_Click(object sender, EventArgs e)
+        {
+            var gv = this.dataGridView1;
+
+            var selectedRow = gv.CurrentRow;
+            if (selectedRow == null)
+                selectedRow = gv.Rows[gv.NewRowIndex];
+            var cell = FindGridViewCell(gv, selectedRow, nameof(TradeInfo.TradeVolume));
+            var curVolume = cell.Value as decimal?;
+            if (!curVolume.HasValue)
+                curVolume = 0;
+            curVolume -= 100;
+            cell.Value = curVolume;
+        }
+
+        private void btnSell1000_Click(object sender, EventArgs e)
+        {
+            var gv = this.dataGridView1;
+
+            var selectedRow = gv.CurrentRow;
+            if (selectedRow == null)
+                selectedRow = gv.Rows[gv.NewRowIndex];
+            var cell = FindGridViewCell(gv, selectedRow, nameof(TradeInfo.TradeVolume));
+            var curVolume = cell.Value as decimal?;
+            if (!curVolume.HasValue)
+                curVolume = 0;
+            curVolume -= 1000;
+            cell.Value = curVolume;
+        }
+
+        private void btnVolume0_Click(object sender, EventArgs e)
+        {
+            var gv = this.dataGridView1;
+
+            var selectedRow = gv.CurrentRow;
+            if (selectedRow == null)
+                selectedRow = gv.Rows[gv.NewRowIndex];
+            FindGridViewCell(gv, selectedRow, nameof(TradeInfo.TradeVolume)).Value = 0;
+        }
+
+        private void btnBuy100_Click(object sender, EventArgs e)
+        {
+            var gv = this.dataGridView1;
+
+            var selectedRow = gv.CurrentRow;
+            if (selectedRow == null)
+                selectedRow = gv.Rows[gv.NewRowIndex];
+            var cell = FindGridViewCell(gv, selectedRow, nameof(TradeInfo.TradeVolume));
+            var curVolume = cell.Value as decimal?;
+            if (!curVolume.HasValue)
+                curVolume = 0;
+            curVolume += 100;
+            cell.Value = curVolume;
+        }
+
+        private void btnBuy1000_Click(object sender, EventArgs e)
+        {
+            var gv = this.dataGridView1;
+
+            var selectedRow = gv.CurrentRow;
+            if (selectedRow == null)
+                selectedRow = gv.Rows[gv.NewRowIndex];
+            var cell = FindGridViewCell(gv, selectedRow, nameof(TradeInfo.TradeVolume));
+            var curVolume = cell.Value as decimal?;
+            if (!curVolume.HasValue)
+                curVolume = 0;
+            curVolume += 1000;
+            cell.Value = curVolume;
+        }
+        #endregion
     }
 }
