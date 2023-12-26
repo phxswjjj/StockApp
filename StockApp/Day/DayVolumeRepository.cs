@@ -65,6 +65,11 @@ namespace StockApp.Day
             var db = this.Db;
 
             var list = db.GetCollection<CompanyDayVolume>();
+            
+            //補跑
+            var currentDate = entities.First().UpdateAt;
+            list.DeleteMany(d => d.UpdateAt == currentDate);
+            
             list.Insert(entities);
         }
 
