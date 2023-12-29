@@ -272,8 +272,21 @@ namespace StockApp
                                 entities = CompanyKDJ.GetAll();
                                 if (entities?.Count > 300)
                                 {
-                                    logger.Information("KDJ GetAll Success");
-                                    kdjRepo.Imports(entities);
+                                    logger.ForContext("RowCount", entities.Count)
+                                        .Information("KDJ GetAll Success: {RowCount}");
+                                    using (var trans = conn.BeginTransaction())
+                                    {
+                                        try
+                                        {
+                                            kdjRepo.Imports(entities);
+                                            trans.Commit();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            trans.Rollback();
+                                            throw;
+                                        }
+                                    }
                                 }
                                 else
                                 {
