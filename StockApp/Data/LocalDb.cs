@@ -22,7 +22,9 @@ namespace StockApp.Data
     internal class LocalDb
     {
         private static Lazy<string> LazyFilePath = new Lazy<string>(() => ConfigurationManager.AppSettings["LocalDbPath"]);
+        private static Lazy<string> LazySQLiteConnectionString = new Lazy<string>(() => ConfigurationManager.AppSettings["SQLiteConnectionString"]);
         public static string FilePath => LazyFilePath.Value;
+        public static string SQLiteConnectionString => LazySQLiteConnectionString.Value;
         public readonly static object DbLocker = new object();
 
         public static bool Initialize()
@@ -158,8 +160,7 @@ namespace StockApp.Data
 
         public static IDbConnection CreateSqlLite()
         {
-            const string connStr = "data source=local.sqlite";
-            var conn = new SQLiteConnection(connStr);
+            var conn = new SQLiteConnection(SQLiteConnectionString);
             conn.Open();
             return conn;
         }
