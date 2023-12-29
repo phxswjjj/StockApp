@@ -64,8 +64,8 @@ namespace StockApp
         {
             var total = this.Tasks.Count;
 
-            var waitTasks = this.Tasks.Where(j => !j.IsCompleted);
-            for (var i = 0; i <= total; i++)
+            var waitTasks = this.Tasks.Where(j => !j.IsCompleted).ToList();
+            for (var i = 0; i < total; i++)
             {
                 if (waitTasks == null || !waitTasks.Any())
                     break;
@@ -82,7 +82,7 @@ namespace StockApp
                     var percent = (decimal)completed / total * 100;
                     backgroundWorker1.ReportProgress((int)percent, info);
 
-                    waitTasks = waitTasks.Where(j => !j.IsCompleted);
+                    waitTasks = waitTasks.Where(j => !j.IsCompleted).ToList();
                 }
                 else
                     break;

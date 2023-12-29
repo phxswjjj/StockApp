@@ -8,6 +8,8 @@ using StockApp.Utility;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Security.Policy;
@@ -26,20 +28,23 @@ namespace StockApp.Data
         public static bool Initialize()
         {
             var container = UnityHelper.Create();
-            lock (DbLocker)
+            using (var conn = CreateSqlLite())
             {
-                using (ILiteDatabase db = Create())
+                container.RegisterInstance(conn);
+                lock (DbLocker)
                 {
-                    container.RegisterInstance(db);
+                    using (ILiteDatabase db = Create())
+                    {
+                        container.RegisterInstance(db);
 
-                    InitializeGroup(container);
-                    InitializeROE(container);
-                    InitializeContinueBouns(container);
-                    InitializeDividend(container);
-                    InitializeTraceStock(container);
-                    InitializeAvgBonus(container);
-                    InitializeDayVolume(container);
-                    InitializeTradeInfo(container);
+                        InitializeGroup(container);
+                        InitializeROE(container);
+                        InitializeContinueBouns(container);
+                        InitializeDividend(container);
+                        InitializeTraceStock(container);
+                        InitializeAvgBonus(container);
+                        InitializeTradeInfo(container);
+                    }
                 }
             }
             return true;
@@ -48,15 +53,19 @@ namespace StockApp.Data
         public static void PurgeHistory()
         {
             var container = UnityHelper.Create();
-            lock (DbLocker)
+            using (var conn = CreateSqlLite())
             {
-                using (ILiteDatabase db = Create())
+                container.RegisterInstance(conn);
+                lock (DbLocker)
                 {
-                    container.RegisterInstance(db);
+                    using (ILiteDatabase db = Create())
+                    {
+                        container.RegisterInstance(db);
 
-                    PurgeHistory<AvgBonusRepository>(container);
-                    PurgeHistory<DayVolumeRepository>(container);
-                    PurgeHistory<DividendRepository>(container);
+                        PurgeHistory<AvgBonusRepository>(container);
+                        PurgeHistory<DayVolumeRepository>(container);
+                        PurgeHistory<DividendRepository>(container);
+                    }
                 }
             }
         }
@@ -77,14 +86,6 @@ namespace StockApp.Data
 
             if (!tradeRepo.Initialize())
                 throw new Exception($"Init {nameof(Trade.TradeRepository)} Fail");
-        }
-
-        private static void InitializeDayVolume(IUnityContainer container)
-        {
-            var dayVolumeRepo = container.Resolve<Day.DayVolumeRepository>();
-
-            if (!dayVolumeRepo.Initialize())
-                throw new Exception($"Init {nameof(Day.DayVolumeRepository)} Fail");
         }
 
         private static void InitializeAvgBonus(IUnityContainer container)
@@ -153,6 +154,14 @@ namespace StockApp.Data
                 path = FilePath;
 
             return new LiteDatabase(path);
+        }
+
+        public static IDbConnection CreateSqlLite()
+        {
+            const string connStr = "data source=local.sqlite";
+            var conn = new SQLiteConnection(connStr);
+            conn.Open();
+            return conn;
         }
 
         public class ImportHistory

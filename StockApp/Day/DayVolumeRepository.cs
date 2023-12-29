@@ -1,8 +1,9 @@
-﻿using LiteDB;
+﻿using Dapper;
 using StockApp.Bonus;
 using StockApp.Data;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,101 +13,59 @@ namespace StockApp.Day
 {
     internal class DayVolumeRepository : IPurgeHistory
     {
-        private readonly ILiteDatabase Db;
+        private readonly IDbConnection DbConn;
 
-        public DayVolumeRepository(ILiteDatabase db)
+        public DayVolumeRepository(IDbConnection conn)
         {
-            this.Db = db;
-        }
-
-        internal bool Initialize() => Initialize<CompanyDayVolume>();
-        private bool Initialize<T>()
-            where T : CompanyDayVolume
-        {
-            var db = this.Db;
-
-            var imported = db.GetCollection<Data.LocalDb.ImportHistory>();
-            var everImportRecord = imported.Query()
-                .Where(x => x.Name == typeof(T).Name)
-                .OrderByDescending(x => x.Timestamp)
-                .FirstOrDefault();
-            if (everImportRecord != null)
-                return true;
-
-            var today = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyDayVolume", "last.json");
-            //沒檔案=第一次執行，不拋異常
-            if (!File.Exists(jsonFilePath))
-                return true;
-            var caches = JsonCache.Load<List<T>>(jsonFilePath);
-            //源頭沒資料拋異常
-            if (caches?.Count == 0)
-                return false;
-
-            var list = db.GetCollection<T>();
-            //匯入資料
-            foreach (var cache in caches)
-            {
-                if (cache.UpdateAt.Year < 2023)
-                    cache.UpdateAt = today.Date;
-            }
-            this.Imports(caches);
-            list.EnsureIndex(d => new { d.ComCode, d.UpdateAt }, true);
-            list.EnsureIndex(d => d.ComCode);
-            list.EnsureIndex(d => d.UpdateAt);
-
-            imported.Insert(new Data.LocalDb.ImportHistory(typeof(T).Name));
-
-            return true;
+            this.DbConn = conn;
         }
 
         internal void Imports(IEnumerable<CompanyDayVolume> entities)
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<CompanyDayVolume>();
-            
-            //補跑
-            var currentDate = entities.First().UpdateAt;
-            list.DeleteMany(d => d.UpdateAt == currentDate);
-            
-            list.Insert(entities);
+            var conn = this.DbConn;
+            foreach (var data in entities)
+            {
+                conn.Execute(@"
+insert into CompanyDayVolume(UpdateAt, ComCode, ComName, ComType, DayVolume, CurrentPrice)
+values(:UpdateAt, :ComCode, :ComName, :ComType, :DayVolume, :CurrentPrice)
+", data);
+            }
         }
 
         internal CompanyDayVolume GetLatest()
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<CompanyDayVolume>();
-            var data = list.Query()
-                .OrderByDescending(x => x.UpdateAt)
-                .FirstOrDefault();
-            return data;
+            var conn = this.DbConn;
+            var lastDate = conn.ExecuteScalar<DateTime?>("select max(UpdateAt) from CompanyDayVolume");
+            if (lastDate.HasValue)
+            {
+                var data = conn.QueryFirst<CompanyDayVolume>("select * from CompanyDayVolume where UpdateAt=:UpdateAt",
+                    new { UpdateAt = lastDate });
+                return data;
+            }
+            return null;
         }
 
         public List<CompanyDayVolume> GetAll()
         {
-            var db = this.Db;
-
-            var latest = GetLatest();
-            if (latest == null)
+            var conn = this.DbConn;
+            var lastDate = GetLatest()?.UpdateAt;
+            if (!lastDate.HasValue)
                 return null;
-            var list = db.GetCollection<CompanyDayVolume>();
-            var entities = list.Query()
-                .Where(x => x.UpdateAt == latest.UpdateAt);
-            return entities.ToList();
+            var list = conn.Query<CompanyDayVolume>("select * from CompanyDayVolume where UpdateAt=:UpdateAt",
+                    new { UpdateAt = lastDate.Value });
+            return list.ToList();
         }
 
         public int PurgeHistory()
         {
-            var db = this.Db;
-
-            var latest = GetLatest();
-            if (latest == null)
+            var conn = this.DbConn;
+            var lastDate = GetLatest()?.UpdateAt;
+            if (!lastDate.HasValue)
                 return 0;
 
-            var list = db.GetCollection<CompanyDayVolume>();
-            return list.DeleteMany(d => d.UpdateAt < latest.UpdateAt.AddDays(-7));
+            var cnt = conn.Execute("delete from CompanyDayVolume where UpdateAt<:UpdateAt",
+                new { UpdateAt = lastDate.Value.AddDays(-7) });
+            return cnt;
         }
     }
 }

@@ -131,152 +131,169 @@ namespace StockApp
             var logger = container.Resolve<ILogger>()
                 .ForContext("class", nameof(Form1))
                 .ForContext("event", nameof(LoadData));
-            lock (LocalDb.DbLocker)
+            using (var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
+                container.RegisterInstance(conn);
+                lock (LocalDb.DbLocker)
                 {
-                    container.RegisterInstance(db);
-
-                    taskContBonus = loading.AddTask("連續股息", () =>
+                    using (ILiteDatabase db = LocalDb.Create())
                     {
-                        var bonusRepo = container.Resolve<Bonus.ContinueBonusRepository>();
-                        var latestData = bonusRepo.GetLatest();
-                        var today = TWSEDate.Today;
-                        List<Bonus.CompanyContBonus> entities;
-                        if (latestData?.UpdateAt.Year != today.Year)
+                        container.RegisterInstance(db);
+
+                        taskContBonus = loading.AddTask("連續股息", () =>
                         {
-                            entities = Bonus.CompanyContBonus.GetAll();
-                            if (entities?.Count > 300)
+                            var bonusRepo = container.Resolve<Bonus.ContinueBonusRepository>();
+                            var latestData = bonusRepo.GetLatest();
+                            var today = TWSEDate.Today;
+                            List<Bonus.CompanyContBonus> entities;
+                            if (latestData?.UpdateAt.Year != today.Year)
                             {
-                                logger.Information("Continue Bonus GetAll Success");
-                                bonusRepo.Imports(entities);
+                                entities = Bonus.CompanyContBonus.GetAll();
+                                if (entities?.Count > 300)
+                                {
+                                    logger.Information("Continue Bonus GetAll Success");
+                                    bonusRepo.Imports(entities);
+                                }
+                                else
+                                {
+                                    logger.Error("Continue Bonus GetAll Fail");
+                                    return null;
+                                }
                             }
                             else
-                            {
-                                logger.Error("Continue Bonus GetAll Fail");
-                                return null;
-                            }
-                        }
-                        else
-                            entities = bonusRepo.GetAll();
-
-                        return entities;
-                    });
-
-                    taskExDividend = loading.AddTask("除息時間", () =>
-                    {
-                        var dividendRepo = container.Resolve<Bonus.DividendRepository>();
-                        var latestData = dividendRepo.GetDividendLatest();
-                        var today = TWSEDate.Today;
-                        List<CompanyExDividend> entities = null;
-                        if (latestData?.UpdateAt != today)
-                        {
-                            entities = CompanyExDividend.GetAll();
-                            if (entities?.Count > 10)
-                            {
-                                logger.Information("除息時間 GetAll Success");
-                                dividendRepo.Imports(entities);
-                            }
-                            else
-                                logger.Error("除息時間 GetAll Fail");
-                        }
-                        if (entities == null)
-                        {
-                            logger.Information("除息時間 Load Latest");
-                            entities = dividendRepo.GetDividends();
-                        }
-
-                        return entities;
-                    });
-                    taskDayVolume = loading.AddTask("日交易量", () =>
-                    {
-                        var dayVolumeRepo = container.Resolve<Day.DayVolumeRepository>();
-                        var latestData = dayVolumeRepo.GetLatest();
-                        var today = TWSEDate.Today;
-                        List<Day.CompanyDayVolume> entities;
-                        if (latestData?.UpdateAt.Date != today)
-                        {
-                            entities = Day.CompanyDayVolume.GetAll();
-                            //市/櫃
-                            var comTypeCount = entities.Select(et => et.ComType).Distinct().Count();
-                            if (comTypeCount == 2)
-                            {
-                                logger.Information("Day Volume GetAll Success");
-                                dayVolumeRepo.Imports(entities);
-                            }
-                            else
-                            {
-                                logger.Error("Day Volume GetAll Fail, Load Latest");
-                                entities = dayVolumeRepo.GetAll();
-                            }
-                        }
-                        else
-                            entities = dayVolumeRepo.GetAll();
-
-                        return entities.ConvertAll(d => new DisplayModel(d));
-                    });
-                    taskAvgBonus = loading.AddTask("平均股息", () =>
-                    {
-                        var bonusRepo = container.Resolve<Bonus.AvgBonusRepository>();
-                        var latestData = bonusRepo.GetLatest();
-                        var today = TWSEDate.Today;
-                        List<Bonus.CompanyAvgBonus> entities;
-                        if (latestData?.UpdateAt.Date != today)
-                        {
-                            entities = Bonus.CompanyAvgBonus.GetAll();
-                            if (entities?.Count > 300)
-                            {
-                                logger.Information("Avg Bonus GetAll Success");
-                                bonusRepo.Imports(entities);
-                            }
-                            else
-                            {
-                                logger.Error("Avg Bonus GetAll Fail, Load Latest");
                                 entities = bonusRepo.GetAll();
-                            }
-                        }
-                        else
-                            entities = bonusRepo.GetAll();
 
-                        return entities;
-                    });
-                    taskTraceStock = loading.AddTask("追蹤價格", () =>
-                    {
-                        var traceStockRepo = container.Resolve<Trace.TraceStockRepository>();
-                        return traceStockRepo.GetAll().ToList();
-                    });
-                    taskKDJ = loading.AddTask("KDJ", () =>
-                    {
-                        var kdjRepo = container.Resolve<Analysis.KDJRepository>();
-                        var latestData = kdjRepo.GetLatest();
-                        var today = TWSEDate.Today;
-                        List<CompanyKDJ> entities;
-                        if (latestData?.UpdateAt != today)
+                            return entities;
+                        });
+
+                        taskExDividend = loading.AddTask("除息時間", () =>
                         {
-                            entities = CompanyKDJ.GetAll();
-                            if (entities?.Count > 300)
+                            var dividendRepo = container.Resolve<Bonus.DividendRepository>();
+                            var latestData = dividendRepo.GetDividendLatest();
+                            var today = TWSEDate.Today;
+                            List<CompanyExDividend> entities = null;
+                            if (latestData?.UpdateAt != today)
                             {
-                                logger.Information("KDJ GetAll Success");
-                                kdjRepo.Imports(entities);
+                                entities = CompanyExDividend.GetAll();
+                                if (entities?.Count > 10)
+                                {
+                                    logger.Information("除息時間 GetAll Success");
+                                    dividendRepo.Imports(entities);
+                                }
+                                else
+                                    logger.Error("除息時間 GetAll Fail");
+                            }
+                            if (entities == null)
+                            {
+                                logger.Information("除息時間 Load Latest");
+                                entities = dividendRepo.GetDividends();
+                            }
+
+                            return entities;
+                        });
+                        taskDayVolume = loading.AddTask("日交易量", () =>
+                        {
+                            var dayVolumeRepo = container.Resolve<Day.DayVolumeRepository>();
+                            var latestData = dayVolumeRepo.GetLatest();
+                            var today = TWSEDate.Today;
+                            List<Day.CompanyDayVolume> entities;
+                            if (latestData?.UpdateAt.Date != today)
+                            {
+                                entities = Day.CompanyDayVolume.GetAll();
+                                //市/櫃
+                                var comTypeCount = entities.Select(et => et.ComType).Distinct().Count();
+                                if (comTypeCount == 2)
+                                {
+                                    logger.ForContext("RowCount", entities.Count)
+                                        .Information("Day Volume GetAll Success: {RowCount}");
+                                    using (var trans = conn.BeginTransaction())
+                                    {
+                                        try
+                                        {
+                                            dayVolumeRepo.Imports(entities);
+                                            trans.Commit();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            trans.Rollback();
+                                            throw;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    logger.Error("Day Volume GetAll Fail, Load Latest");
+                                    entities = dayVolumeRepo.GetAll();
+                                }
                             }
                             else
-                            {
-                                logger.Error("KDJ GetAll Fail, Load Latest");
-                                entities = kdjRepo.GetAll();
-                            }
-                        }
-                        else
-                            entities = kdjRepo.GetAll();
+                                entities = dayVolumeRepo.GetAll();
 
-                        return entities;
-                    });
-                    taskTradeHistory = loading.AddTask("交易記錄", () =>
-                    {
-                        var tradeRepo = container.Resolve<Trade.TradeRepository>();
-                        return tradeRepo.GetAll();
-                    });
-                    if (!loading.Start())
-                        loading.ShowDialog(this);
+                            return entities.ConvertAll(d => new DisplayModel(d));
+                        });
+                        taskAvgBonus = loading.AddTask("平均股息", () =>
+                        {
+                            var bonusRepo = container.Resolve<Bonus.AvgBonusRepository>();
+                            var latestData = bonusRepo.GetLatest();
+                            var today = TWSEDate.Today;
+                            List<Bonus.CompanyAvgBonus> entities;
+                            if (latestData?.UpdateAt.Date != today)
+                            {
+                                entities = Bonus.CompanyAvgBonus.GetAll();
+                                if (entities?.Count > 300)
+                                {
+                                    logger.Information("Avg Bonus GetAll Success");
+                                    bonusRepo.Imports(entities);
+                                }
+                                else
+                                {
+                                    logger.Error("Avg Bonus GetAll Fail, Load Latest");
+                                    entities = bonusRepo.GetAll();
+                                }
+                            }
+                            else
+                                entities = bonusRepo.GetAll();
+
+                            return entities;
+                        });
+                        taskTraceStock = loading.AddTask("追蹤價格", () =>
+                        {
+                            var traceStockRepo = container.Resolve<Trace.TraceStockRepository>();
+                            return traceStockRepo.GetAll().ToList();
+                        });
+                        taskKDJ = loading.AddTask("KDJ", () =>
+                        {
+                            var kdjRepo = container.Resolve<Analysis.KDJRepository>();
+                            var latestData = kdjRepo.GetLatest();
+                            var today = TWSEDate.Today;
+                            List<CompanyKDJ> entities;
+                            if (latestData?.UpdateAt != today)
+                            {
+                                entities = CompanyKDJ.GetAll();
+                                if (entities?.Count > 300)
+                                {
+                                    logger.Information("KDJ GetAll Success");
+                                    kdjRepo.Imports(entities);
+                                }
+                                else
+                                {
+                                    logger.Error("KDJ GetAll Fail, Load Latest");
+                                    entities = kdjRepo.GetAll();
+                                }
+                            }
+                            else
+                                entities = kdjRepo.GetAll();
+
+                            return entities;
+                        });
+                        taskTradeHistory = loading.AddTask("交易記錄", () =>
+                        {
+                            var tradeRepo = container.Resolve<Trade.TradeRepository>();
+                            return tradeRepo.GetAll();
+                        });
+                        if (!loading.Start())
+                            loading.ShowDialog(this);
+                    }
                 }
             }
 
