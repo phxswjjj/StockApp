@@ -200,9 +200,7 @@ namespace StockApp
                             if (latestData?.UpdateAt.Date != today)
                             {
                                 entities = Day.CompanyDayVolume.GetAll();
-                                //市/櫃
-                                var comTypeCount = entities.Select(et => et.ComType).Distinct().Count();
-                                if (comTypeCount == 2)
+                                if (entities != null && entities.Select(et => et.ComType).Distinct().Count() == 2)
                                 {
                                     logger.ForContext("RowCount", entities.Count)
                                         .Information("Day Volume GetAll Success: {RowCount}");
