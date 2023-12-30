@@ -1,103 +1,63 @@
-﻿using LiteDB;
-using StockApp.Day;
-using StockApp.Group;
+﻿using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static StockApp.Group.CustomGroup;
 
 namespace StockApp.Trade
 {
     internal class TradeRepository
     {
-        private readonly ILiteDatabase Db;
+        private readonly IDbConnection DbConn;
 
-        public TradeRepository(ILiteDatabase db)
+        public TradeRepository(IDbConnection conn)
         {
-            this.Db = db;
-        }
-
-        internal bool Initialize() => Initialize<TradeInfo>();
-        private bool Initialize<T>()
-            where T : TradeInfo
-        {
-            var db = this.Db;
-
-            var imported = db.GetCollection<Data.LocalDb.ImportHistory>();
-            var everImportRecord = imported.Query()
-                .Where(x => x.Name == typeof(T).Name)
-                .OrderByDescending(x => x.Timestamp)
-                .FirstOrDefault();
-            if (everImportRecord != null)
-                return true;
-
-            var tradeFolder = "Trade";
-            //沒目錄/檔案=第一次執行，不拋異常
-            if (!Directory.Exists(tradeFolder))
-                return true;
-            if (Directory.GetFiles(tradeFolder, "*.json").Length == 0)
-                return true;
-
-            var list = db.GetCollection<T>();
-            foreach (var filePath in Directory.GetFiles(tradeFolder, "*.json"))
-            {
-                var caches = JsonCache.Load<List<T>>(filePath);
-                caches.ForEach(cache => cache.Id = ObjectId.NewObjectId());
-                list.Insert(caches);
-            }
-            list.EnsureIndex(d => d.ComCode);
-
-            imported.Insert(new Data.LocalDb.ImportHistory(typeof(T).Name));
-
-            return true;
+            this.DbConn = conn;
         }
 
         public List<TradeInfo> GetAll()
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<TradeInfo>();
-            var entities = list.Query();
-            return entities.ToList();
+            var conn = this.DbConn;
+            var list = conn.Query<TradeInfo>("select * from TradeInfo");
+            return list.ToList();
         }
 
         public List<string> GetAllComCodes()
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<TradeInfo>();
-            var codes = list.Query().Select(d => d.ComCode).ToList();
-            return codes;
+            var conn = this.DbConn;
+            var codes = conn.Query<string>("select distinct ComCode from TradeInfo");
+            return codes.ToList();
         }
 
         internal void Updates(List<TradeInfo> updateTrades)
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<TradeInfo>();
+            var conn = this.DbConn;
             foreach (var trade in updateTrades)
             {
-                if (trade.Id == ObjectId.Empty)
-                {
-                    trade.Id = ObjectId.NewObjectId();
-                    list.Insert(trade);
-                }
+                if (!string.IsNullOrEmpty(trade.SysId))
+                    conn.Execute("delete from TradeInfo where SysId=:SysId",
+                        new { SysId = trade.SysId });
                 else
-                    list.Update(trade);
+                    trade.SysId = Guid.NewGuid().ToString("N");
+                conn.Execute(@"
+insert into TradeInfo(SysId, ComCode, TradeDate, TradePrice, TradeVolume, StockCenterName, Memo)
+values(:SysId, :ComCode, :TradeDate, :TradePrice, :TradeVolume, :StockCenterName, :Memo)
+", trade);
             }
         }
 
         internal void Deletes(List<TradeInfo> deleteTrades)
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<TradeInfo>();
+            var conn = this.DbConn;
             foreach (var trade in deleteTrades)
-                list.Delete(trade.Id);
+            {
+                conn.Execute("delete from TradeInfo where SysId=:SysId",
+                    new { SysId = trade.SysId });
+            }
         }
     }
 }

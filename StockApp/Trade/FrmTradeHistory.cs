@@ -1,5 +1,4 @@
-﻿using LiteDB;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Serilog;
 using StockApp.Data;
 using StockApp.Group;
@@ -216,31 +215,29 @@ namespace StockApp.Trade
                 updateTrades.Add(trade);
             }
 
-            var deleteTrades = trades.Where(t => !updateTrades.Any(u => u.Id == t.Id)).ToList();
+            var deleteTrades = trades.Where(t => !updateTrades.Any(u => u.SysId == t.SysId)).ToList();
             #endregion
 
             var container = UnityHelper.Create();
             try
             {
-                lock (LocalDb.DbLocker)
+                using(var conn = LocalDb.CreateSqlLite())
                 {
-                    using (ILiteDatabase db = LocalDb.Create())
+                    container.RegisterInstance(conn);
+                    var tradeRepo = container.Resolve<TradeRepository>();
+                    using(var trans = conn.BeginTransaction())
                     {
-                        container.RegisterInstance(db);
-                        var tradeRepo = container.Resolve<TradeRepository>();
-
-                        db.BeginTrans();
                         try
                         {
                             if (updateTrades.Count > 0)
                                 tradeRepo.Updates(updateTrades);
                             if (deleteTrades.Count > 0)
                                 tradeRepo.Deletes(deleteTrades);
-                            db.Commit();
+                            trans.Commit();
                         }
                         catch (Exception)
                         {
-                            db.Rollback();
+                            trans.Rollback();
                             throw;
                         }
                     }

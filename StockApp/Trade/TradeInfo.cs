@@ -12,8 +12,7 @@ namespace StockApp.Trade
 {
     internal class TradeInfo
     {
-        [BsonId]
-        public ObjectId Id { get; set; } = ObjectId.Empty;
+        public string SysId { get; set; }
         [BsonIgnore]
         public DisplayModel Source { get; private set; }
         [JsonProperty]
@@ -26,8 +25,25 @@ namespace StockApp.Trade
         public int TradeVolume { get; set; }
         [BsonIgnore]
         public decimal? CurrentValue => this.Source?.CurrentPrice * this.TradeVolume;
+        public string StockCenterName { get; set; }
         [JsonProperty]
-        public StockCenterType? StockCenter { get; set; }
+        public StockCenterType? StockCenter
+        {
+            get
+            {
+                if (Enum.TryParse<StockCenterType>(StockCenterName, out var result))
+                    return result;
+                else
+                    return null;
+            }
+            set
+            {
+                if (value.HasValue)
+                    StockCenterName = value.ToString();
+                else
+                    StockCenterName = null;
+            }
+        }
         [JsonProperty]
         public string Memo { get; set; }
 

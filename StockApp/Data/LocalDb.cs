@@ -45,7 +45,6 @@ namespace StockApp.Data
                         InitializeDividend(container);
                         InitializeTraceStock(container);
                         InitializeAvgBonus(container);
-                        InitializeTradeInfo(container);
                     }
                 }
             }
@@ -80,14 +79,6 @@ namespace StockApp.Data
             logger.ForContext("PurgeItem", typeof(T).Name)
                 .ForContext("RowCount", repo.PurgeHistory())
                 .Information("Purge {PurgeItem} {RowCount}");
-        }
-
-        private static void InitializeTradeInfo(IUnityContainer container)
-        {
-            var tradeRepo = container.Resolve<Trade.TradeRepository>();
-
-            if (!tradeRepo.Initialize())
-                throw new Exception($"Init {nameof(Trade.TradeRepository)} Fail");
         }
 
         private static void InitializeAvgBonus(IUnityContainer container)

@@ -663,14 +663,11 @@ namespace StockApp
             List<string> comCodes;
 
             var container = UnityHelper.Create();
-            lock (LocalDb.DbLocker)
+            using(var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
-                {
-                    container.RegisterInstance(db);
-                    var tradeRepo = container.Resolve<Trade.TradeRepository>();
-                    comCodes = tradeRepo.GetAllComCodes();
-                }
+                container.RegisterInstance(conn);
+                var tradeRepo = container.Resolve<Trade.TradeRepository>();
+                comCodes = tradeRepo.GetAllComCodes();
             }
 
             LoadData(comCodes.ToArray());

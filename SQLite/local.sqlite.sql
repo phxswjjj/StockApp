@@ -23,4 +23,14 @@ CREATE TABLE IF NOT EXISTS "CompanyDayVolume" (
 	"CurrentPrice"	real,
 	PRIMARY KEY("UpdateAt","ComCode")
 );
+CREATE TABLE IF NOT EXISTS "TradeInfo" (
+	"SysId"	TEXT,
+	"ComCode"	TEXT NOT NULL,
+	"TradeDate"	DATE NOT NULL,
+	"TradePrice"	REAL NOT NULL,
+	"TradeVolume"	INTEGER NOT NULL,
+	"StockCenterName"	TEXT,
+	"Memo"	TEXT,
+	PRIMARY KEY("SysId")
+);
 COMMIT;
