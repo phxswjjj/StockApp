@@ -44,4 +44,10 @@ CREATE TABLE IF NOT EXISTS "CustomGroupComCode" (
 	"ComCode"	TEXT NOT NULL,
 	PRIMARY KEY("GroupName","ComCode")
 );
+CREATE TABLE IF NOT EXISTS "CompanyROE" (
+	"UpdateAt"	DATE NOT NULL,
+	"ComCode"	TEXT NOT NULL,
+	"ROEHeader"	TEXT,
+	"ROEValue"	REAL
+);
 COMMIT;

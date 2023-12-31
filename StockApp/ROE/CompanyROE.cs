@@ -17,13 +17,13 @@ namespace StockApp.ROE
 
         public DateTime UpdateAt { get; set; }
         [JsonProperty]
-        public string ComCode { get; private set; }
+        public string ComCode { get; set; }
         [JsonProperty]
         public string ComName { get; private set; }
         [JsonProperty]
-        public List<string> ROEHeaders { get; private set; }
+        public List<string> ROEHeaders { get; set; } = new List<string>();
         [JsonProperty]
-        public List<decimal?> ROEValues { get; private set; }
+        public List<decimal?> ROEValues { get; set; } = new List<decimal?>();
 
         public static List<CompanyROE> GetAll()
         {
@@ -86,6 +86,14 @@ namespace StockApp.ROE
             }
 
             return results;
+        }
+
+        public class Entity
+        {
+            public DateTime UpdateAt { get; set; }
+            public string ComCode { get; set; }
+            public string ROEHeader { get; set; }
+            public decimal? ROEValue { get; set; }
         }
     }
 }

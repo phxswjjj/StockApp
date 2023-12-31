@@ -1,94 +1,80 @@
-﻿using LiteDB;
+﻿using Dapper;
 using StockApp.Group;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using static StockApp.Group.CustomGroup;
 
 namespace StockApp.ROE
 {
     internal class ROERepository
     {
-        private readonly ILiteDatabase Db;
+        private readonly IDbConnection DbConn;
 
-        public ROERepository(ILiteDatabase db)
+        public ROERepository(IDbConnection conn)
         {
-            this.Db = db;
+            this.DbConn = conn;
         }
 
         internal CompanyROE GetROELatest()
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<CompanyROE>();
-            var data = list.Query()
-                .OrderByDescending(x => x.UpdateAt)
-                .FirstOrDefault();
-            return data;
+            var conn = this.DbConn;
+            var latestDate = conn.ExecuteScalar<DateTime?>("select max(UpdateAt) from CompanyROE");
+            if (!latestDate.HasValue)
+                return null;
+            var anyComCode = conn.QueryFirstOrDefault<string>("select ComCode from CompanyROE where UpdateAt=:UpdateAt limit 1",
+                new { UpdateAt = latestDate.Value });
+            if (string.IsNullOrEmpty(anyComCode))
+                return null;
+            return GetROE(anyComCode);
         }
 
         internal CompanyROE GetROE(string comCode)
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<CompanyROE>();
-            var data = list.Query()
-                .Where(x => x.ComCode == comCode)
-                .OrderByDescending(x => x.UpdateAt)
-                .FirstOrDefault();
-            return data;
-        }
-
-        internal bool Initialize<T>()
-            where T : CompanyROE
-        {
-            var db = this.Db;
-
-            var imported = db.GetCollection<Data.LocalDb.ImportHistory>();
-            var everImportRecord = imported.Query()
-                .Where(x => x.Name == typeof(T).Name)
-                .OrderByDescending(x => x.Timestamp)
-                .FirstOrDefault();
-            if (everImportRecord != null)
-                return true;
-
-            var today = Utility.TWSEDate.Today;
-            var jsonFilePath = Path.Combine("CompanyROE", $"{today:yyyyMM}.json");
-            //沒檔案=第一次執行，不拋異常
-            if (!File.Exists(jsonFilePath))
-                return true;
-            var caches = JsonCache.Load<List<T>>(jsonFilePath);
-            //源頭沒資料拋異常
-            if (caches?.Count == 0)
-                return false;
-
-            var list = db.GetCollection<T>();
-            //匯入資料
-            foreach (var cache in caches)
-            {
-                if (cache.UpdateAt.Year < 2023)
-                    cache.UpdateAt = today.Date;
-            }
-            this.Imports(caches);
-            list.EnsureIndex(d => new { d.ComCode, d.UpdateAt }, true);
-            list.EnsureIndex(d => d.ComCode);
-            list.EnsureIndex(d => d.UpdateAt);
-
-            imported.Insert(new Data.LocalDb.ImportHistory(typeof(T).Name));
-
-            return true;
+            var conn = this.DbConn;
+            var entities = conn.Query<CompanyROE.Entity>("select * from CompanyROE where ComCode=:ComCode",
+                new { ComCode = comCode });
+            var result = entities.GroupBy(entity => entity.ComCode)
+                .Select(g =>
+                {
+                    var data = new CompanyROE()
+                    {
+                        ComCode = g.Key,
+                    };
+                    foreach (var roeItem in g.ToList())
+                    {
+                        data.ROEHeaders.Add(roeItem.ROEHeader);
+                        data.ROEValues.Add(roeItem.ROEValue);
+                    }
+                    return data;
+                }).FirstOrDefault();
+            return result;
         }
 
         internal void Imports(IEnumerable<CompanyROE> entities)
         {
-            var db = this.Db;
+            var conn = this.DbConn;
+            foreach (var data in entities)
+            {
+                conn.Execute("delete from CompanyROE where ComCode=:ComCode",
+                    new { ComCode = data.ComCode });
+                if (data.ROEHeaders.Count == 0)
+                    continue;
 
-            var list = db.GetCollection<CompanyROE>();
-            list.Insert(entities);
+                for (var headerIndex = 0; headerIndex < data.ROEHeaders.Count; headerIndex++)
+                {
+                    var header = data.ROEHeaders[headerIndex];
+                    var roeValue = data.ROEValues[headerIndex];
+                    conn.Execute(@"
+insert into CompanyROE(UpdateAt, ComCode, ROEHeader, ROEValue)
+values(:UpdateAt, :ComCode, :ROEHeader, :ROEValue)
+", new { UpdateAt = data.UpdateAt, ComCode = data.ComCode, ROEHeader = header, ROEValue = roeValue });
+                }
+            }
         }
     }
 }

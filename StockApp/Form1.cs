@@ -55,7 +55,7 @@ namespace StockApp
             var logger = container.Resolve<ILogger>()
                 .ForContext("class", nameof(Form1))
                 .ForContext("event", nameof(LoadSetting));
-            using(var conn = LocalDb.CreateSqlLite())
+            using (var conn = LocalDb.CreateSqlLite())
             {
                 container.RegisterInstance(conn);
                 lock (LocalDb.DbLocker)
@@ -72,13 +72,26 @@ namespace StockApp
                         {
                             var latestData = roeRepo.GetROELatest();
                             var today = TWSEDate.Today;
-                            if (latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
+                            if (latestData == null || latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
                             {
                                 var list = ROE.CompanyROE.GetAll();
-                                if (list?.Count > 300)
+                                if (list.Count > 300)
                                 {
-                                    logger.Information("ROE GetAll Success");
-                                    roeRepo.Imports(list);
+                                    logger.ForContext("RowCount", list.Count)
+                                        .Information("ROE GetAll Success: {RowCount}");
+                                    using (var trans = conn.BeginTransaction())
+                                    {
+                                        try
+                                        {
+                                            roeRepo.Imports(list);
+                                            trans.Commit();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            trans.Rollback();
+                                            throw;
+                                        }
+                                    }
                                 }
                                 else
                                 {
@@ -628,7 +641,7 @@ namespace StockApp
 
             Group.CustomGroup group;
             var container = UnityHelper.Create();
-            using(var conn = LocalDb.CreateSqlLite())
+            using (var conn = LocalDb.CreateSqlLite())
             {
                 container.RegisterInstance(conn);
 
@@ -662,7 +675,7 @@ namespace StockApp
             List<string> comCodes;
 
             var container = UnityHelper.Create();
-            using(var conn = LocalDb.CreateSqlLite())
+            using (var conn = LocalDb.CreateSqlLite())
             {
                 container.RegisterInstance(conn);
                 var tradeRepo = container.Resolve<Trade.TradeRepository>();

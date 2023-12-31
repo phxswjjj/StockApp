@@ -28,15 +28,12 @@ namespace StockApp.ROE
 
             CompanyROE data;
             var container = UnityHelper.Create();
-            lock (LocalDb.DbLocker)
+            using (var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
-                {
-                    container.RegisterInstance(db);
-                    var roeRepo = container.Resolve<ROERepository>();
+                container.RegisterInstance(conn);
+                var roeRepo = container.Resolve<ROERepository>();
 
-                    data = roeRepo.GetROELatest();
-                }
+                data = roeRepo.GetROELatest();
             }
 
             if (data == null)
@@ -90,23 +87,20 @@ namespace StockApp.ROE
         internal void AddData(List<DisplayModel> list)
         {
             var container = UnityHelper.Create();
-            lock (LocalDb.DbLocker)
+            using (var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
+                container.RegisterInstance(conn);
+                var roeRepo = container.Resolve<ROERepository>();
+
+                foreach (var data in list)
                 {
-                    container.RegisterInstance(db);
-                    var roeRepo = container.Resolve<ROERepository>();
+                    if (this.DataSource.Any(d => d.ComCode == data.ComCode))
+                        continue;
 
-                    foreach (var data in list)
-                    {
-                        if (this.DataSource.Any(d => d.ComCode == data.ComCode))
-                            continue;
-
-                        var rdata = roeRepo.GetROE(data.ComCode);
-                        var fdata = new FormData(data, rdata);
-                        this.DataSource.Add(fdata);
-                        AddSeries(fdata);
-                    }
+                    var rdata = roeRepo.GetROE(data.ComCode);
+                    var fdata = new FormData(data, rdata);
+                    this.DataSource.Add(fdata);
+                    AddSeries(fdata);
                 }
             }
         }

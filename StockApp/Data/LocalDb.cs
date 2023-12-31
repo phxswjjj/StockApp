@@ -39,7 +39,6 @@ namespace StockApp.Data
                     {
                         container.RegisterInstance(db);
 
-                        InitializeROE(container);
                         InitializeContinueBouns(container);
                         InitializeDividend(container);
                         InitializeTraceStock(container);
@@ -110,14 +109,6 @@ namespace StockApp.Data
 
             if (!bonusRepo.Initialize<CompanyContBonus>())
                 throw new Exception($"Init {nameof(CompanyContBonus)} Fail");
-        }
-
-        private static void InitializeROE(IUnityContainer container)
-        {
-            var roeRepo = container.Resolve<ROERepository>();
-
-            if (!roeRepo.Initialize<CompanyROE>())
-                throw new Exception($"Init {nameof(CompanyROE)} Fail");
         }
 
         public static LiteDatabase Create(string path = null)
