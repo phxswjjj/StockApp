@@ -53,14 +53,11 @@ namespace StockApp
         {
             List<CustomGroup> customGroups;
             var container = UnityHelper.Create();
-            lock (LocalDb.DbLocker)
+            using (var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
-                {
-                    container.RegisterInstance(db);
-                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                    customGroups = custGroupRepo.GetAll().ToList();
-                }
+                container.RegisterInstance(conn);
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                customGroups = custGroupRepo.GetAll();
             }
 
             customGroups.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
@@ -136,15 +133,11 @@ namespace StockApp
 
             var container = UnityHelper.Create();
             List<CustomGroup> customGroups;
-            lock (LocalDb.DbLocker)
+            using (var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
-                {
-                    container.RegisterInstance(db);
-                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
-
-                    customGroups = custGroupRepo.GetAll().ToList();
-                }
+                container.RegisterInstance(conn);
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                customGroups = custGroupRepo.GetAll();
             }
 
             var changedGroups = new List<CustomGroup>();
@@ -174,39 +167,32 @@ namespace StockApp
                 }
             }
 
-            try
+            if (changedGroups.Count > 0)
             {
-                lock (LocalDb.DbLocker)
+                using (var conn = LocalDb.CreateSqlLite())
                 {
-                    using (ILiteDatabase db = LocalDb.Create())
-                    {
-                        container.RegisterInstance(db);
-                        var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                        var logger = container.Resolve<ILogger>()
-                            .ForContext("class", this.GetType())
-                            .ForContext("event", nameof(BtnSave_Click));
+                    container.RegisterInstance(conn);
+                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    var logger = container.Resolve<ILogger>()
+                        .ForContext("class", this.GetType())
+                        .ForContext("event", nameof(BtnSave_Click));
 
-                        if (changedGroups.Count > 0 && db.BeginTrans())
+                    using (var trans = conn.BeginTransaction())
+                    {
+                        try
                         {
-                            try
-                            {
-                                custGroupRepo.Updates(changedGroups);
-                                db.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                logger.Error(ex, ex.Message);
-                                db.Rollback();
-                                throw;
-                            }
+                            custGroupRepo.Updates(changedGroups);
+                            trans.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex, ex.Message);
+                            trans.Rollback();
+                            MessageBox.Show(ex.Message);
+                            return;
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
             }
 
             this.DialogResult = DialogResult.OK;

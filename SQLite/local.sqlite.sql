@@ -33,4 +33,15 @@ CREATE TABLE IF NOT EXISTS "TradeInfo" (
 	"Memo"	TEXT,
 	PRIMARY KEY("SysId")
 );
+CREATE TABLE IF NOT EXISTS "CustomGroup" (
+	"Name"	TEXT NOT NULL,
+	"IsFavorite"	INTEGER NOT NULL DEFAULT 1,
+	"GroupTypeName"	TEXT,
+	PRIMARY KEY("Name")
+);
+CREATE TABLE IF NOT EXISTS "CustomGroupComCode" (
+	"GroupName"	TEXT NOT NULL,
+	"ComCode"	TEXT NOT NULL,
+	PRIMARY KEY("GroupName","ComCode")
+);
 COMMIT;

@@ -1,11 +1,14 @@
-﻿using LiteDB;
+﻿using Dapper;
 using StockApp.Trace;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static StockApp.Group.CustomGroup;
 
 namespace StockApp.Group
@@ -14,82 +17,68 @@ namespace StockApp.Group
     {
         const string GROUP_NAME_TRACE_STOCK = "追蹤價格";
 
-        private readonly ILiteDatabase Db;
+        private readonly IDbConnection DbConn;
 
-        public CustomGroupRepository(ILiteDatabase db)
+        public CustomGroupRepository(IDbConnection conn)
         {
-            this.Db = db;
+            this.DbConn = conn;
         }
 
-        internal bool Initialize<T>()
-            where T : CustomGroup
+        public List<CustomGroup> GetAll()
         {
-            var db = this.Db;
-
-            var imported = db.GetCollection<Data.LocalDb.ImportHistory>();
-            var everImportRecord = imported.Query()
-                .Where(x => x.Name == typeof(T).Name)
-                .OrderByDescending(x => x.Timestamp)
-                .FirstOrDefault();
-            if (everImportRecord != null)
-                return true;
-
-            var jsonFilePath = $"CustomGroup\\{typeof(T)}.json";
-            //沒檔案=第一次執行，不拋異常
-            if (!File.Exists(jsonFilePath))
-                return true;
-            var caches = JsonCache.Load<List<T>>(jsonFilePath);
-            //源頭沒資料拋異常
-            if (caches?.Count == 0)
-                return false;
-
-            var list = db.GetCollection<CustomGroup>();
-            //匯入資料
-            foreach (var cache in caches)
-            {
-                cache.Group = (GroupType)cache.SortIndex;
-                list.Insert(cache);
-            }
-            list.EnsureIndex(d => d.Name);
-
-            imported.Insert(new Data.LocalDb.ImportHistory(typeof(T).Name));
-
-            return true;
+            var conn = this.DbConn;
+            var list = conn.Query<CustomGroup>("select * from CustomGroup").ToList();
+            foreach (var data in list)
+                LoadComCodes(data);
+            return list;
         }
-
-        public IEnumerable<CustomGroup> GetAll() => this.Db.GetCollection<CustomGroup>().FindAll();
 
         internal void Updates(List<CustomGroup> customGroups)
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<CustomGroup>();
             foreach (var customGroup in customGroups)
+                Update(customGroup);
+        }
+        private void Update(CustomGroup customGroup)
+        {
+            var conn = this.DbConn;
+
+            conn.Execute(@"delete from CustomGroup where Name=:Name",
+                new { Name = customGroup.Name });
+            conn.Execute(@"delete from CustomGroupComCode where GroupName=:GroupName",
+                                new { GroupName = customGroup.Name });
+
+            //系統定義群組(IsFavorite=false)沒有內容也要保留群組
+            if (customGroup.ComCodes.Count > 0 || !customGroup.IsFavorite)
             {
-                var existsGroup = list.FindById(customGroup.Name);
-                if (existsGroup != null)
+                conn.Execute("insert into CustomGroup(Name, IsFavorite, GroupTypeName) values(:Name, :IsFavorite, :GroupTypeName)",
+                    customGroup);
+                foreach (var comCode in customGroup.ComCodes)
                 {
-                    if (customGroup.ComCodes.Count > 0)
-                    {
-                        existsGroup.ComCodes = customGroup.ComCodes;
-                        existsGroup.Timestamp = DateTime.Now;
-                        list.Update(existsGroup);
-                    }
-                    else if (existsGroup.Group == GroupType.CustomGroup)
-                        list.Delete(existsGroup.Name);
+                    conn.Execute("insert into CustomGroupComCode(GroupName, ComCode) values(:GroupName, :ComCode)",
+                        new { GroupName = customGroup.Name, ComCode = comCode });
                 }
-                else if (customGroup.ComCodes.Count > 0)
-                    list.Insert(customGroup);
             }
+        }
+        public CustomGroup GetGroupByName(string groupName)
+        {
+            var conn = this.DbConn;
+            var data = conn.QueryFirstOrDefault<CustomGroup>("select * from CustomGroup where Name=:Name",
+                new { Name = groupName });
+            if (data != null)
+                LoadComCodes(data);
+            return data;
+        }
+        public void LoadComCodes(CustomGroup group)
+        {
+            var conn = this.DbConn;
+            var codes = conn.Query<string>("select ComCode from CustomGroupComCode where GroupName=:GroupName",
+                new { GroupName = group.Name }).ToList();
+            group.ComCodes = codes;
         }
 
         public bool AddTraceStock(StockDetail stock)
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<CustomGroup>();
-
-            var existsGroup = list.FindById(GROUP_NAME_TRACE_STOCK);
+            var existsGroup = GetGroupByName(GROUP_NAME_TRACE_STOCK);
             if (existsGroup == null)
             {
                 var newGroup = new TraceGroup()
@@ -97,36 +86,29 @@ namespace StockApp.Group
                     Name = GROUP_NAME_TRACE_STOCK,
                     ComCodes = new List<string> { stock.ComCode },
                     Group = GroupType.TraceGroup,
-                    SortIndex = (int)GroupType.TraceGroup,
                 };
-                list.Insert(newGroup);
-                return true;
+                Update(newGroup);
             }
             else
             {
                 if (!existsGroup.ComCodes.Contains(stock.ComCode))
                 {
                     existsGroup.ComCodes.Add(stock.ComCode);
-                    list.Update(existsGroup);
-                    return true;
+                    Update(existsGroup);
                 }
             }
-            return false;
+            return true;
         }
 
         internal bool DeleteTraceStock(StockDetail stock)
         {
-            var db = this.Db;
-
-            var list = db.GetCollection<CustomGroup>();
-
-            var existsGroup = list.FindById(GROUP_NAME_TRACE_STOCK);
+            var existsGroup = GetGroupByName(GROUP_NAME_TRACE_STOCK);
             if (existsGroup != null)
             {
                 if (existsGroup.ComCodes.Contains(stock.ComCode))
                 {
                     existsGroup.ComCodes.Remove(stock.ComCode);
-                    list.Update(existsGroup);
+                    Update(existsGroup);
                     return true;
                 }
             }

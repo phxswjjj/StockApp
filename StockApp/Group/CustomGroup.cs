@@ -1,5 +1,4 @@
-﻿using LiteDB;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.CodeDom;
 using System.Collections;
@@ -14,7 +13,6 @@ namespace StockApp.Group
 {
     class CustomGroup
     {
-        [BsonId]
         [JsonProperty]
         public virtual string Name { get; set; }
         [JsonProperty]
@@ -24,11 +22,23 @@ namespace StockApp.Group
         /// </summary>
         [JsonProperty]
         public virtual bool IsFavorite { get; protected set; } = true;
-        [BsonIgnore]
         [JsonProperty]
-        public virtual int SortIndex { get; set; } = (int)GroupType.CustomGroup;
+        public virtual int SortIndex => (int)this.Group;
+        public string GroupTypeName
+        {
+            get
+            {
+                return Group.ToString();
+            }
+            set
+            {
+                if (Enum.TryParse<GroupType>(value, out var t))
+                    this.Group = t;
+                else
+                    throw new Exception($"value 轉型 GroupType 失敗");
+            }
+        }
         public virtual GroupType Group { get; set; } = GroupType.CustomGroup;
-        public DateTime Timestamp { get; set; } = DateTime.Now;
 
         public static CustomGroup Create(string name)
         {

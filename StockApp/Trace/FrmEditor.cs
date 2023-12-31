@@ -62,10 +62,14 @@ namespace StockApp.Trace
 
                     var traceStockRepo = container.Resolve<TraceStockRepository>();
                     traceStockRepo.Update(tdata);
-
-                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                    custGroupRepo.AddTraceStock(tdata);
                 }
+            }
+            using (var conn = LocalDb.CreateSqlLite())
+            {
+                container.RegisterInstance(conn);
+
+                var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                custGroupRepo.AddTraceStock(tdata);
             }
 
             rdata.SetExtra(tdata);
@@ -87,10 +91,14 @@ namespace StockApp.Trace
 
                         var traceStockRepo = container.Resolve<TraceStockRepository>();
                         traceStockRepo.Delete(tdata);
-
-                        var custGroupRepo = container.Resolve<CustomGroupRepository>();
-                        custGroupRepo.DeleteTraceStock(tdata);
                     }
+                }
+                using (var conn = LocalDb.CreateSqlLite())
+                {
+                    container.RegisterInstance(conn);
+
+                    var custGroupRepo = container.Resolve<CustomGroupRepository>();
+                    custGroupRepo.DeleteTraceStock(tdata);
                 }
             }
 

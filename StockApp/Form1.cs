@@ -55,51 +55,55 @@ namespace StockApp
             var logger = container.Resolve<ILogger>()
                 .ForContext("class", nameof(Form1))
                 .ForContext("event", nameof(LoadSetting));
-            lock (LocalDb.DbLocker)
+            using(var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
+                container.RegisterInstance(conn);
+                lock (LocalDb.DbLocker)
                 {
-                    container.RegisterInstance(db);
-                    var custGroupRepo = container.Resolve<Group.CustomGroupRepository>();
-                    var roeRepo = container.Resolve<ROE.ROERepository>();
-
-                    var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll().ToList());
-
-                    var taskROE = loading.AddTask("ROE", () =>
+                    using (ILiteDatabase db = LocalDb.Create())
                     {
-                        var latestData = roeRepo.GetROELatest();
-                        var today = TWSEDate.Today;
-                        if (latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
+                        container.RegisterInstance(db);
+                        var custGroupRepo = container.Resolve<Group.CustomGroupRepository>();
+                        var roeRepo = container.Resolve<ROE.ROERepository>();
+
+                        var taskGroups = loading.AddTask("取得群組", () => custGroupRepo.GetAll());
+
+                        var taskROE = loading.AddTask("ROE", () =>
                         {
-                            var list = ROE.CompanyROE.GetAll();
-                            if (list?.Count > 300)
+                            var latestData = roeRepo.GetROELatest();
+                            var today = TWSEDate.Today;
+                            if (latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
                             {
-                                logger.Information("ROE GetAll Success");
-                                roeRepo.Imports(list);
+                                var list = ROE.CompanyROE.GetAll();
+                                if (list?.Count > 300)
+                                {
+                                    logger.Information("ROE GetAll Success");
+                                    roeRepo.Imports(list);
+                                }
+                                else
+                                {
+                                    logger.Error("ROE GetAll Fail");
+                                    return false;
+                                }
                             }
-                            else
-                            {
-                                logger.Error("ROE GetAll Fail");
-                                return false;
-                            }
-                        }
-                        return true;
-                    });
+                            return true;
+                        });
 
-                    if (!loading.Start())
-                        loading.ShowDialog(this);
+                        if (!loading.Start())
+                            loading.ShowDialog(this);
 
-                    groups = taskGroups.Result;
+                        groups = taskGroups.Result;
 
-                    var favoriteGroup = groups.FirstOrDefault(g => g.Group == Group.CustomGroup.GroupType.FavoriteGroup);
-                    if (favoriteGroup == null)
-                        favoriteGroup = new Group.FavoriteGroup();
-                    this.FavoriteGroup = favoriteGroup;
+                        var favoriteGroup = groups.FirstOrDefault(g => g.Group == Group.CustomGroup.GroupType.FavoriteGroup);
+                        if (favoriteGroup == null)
+                            favoriteGroup = new Group.FavoriteGroup();
+                        this.FavoriteGroup = favoriteGroup;
 
-                    var hateGroup = groups.FirstOrDefault(g => g.Group == Group.CustomGroup.GroupType.HateGroup);
-                    if (hateGroup == null)
-                        hateGroup = new Group.HateGroup();
-                    this.HateGroup = hateGroup;
+                        var hateGroup = groups.FirstOrDefault(g => g.Group == Group.CustomGroup.GroupType.HateGroup);
+                        if (hateGroup == null)
+                            hateGroup = new Group.HateGroup();
+                        this.HateGroup = hateGroup;
+                    }
                 }
             }
 
@@ -624,15 +628,12 @@ namespace StockApp
 
             Group.CustomGroup group;
             var container = UnityHelper.Create();
-            lock (LocalDb.DbLocker)
+            using(var conn = LocalDb.CreateSqlLite())
             {
-                using (ILiteDatabase db = LocalDb.Create())
-                {
-                    container.RegisterInstance(db);
+                container.RegisterInstance(conn);
 
-                    var custGroupRepo = container.Resolve<Group.CustomGroupRepository>();
-                    group = custGroupRepo.GetAll().FirstOrDefault(g => g.Name == text);
-                }
+                var custGroupRepo = container.Resolve<Group.CustomGroupRepository>();
+                group = custGroupRepo.GetAll().FirstOrDefault(g => g.Name == text);
             }
             if (group == null)
             {
