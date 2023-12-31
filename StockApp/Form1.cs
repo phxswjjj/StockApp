@@ -70,9 +70,10 @@ namespace StockApp
 
                         var taskROE = loading.AddTask("ROE", () =>
                         {
-                            var latestData = roeRepo.GetROELatest();
+                            var latestDate = roeRepo.GetROELatestDate();
                             var today = TWSEDate.Today;
-                            if (latestData == null || latestData.UpdateAt.Year != today.Year || latestData.UpdateAt.Month != today.Month)
+                            //沒有資料或非當月則重新取得新資料
+                            if (!latestDate.HasValue || latestDate.Value.Year != today.Year || latestDate.Value.Month != today.Month)
                             {
                                 var list = ROE.CompanyROE.GetAll();
                                 if (list.Count > 300)

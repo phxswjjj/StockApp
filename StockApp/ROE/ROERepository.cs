@@ -20,18 +20,22 @@ namespace StockApp.ROE
             this.DbConn = conn;
         }
 
-        internal CompanyROE GetROELatest()
+        /// <summary>
+        /// 取得最新、任一資料
+        /// </summary>
+        /// <returns></returns>
+        internal CompanyROE GetROELatestAny()
         {
             var conn = this.DbConn;
-            var latestDate = conn.ExecuteScalar<DateTime?>("select max(UpdateAt) from CompanyROE");
-            if (!latestDate.HasValue)
-                return null;
+            var latestDate = GetROELatestDate();
             var anyComCode = conn.QueryFirstOrDefault<string>("select ComCode from CompanyROE where UpdateAt=:UpdateAt limit 1",
                 new { UpdateAt = latestDate.Value });
             if (string.IsNullOrEmpty(anyComCode))
                 return null;
             return GetROE(anyComCode);
         }
+        internal DateTime? GetROELatestDate()
+            => this.DbConn.ExecuteScalar<DateTime?>("select max(UpdateAt) from CompanyROE");
 
         internal CompanyROE GetROE(string comCode)
         {

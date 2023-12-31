@@ -33,7 +33,7 @@ namespace StockApp.ROE
                 container.RegisterInstance(conn);
                 var roeRepo = container.Resolve<ROERepository>();
 
-                data = roeRepo.GetROELatest();
+                data = roeRepo.GetROELatestAny();
             }
 
             if (data == null)
