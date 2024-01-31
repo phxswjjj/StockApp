@@ -38,6 +38,8 @@ namespace StockApp.Web
             var task = base.SendAsync(request, cancellationToken);
             task.ContinueWith(t =>
             {
+                if (t.IsCanceled)
+                    return;
                 var resp = t.Result;
                 if (resp.StatusCode == HttpStatusCode.Redirect)
                 {

@@ -115,18 +115,7 @@ namespace StockApp
             {
                 var d = this.KDJSource;
                 if (d == null) return null;
-                var range = BasicSetting.Instance.KDJRange;
-                var k = d.MonthK;
-                switch (range)
-                {
-                    case KDJRangeType.Week:
-                        k = d.WeekK;
-                        break;
-                    case KDJRangeType.Day:
-                        k = d.DayK;
-                        break;
-                }
-                return k ?? d.DayK;
+                return d.DayK;
             }
         }
         protected decimal? ValueJ
@@ -135,18 +124,7 @@ namespace StockApp
             {
                 var d = this.KDJSource;
                 if (d == null) return null;
-                var range = BasicSetting.Instance.KDJRange;
-                var j = d.MonthJ;
-                switch (range)
-                {
-                    case KDJRangeType.Week:
-                        j = d.WeekJ;
-                        break;
-                    case KDJRangeType.Day:
-                        j = d.DayJ;
-                        break;
-                }
-                return j ?? d.DayJ;
+                return d.DayJ;
             }
         }
         [DisplayName("K")]

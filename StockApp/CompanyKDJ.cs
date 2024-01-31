@@ -90,18 +90,13 @@ namespace StockApp
                     ComCode = tds[0].Text(),
                     ComName = tds[1].Text()
                 };
-                var dayK = tds[7].Text();
+                const int colIndexK = 8;
+                var dayK = tds[colIndexK].Text();
                 if (string.IsNullOrEmpty(dayK))
                     continue;
                 data.DayK = Parse(dayK).Value;
-                data.DayD = Parse(tds[8].Text()).Value;
-                data.DayJ = Parse(tds[9].Text()).Value;
-                data.WeekK = Parse(tds[11].Text());
-                data.WeekD = Parse(tds[12].Text());
-                data.WeekJ = Parse(tds[13].Text());
-                data.MonthK = Parse(tds[15].Text());
-                data.MonthD = Parse(tds[16].Text());
-                data.MonthJ = Parse(tds[17].Text());
+                data.DayD = Parse(tds[colIndexK + 1].Text()).Value;
+                data.DayJ = Parse(tds[colIndexK + 2].Text()).Value;
 
                 list.Add(data);
             }

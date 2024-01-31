@@ -18,6 +18,7 @@ namespace StockApp
         public decimal PriceLimit { get; private set; }
         public int ContBonusTimesLimit { get; private set; }
         public int SimulateMaxMonths { get; internal set; }
+        [Obsolete("不使用")]
         public DisplayModel.KDJRangeType KDJRange { get; private set; }
         public int TraceDays { get; private set; }
         public decimal HoldValueMaxRatio { get; private set; }
