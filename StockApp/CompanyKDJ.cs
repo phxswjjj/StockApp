@@ -90,7 +90,7 @@ namespace StockApp
                     ComCode = tds[0].Text(),
                     ComName = tds[1].Text()
                 };
-                const int colIndexK = 8;
+                const int colIndexK = 7;
                 var dayK = tds[colIndexK].Text();
                 if (string.IsNullOrEmpty(dayK))
                     continue;
