@@ -55,11 +55,11 @@ namespace StockApp
                 var sBonus = tds.Last().Text();
                 data.ExDividendBonus = decimal.Parse(sBonus);
 
+                //'24/03/19即將除息
                 var sExDividendDate = tds[4].Text()
                     .Replace("即將除息", "")
                     .Replace("今日除息", "")
-                    .Replace("'", "/")
-                    .Trim();
+                    .Trim('/', '\'');
                 if (string.IsNullOrEmpty(sExDividendDate))
                     continue;
                 data.ExDividendDate = DateTime.ParseExact(sExDividendDate, "yy/MM/dd",
