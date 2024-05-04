@@ -1,11 +1,13 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
 using Newtonsoft.Json;
+using StockApp.Web;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,10 +29,12 @@ namespace StockApp.ROE
 
         public static List<CompanyROE> GetAll()
         {
-            var request = Web.WebRequest.CreateGoodInfo();
-            var resp = request.PostAsync(QueryBaseUrl, null).Result;
-            var bytes = resp.Content.ReadAsByteArrayAsync().Result;
-            var content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            string content;
+            using (var page = ChromiumBrowser.NewPage(QueryBaseUrl))
+            {
+                page.WaitForSelectorAsync("#tblStockList").Wait();
+                content = page.GetContentAsync().Result;
+            }
 
             IDocument doc = BrowsingContext.New(Configuration.Default.WithDefaultLoader())
                 .OpenAsync(req => req.Content(content)).Result;
