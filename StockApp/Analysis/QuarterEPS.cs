@@ -49,7 +49,10 @@ namespace StockApp.Analysis
             var trs = doc.QuerySelectorAll("#divFinDetail tbody>tr");
             var trHead = trs.First();
             var quartTds = trHead.QuerySelectorAll("th").Skip(1).GetEnumerator();
-            var trEPS = trs.Not(".bg_h1").Last();
+            var trEPS = trs.Not(".bg_h1")
+                //Id start with 'hrow' 只有標題
+                .Where(row => row.Id.StartsWith("row"))
+                .Last();
             var epsTds = trEPS.QuerySelectorAll("td").Skip(1).GetEnumerator();
 
             var quarts = new List<QuarterEPS>();
