@@ -18,10 +18,12 @@ namespace StockApp.Group
         const string GROUP_NAME_TRACE_STOCK = "追蹤價格";
 
         private readonly IDbConnection DbConn;
+        private readonly CustomGroupService Service;
 
-        public CustomGroupRepository(IDbConnection conn)
+        public CustomGroupRepository(IDbConnection conn, CustomGroupService service)
         {
             this.DbConn = conn;
+            this.Service = service;
         }
 
         public List<CustomGroup> GetAll()
@@ -58,6 +60,12 @@ namespace StockApp.Group
                         new { GroupName = customGroup.Name, ComCode = comCode });
                 }
             }
+
+            var service = this.Service;
+            if (customGroup.ComCodes.Count > 0 || !customGroup.IsFavorite)
+                service.InsertOrUpdate(customGroup);
+            else
+                service.Delete(customGroup.Name);
         }
         public CustomGroup GetGroupByName(string groupName)
         {

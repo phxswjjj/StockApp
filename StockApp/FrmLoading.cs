@@ -38,6 +38,7 @@ namespace StockApp
         private void FrmLoading_FormClosing(object sender, FormClosingEventArgs e)
         {
             var sw = this.Stopwatch;
+            //不要太快關閉
             while (sw.ElapsedMilliseconds < this.MinimizeMilliseconds)
                 System.Threading.Thread.Sleep(100);
         }

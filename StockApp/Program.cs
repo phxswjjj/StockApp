@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using MongoDB.Driver;
+using Serilog;
 using StockApp.Data;
 using StockApp.Utility;
 using StockApp.Web;
@@ -51,6 +52,7 @@ namespace StockApp
         {
             IUnityContainer container = new UnityContainer();
             container.RegisterInstance<ILogger>(LogHelper.Log);
+            container.RegisterFactory<IMongoDatabase>(c => MongoDbHelper.Create());
             UnityHelper.Initialize(container);
         }
     }
