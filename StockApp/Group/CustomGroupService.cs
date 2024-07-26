@@ -18,15 +18,24 @@ namespace StockApp.Group
             this.Collection = db.GetCollection<CustomGroup>("CustomGroup");
         }
 
-        internal void InsertOrUpdate(CustomGroup customGroup)
+        internal void Save(CustomGroup group)
+        {
+            var doc = this.Collection;
+
+            if (group.ComCodes.Count > 0 || group.IsFavorite)
+                this.InsertOrUpdate(group);
+            else
+                this.Delete(group.Name);
+        }
+
+        private void InsertOrUpdate(CustomGroup customGroup)
         {
             var doc = this.Collection;
             doc.ReplaceOne(d => d.Name == customGroup.Name,
                 customGroup,
                 new ReplaceOptions() { IsUpsert = true });
         }
-
-        internal void Delete(string name)
+        private void Delete(string name)
         {
             var doc = this.Collection;
             doc.DeleteOne(d => d.Name == name);

@@ -62,10 +62,7 @@ namespace StockApp.Group
             }
 
             var service = this.Service;
-            if (customGroup.ComCodes.Count > 0 || !customGroup.IsFavorite)
-                service.InsertOrUpdate(customGroup);
-            else
-                service.Delete(customGroup.Name);
+            service.Save(customGroup);
         }
         public CustomGroup GetGroupByName(string groupName)
         {
